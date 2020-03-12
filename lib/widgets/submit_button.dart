@@ -14,7 +14,7 @@ class SubmitButton extends StatelessWidget {
   Widget _submitButton(Color color, String title) {
     return Center(
       child: Container(
-        width: 170,
+        width: 180,
         padding: EdgeInsets.symmetric(vertical: 12),
         alignment: Alignment.center,
         decoration: BoxDecoration(

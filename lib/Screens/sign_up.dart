@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:ameen/widgets/entry_field.dart';
+import 'package:ameen/widgets/or_line.dart';
 import 'package:ameen/widgets/submit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,40 +11,10 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  Widget _entryField(String title, Icon inputIcon, {textInputType = TextInputType.text, bool isPassword = false,
-  Icon visibleIcon}) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        textDirection: TextDirection.rtl,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          SizedBox(
-            height: 8,
-          ),
-          TextField(
-              textAlign: TextAlign.right,
-              textDirection: TextDirection.rtl,
-              obscureText: isPassword,
-              autocorrect: true,
-              keyboardType: textInputType,
-              cursorColor:Color.fromRGBO(0, 153, 51, 1),
-              style: TextStyle(fontFamily: 'Cairo', fontSize: 15),
-              decoration: InputDecoration(
-                suffixIcon: inputIcon,
-                prefixIcon: visibleIcon,
-                hintText: title,
-                border: UnderlineInputBorder(),
-              ))
-        ],
-      ),
-    );
-  }
 
   Widget _loginAccountLabel() {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 20),
-//      alignment: Alignment.bottomCenter,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
@@ -98,34 +69,6 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  Widget _orLine() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        horizontalLine(),
-        Text(
-          'أو',
-          style: TextStyle(
-            fontSize: 15,
-            fontFamily: 'Cairo',
-            fontWeight: FontWeight.bold,
-            color: Colors.grey.shade700,
-          ),
-        ),
-        horizontalLine(),
-      ],
-    );
-  }
-
-  Widget horizontalLine() => Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.0),
-        child: Container(
-          width: 120,
-          height: 1.0,
-          color: Colors.grey.shade700,
-        ),
-      );
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -159,7 +102,7 @@ class _SignUpState extends State<SignUp> {
                     SizedBox(
                       height: 10,
                     ),
-                    _orLine(),
+                    OrLine(),
                     SizedBox(
                       height: 10,
                     ),

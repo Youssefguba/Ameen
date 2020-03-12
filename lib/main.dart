@@ -1,3 +1,4 @@
+import 'package:ameen/Screens/login.dart';
 import 'package:ameen/Screens/sign_up.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +13,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.green,
       ),
       debugShowCheckedModeBanner: false,
-      home: SignUp(),
+      home: Login(),
     );
 
   }
