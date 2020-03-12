@@ -1,14 +1,12 @@
 import 'dart:ui';
-import 'package:flutter/foundation.dart';
+import 'package:ameen/widgets/entry_field.dart';
+import 'package:ameen/widgets/submit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class SignUp extends StatefulWidget {
-  const SignUp({Key key, this.title}) : super(key: key);
-
   @override
   _SignUpState createState() => _SignUpState();
-  final String title;
 }
 
 class _SignUpState extends State<SignUp> {
@@ -38,32 +36,6 @@ class _SignUpState extends State<SignUp> {
                 border: UnderlineInputBorder(),
               ))
         ],
-      ),
-    );
-  }
-
-  Widget _submitButton(Color color, String title) {
-    return Center(
-      child: Container(
-        width: 170,
-        padding: EdgeInsets.symmetric(vertical: 12),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.all(Radius.circular(30)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.shade200,
-                offset: Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
-          ],
-        ),
-        child: Text(
-          title,
-          style:
-              TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'Cairo', fontWeight: FontWeight.bold ),
-        ),
       ),
     );
   }
@@ -119,9 +91,9 @@ class _SignUpState extends State<SignUp> {
   Widget _emailPasswordWidget() {
     return Column(
       children: <Widget>[
-        _entryField("الإسم", Icon(Icons.person)),
-        _entryField("البريد الإلكتروني", Icon(Icons.email), textInputType: TextInputType.emailAddress),
-        _entryField("إنشاء كلمة سر", Icon(Icons.lock), isPassword: true, visibleIcon: Icon(Icons.visibility_off)),
+        EntryField("الإسم", Icon(Icons.person)),
+        EntryField("البريد الإلكتروني", Icon(Icons.email), textInputType: TextInputType.emailAddress),
+        EntryField("إنشاء كلمة سر", Icon(Icons.lock), isPassword: true, visibleIcon: Icon(Icons.visibility_off)),
       ],
     );
   }
@@ -179,7 +151,7 @@ class _SignUpState extends State<SignUp> {
                     SizedBox(
                       height: 10,
                     ),
-                    _submitButton(Color.fromRGBO(0, 153, 51, 1), "إنشاء حساب"),
+                    SubmitButton(Color.fromRGBO(0, 153, 51, 1), "إنشاء حساب"),
                     SizedBox(
                       height: 10,
                     ),
@@ -191,12 +163,12 @@ class _SignUpState extends State<SignUp> {
                     SizedBox(
                       height: 10,
                     ),
-                    _submitButton(Color.fromRGBO(59, 89, 152, 1),
+                    SubmitButton(Color.fromRGBO(59, 89, 152, 1),
                         "التسجيل بواسطة الفيسبوك"),
                     SizedBox(
                       height: 13,
                     ),
-                    _submitButton(Colors.grey.shade700, "الدخول كمستخدم خفي")
+                    SubmitButton(Colors.grey.shade700, "الدخول كمستخدم خفي")
                   ],
                 ),
               ),
