@@ -25,9 +25,6 @@ class EntryField extends StatelessWidget {
         textDirection: TextDirection.rtl,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          SizedBox(
-            height: 8,
-          ),
           TextField(
               textAlign: TextAlign.right,
               textDirection: TextDirection.rtl,
@@ -35,13 +32,13 @@ class EntryField extends StatelessWidget {
               autocorrect: true,
               keyboardType: textInputType,
               cursorColor:Color.fromRGBO(0, 153, 51, 1),
-              style: TextStyle(fontFamily: 'Cairo', fontSize: 15),
+              style: TextStyle(fontFamily: 'Dubai', fontSize: 15),
               decoration: InputDecoration(
                 suffixIcon: inputIcon,
                 prefixIcon: visibleIcon,
                 hintText: title,
                 border: UnderlineInputBorder(),
-              ))
+              )),
         ],
       ),
     );

@@ -1,6 +1,6 @@
-import 'package:ameen/Screens/login.dart';
-import 'package:ameen/Screens/sign_up.dart';
+import 'package:ameen/Screens/news_feed.dart';
 import 'package:flutter/material.dart';
+
 
 void main() => runApp(MyApp());
 
@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.green,
       ),
       debugShowCheckedModeBanner: false,
-      home: Login(),
+      home:  NewsFeed(),
     );
 
   }

@@ -64,6 +64,14 @@ flutter:
         - asset: fonts/Cairo_Bold.ttf
 
 
+    - family: Dubai
+      fonts:
+        - asset: fonts/Dubai_Regular.ttf
+        - asset: fonts/Dubai_Bold.ttf
+        - asset: fonts/Dubai_Light.ttf
+
+
+
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf

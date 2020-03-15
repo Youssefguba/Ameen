@@ -11,7 +11,6 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-
   Widget _loginAccountLabel() {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 20),
@@ -22,9 +21,9 @@ class _SignUpState extends State<SignUp> {
             child: Text(
               'تسجيل دخول',
               style: TextStyle(
-                  color: Color.fromRGBO(0, 153, 51, 1),
+                  color: Colors.green.shade700,
                   fontSize: 13,
-                  fontFamily: 'Cairo',
+                  fontFamily: 'Dubai',
                   fontWeight: FontWeight.w600),
             ),
           ),
@@ -37,7 +36,7 @@ class _SignUpState extends State<SignUp> {
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: Colors.grey.shade700,
-                fontFamily: 'Cairo'),
+                fontFamily: 'Dubai'),
           ),
         ],
       ),
@@ -51,7 +50,7 @@ class _SignUpState extends State<SignUp> {
         text: 'الإشتراك',
         style: TextStyle(
           fontSize: 25,
-          fontFamily: 'Cairo',
+          fontFamily: 'Dubai',
           fontWeight: FontWeight.w700,
           color: Colors.grey.shade700,
         ),
@@ -63,8 +62,11 @@ class _SignUpState extends State<SignUp> {
     return Column(
       children: <Widget>[
         EntryField("الإسم", Icon(Icons.person)),
-        EntryField("البريد الإلكتروني", Icon(Icons.email), textInputType: TextInputType.emailAddress),
-        EntryField("إنشاء كلمة سر", Icon(Icons.lock), isPassword: true, visibleIcon: Icon(Icons.visibility_off)),
+        EntryField("إسم العائلة", Icon(Icons.person)),
+        EntryField("البريد الإلكتروني", Icon(Icons.email),
+            textInputType: TextInputType.emailAddress),
+        EntryField("إنشاء كلمة سر", Icon(Icons.lock),
+            isPassword: true, visibleIcon: Icon(Icons.visibility_off)),
       ],
     );
   }
@@ -78,15 +80,15 @@ class _SignUpState extends State<SignUp> {
           child: Stack(
             children: <Widget>[
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: 21),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(
-                      height: 40,
-                    ),
                     _title(),
+                    SizedBox(
+                      height: 20,
+                    ),
                     SizedBox(
                       height: 10,
                     ),
@@ -94,7 +96,7 @@ class _SignUpState extends State<SignUp> {
                     SizedBox(
                       height: 10,
                     ),
-                    SubmitButton(Color.fromRGBO(0, 153, 51, 1), "إنشاء حساب"),
+                    SubmitButton(Colors.green.shade700, "إنشاء حساب"),
                     SizedBox(
                       height: 10,
                     ),
