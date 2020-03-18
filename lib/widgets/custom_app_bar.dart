@@ -13,7 +13,7 @@ Widget CustomAppBar() {
           fontSize: 16.0,
           fontFamily: 'Dubai',
           fontWeight: FontWeight.w700,
-          color: Colors.green.shade700,
+          color: Color.fromRGBO(62, 146, 42, 1),
         ),
       ),
     ),
@@ -21,6 +21,7 @@ Widget CustomAppBar() {
       IconButton(
         icon: Icon(Icons.notifications_none),
         tooltip: "الآشعارات",
+
       )
     ],
   );

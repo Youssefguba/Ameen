@@ -9,10 +9,12 @@ class _BottomNavigationState extends State<BottomNavigation> {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
+      selectedItemColor: Color.fromRGBO(62, 146, 42, 1),
       currentIndex: 1, // this will be set when a new tab is tapped
       items: [
         BottomNavigationBarItem(
-          icon: new Icon(Icons.mail),
+          icon: new Icon(Icons.mail,
+          ),
           title: new Text(
             'الرسائل',
             style: TextStyle(
@@ -40,6 +42,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
             style: TextStyle(
               fontFamily: 'Dubai',
               fontSize: 12.0,
+              color: Colors.grey.shade500,
               fontWeight: FontWeight.w500,
             ),
           ),

@@ -30,7 +30,7 @@ class CreatePost extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.person_pin),
             iconSize: 35.0,
-            disabledColor: Colors.green,
+            disabledColor: Color.fromRGBO(62, 146, 42, 1),
           ),
         ],
       ),
