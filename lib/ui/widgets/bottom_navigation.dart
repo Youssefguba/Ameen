@@ -1,16 +1,22 @@
+import 'package:ameen/helpers/ui/app_color.dart';
 import 'package:flutter/material.dart';
 
 class BottomNavigation extends StatefulWidget {
+  final int currentIndex;
+
+  const BottomNavigation(this.currentIndex);
+
   @override
   _BottomNavigationState createState() => _BottomNavigationState();
+
 }
 
 class _BottomNavigationState extends State<BottomNavigation> {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      selectedItemColor: Color.fromRGBO(62, 146, 42, 1),
-      currentIndex: 1, // this will be set when a new tab is tapped
+      selectedItemColor: cGreen,
+      currentIndex: widget.currentIndex, // this will be set when a new tab is tapped
       items: [
         BottomNavigationBarItem(
           icon: new Icon(Icons.mail,

@@ -1,9 +1,11 @@
 import 'dart:ui';
-import 'package:ameen/widgets/entry_field.dart';
-import 'package:ameen/widgets/or_line.dart';
-import 'package:ameen/widgets/submit_button.dart';
+import 'package:ameen/helpers/ui/app_color.dart';
+import 'package:ameen/ui/widgets/entry_field.dart';
+import 'package:ameen/ui/widgets/or_line.dart';
+import 'package:ameen/ui/widgets/submit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 
 class SignUp extends StatefulWidget {
   @override
@@ -21,10 +23,12 @@ class _SignUpState extends State<SignUp> {
             child: Text(
               'تسجيل دخول',
               style: TextStyle(
-                  color: Colors.green.shade700,
-                  fontSize: 13,
-                  fontFamily: 'Dubai',
-                  fontWeight: FontWeight.w600),
+                color: cGreen,
+                fontSize: 13,
+                fontFamily: 'Dubai',
+                fontWeight: FontWeight.w600,
+                decoration: TextDecoration.underline,
+              ),
             ),
           ),
           SizedBox(
@@ -96,7 +100,7 @@ class _SignUpState extends State<SignUp> {
                     SizedBox(
                       height: 10,
                     ),
-                    SubmitButton(Colors.green.shade700, "إنشاء حساب"),
+                    SubmitButton(cGreen, "إنشاء حساب"),
                     SizedBox(
                       height: 10,
                     ),
@@ -108,7 +112,7 @@ class _SignUpState extends State<SignUp> {
                     SizedBox(
                       height: 10,
                     ),
-                    SubmitButton(Color.fromRGBO(59, 89, 152, 1),
+                    SubmitButton(cFacebookColor,
                         "التسجيل بواسطة الفيسبوك"),
                     SizedBox(
                       height: 13,

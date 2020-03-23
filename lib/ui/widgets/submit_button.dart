@@ -31,7 +31,7 @@ class SubmitButton extends StatelessWidget {
         child: Text(
           title,
           style:
-          TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'Cairo', fontWeight: FontWeight.bold ),
+          TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'Dubai', fontWeight: FontWeight.bold ),
         ),
       ),
     );

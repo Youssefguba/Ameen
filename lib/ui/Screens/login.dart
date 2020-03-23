@@ -1,7 +1,7 @@
 import 'dart:ui';
-import 'package:ameen/widgets/entry_field.dart';
-import 'package:ameen/widgets/or_line.dart';
-import 'package:ameen/widgets/submit_button.dart';
+import 'package:ameen/ui/widgets/entry_field.dart';
+import 'package:ameen/ui/widgets/or_line.dart';
+import 'package:ameen/ui/widgets/submit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
