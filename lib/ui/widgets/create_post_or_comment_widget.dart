@@ -2,7 +2,11 @@ import 'package:ameen/helpers/ui/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-class CreatePost extends StatelessWidget {
+class CreatePostOrComment extends StatelessWidget {
+  final String hintText;
+  final Color color;
+  CreatePostOrComment(this.hintText, this.color);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -24,24 +28,23 @@ class CreatePost extends StatelessWidget {
                 textAlign: TextAlign.right,
                 textDirection: TextDirection.rtl,
                 showCursor: false,
-                style:
-                    TextStyle(fontFamily: 'Dubai', fontSize: 14, height: 1.0),
+                style: TextStyle(fontFamily: 'Dubai', fontSize: 12, height: 1.0),
                 readOnly: true,
                 decoration: InputDecoration(
-                  fillColor: Colors.grey.shade200,
+                  fillColor: color,
                   filled: true,
-                  hintText: "..  أنشر دعاء ",
-                  contentPadding: EdgeInsets.all(20.0),
+                  hintText: hintText,
+                  contentPadding: EdgeInsets.all(10.0),
                   enabled: false,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                    borderRadius: BorderRadius.all(Radius.circular(25.0)),
                   ),
                 )),
           ),
           Image(
             image: AssetImage('assets/images/person_test.png'),
-            height: 62,
-            width: 62,
+            height: 60,
+            width: 60,
           ),
         ],
       ),

@@ -19,37 +19,45 @@ class _BottomNavigationState extends State<BottomNavigation> {
       currentIndex: widget.currentIndex, // this will be set when a new tab is tapped
       items: [
         BottomNavigationBarItem(
-          icon: new Icon(Icons.mail,
+          icon: ImageIcon (
+              AssetImage("assets/images/email.png"),
+              size: 24,
           ),
           title: new Text(
             'الرسائل',
             style: TextStyle(
               fontFamily: 'Dubai',
               fontSize: 12.0,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w800,
             ),
           ),
         ),
         BottomNavigationBarItem(
-          icon: new Icon(Icons.home),
+          icon: ImageIcon (
+            AssetImage("assets/images/home.png"),
+            size: 24,
+          ),
           title: new Text(
             'الصفحة الرئيسية',
             style: TextStyle(
               fontFamily: 'Dubai',
               fontSize: 12.0,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w800,
             ),
           ),
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person),
+          icon: ImageIcon (
+            AssetImage("assets/images/account.png"),
+            size: 24,
+          ),
           title: Text(
             'الصفحة الشخصية',
             style: TextStyle(
               fontFamily: 'Dubai',
               fontSize: 12.0,
               color: Colors.grey.shade500,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w800,
             ),
           ),
         )
