@@ -1,7 +1,5 @@
 import 'package:ameen/helpers/ui/app_color.dart';
-import 'package:ameen/ui/Screens/news_feed.dart';
-import 'package:ameen/ui/Screens/test.dart';
-import 'package:ameen/ui/Screens/user_profile.dart';
+import 'package:ameen/ui/Screens/contacts_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -21,7 +19,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Color.fromRGBO(62, 146, 42, 1),
       ),
       debugShowCheckedModeBanner: false,
-      home: NewsFeed(),
+      home: ContactList(),
     );
   }
 }

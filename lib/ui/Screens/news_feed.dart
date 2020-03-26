@@ -132,7 +132,6 @@ class _NewsFeedState extends State<NewsFeed> {
               ],
             ),
           ),
-
           /*
           * The End of Reaction Buttons Row
           * */
