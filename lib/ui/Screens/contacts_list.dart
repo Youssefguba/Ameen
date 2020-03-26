@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 
 /*
 * This class represent list of chats in messages section.
-*
 * Y.G
 * */
 
@@ -35,21 +34,6 @@ class _ContactListState extends State<ContactList> {
             ),
           ],
         ),
-//        actions: <Widget>[
-//          IconButton(
-//            icon: Icon(Icons.arrow_forward),
-//            color: Colors.white,
-//            disabledColor: Colors.white,
-//            onPressed: () {
-//              Navigator.push(
-//                context,
-//                MaterialPageRoute(
-//                  builder: (context) => NewsFeed(),
-//                ),
-//              );
-//            },
-//          ),
-//        ],
       ),
       body: Container(
         child: Container(

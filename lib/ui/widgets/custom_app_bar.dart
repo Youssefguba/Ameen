@@ -1,6 +1,9 @@
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 import 'package:flutter/material.dart';
 
+/*
+* This is the Customized Appbar in Home Screen (NewsFeed)
+* */
 
 Widget CustomAppBar() {
   return AppBar(

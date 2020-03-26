@@ -1,5 +1,6 @@
 import 'package:ameen/blocs/models/choice.dart';
-import 'package:ameen/helpers/ui/app_color.dart';
+import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+import 'package:ameen/ui/Screens/create_post.dart';
 import 'package:ameen/ui/widgets/choice_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -46,28 +47,31 @@ class ProfileAppBar extends StatelessWidget {
     );
   }
 
-  Widget _addDoaaButton(BuildContext buildContext) {
-    return Center(
-      child: Container(
-        width: 120,
-        padding: EdgeInsets.symmetric(vertical: 5),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: cGreen,
-          borderRadius: BorderRadius.all(Radius.circular(30)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.shade200,
-                offset: Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
-          ],
-        ),
-        child: Text(
-          "إضافة دعاء +",
-          style:
-              TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'Dubai'),
-        ),
+  Widget _addDoaaButton(BuildContext context) {
+    return RaisedButton(
+      onPressed: (){
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CreatePost(),
+          ),
+        );
+      },
+      color: myColors.green[900],
+      padding: EdgeInsets.all(5),
+      elevation: 1.0,
+      hoverColor: Colors.white,
+      textColor: Colors.white,
+      disabledColor: myColors.green,
+      splashColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: new BorderRadius.circular(18.0),
+      ),
+      animationDuration: Duration(seconds: 2),
+      child: Text(
+        "إضافة دعاء +",
+        style:
+            TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'Dubai'),
       ),
     );
   }
@@ -105,13 +109,9 @@ class ProfileAppBar extends StatelessWidget {
   }
 
   // The Line that divide between Add Doaa and Posts and Saved Doaa..
-  Widget _horizontalLine() =>
-     Container(
-      height: 1.0,
-      margin: EdgeInsets.symmetric(vertical: 10),
-      color: Colors.grey.shade300,
-  );
-
+  Widget _horizontalLine() => Container(
+        height: 1.0,
+        margin: EdgeInsets.symmetric(vertical: 10),
+        color: Colors.grey.shade300,
+      );
 }
-
-

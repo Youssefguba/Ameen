@@ -1,10 +1,10 @@
-import 'package:ameen/ui/widgets/news_feed_widgets/create_post_or_comment_widget.dart';
-import 'package:ameen/ui/widgets/post_widgets/head_of_post.dart';
+import 'package:ameen/ui/widgets/news_feed_widgets/add_new_post_widget.dart';
 import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
 import 'package:flutter/material.dart';
 
 /*
 * This class represent the UI of Post and every thing related with it..
+* Y.G
 * */
 class PostWidget extends StatefulWidget {
   final String name;
@@ -117,7 +117,7 @@ class _PostWidgetState extends State<PostWidget> {
           * The End of Reaction Buttons Row
           * */
 
-          CreatePostOrComment("أكتب تعليقا ...", Colors.grey[300]),
+          AddNewPostWidget("أكتب تعليقا ...", Colors.grey[300]),
         ],
       ),
     );

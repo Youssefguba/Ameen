@@ -8,7 +8,7 @@ const cFacebookColor = Color.fromRGBO(59, 89, 152, 1);
 const cTextColor = Color(0xFF4A4A4A);
 
 
-const MaterialColor green = const MaterialColor(0xFF54C5E6, const <int, Color>{
+const MaterialColor green = const MaterialColor(0xFF3E922A, const <int, Color>{
   10: const Color(0x0D3E922A),
   50: const Color(0x263E922A),
   100: const Color(0x403E922A),

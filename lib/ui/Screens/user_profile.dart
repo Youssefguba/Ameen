@@ -1,5 +1,6 @@
 import 'package:ameen/blocs/models/choice.dart';
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+import 'package:ameen/ui/Screens/create_post.dart';
 import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
 import 'package:ameen/ui/widgets/profile_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +14,9 @@ class _UserProfileState extends State<UserProfile> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: Color.fromRGBO(222, 222, 222, 1),
+        backgroundColor: myColors.cBackground,
         body: DefaultTabController(
           length: 2,
           child: NestedScrollView(
@@ -23,44 +25,41 @@ class _UserProfileState extends State<UserProfile> {
                 _sliverAppBar(),
               ];
             },
-            body: TabBarView(
-              children: choices.map((Choice choice) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 5.0),
-                  child: ListView(
-                    children: <Widget>[
-                      PostWidget(
-                        name: "محمد أحمد",
-                        time: "12:20",
-                        image: AssetImage("assets/images/person_test.png"),
-                        content:
-                            "اللهم أنت ربي لا إلة الا انت خلقتني وانا عبدك وانا على عهدك ووعدك ما استطعت اعوذ بك من شر ما صنعت وأبوك لك بنعمتك علي وأبوء بذنبي فاغفر لي فإنه لا يغفر الذنوب إلا أنت",
-                      ),
-                      PostWidget(
-                        name: "محمد أحمد",
-                        time: "12:20",
-                        image: AssetImage("assets/images/person_test.png"),
-                        content:
-                            "اللهم أنت ربي لا إلة الا انت خلقتني وانا عبدك وانا على عهدك ووعدك ما استطعت اعوذ بك من شر ما صنعت وأبوك لك بنعمتك علي وأبوء بذنبي فاغفر لي فإنه لا يغفر الذنوب إلا أنت",
-                      ),
-                      PostWidget(
-                        name: "محمد أحمد",
-                        time: "12:20",
-                        image: AssetImage("assets/images/person_test.png"),
-                        content:
-                            "اللهم أنت ربي لا إلة الا انت خلقتني وانا عبدك وانا على عهدك ووعدك ما استطعت اعوذ بك من شر ما صنعت وأبوك لك بنعمتك علي وأبوء بذنبي فاغفر لي فإنه لا يغفر الذنوب إلا أنت",
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
+            body: ListView(
+                  children: <Widget>[
+                    PostWidget(
+                      name: "محمد أحمد",
+                      time: "12:20",
+                      image: AssetImage("assets/images/person_test.png"),
+                      content:
+                          "اللهم أنت ربي لا إلة الا انت خلقتني وانا عبدك وانا على عهدك ووعدك ما استطعت اعوذ بك من شر ما صنعت وأبوك لك بنعمتك علي وأبوء بذنبي فاغفر لي فإنه لا يغفر الذنوب إلا أنت",
+                    ),
+                    PostWidget(
+                      name: "محمد أحمد",
+                      time: "12:20",
+                      image: AssetImage("assets/images/person_test.png"),
+                      content:
+                          "اللهم أنت ربي لا إلة الا انت خلقتني وانا عبدك وانا على عهدك ووعدك ما استطعت اعوذ بك من شر ما صنعت وأبوك لك بنعمتك علي وأبوء بذنبي فاغفر لي فإنه لا يغفر الذنوب إلا أنت",
+                    ),
+                    PostWidget(
+                      name: "محمد أحمد",
+                      time: "12:20",
+                      image: AssetImage("assets/images/person_test.png"),
+                      content:
+                          "اللهم أنت ربي لا إلة الا انت خلقتني وانا عبدك وانا على عهدك ووعدك ما استطعت اعوذ بك من شر ما صنعت وأبوك لك بنعمتك علي وأبوء بذنبي فاغفر لي فإنه لا يغفر الذنوب إلا أنت",
+                    ),
+                  ],
+                ),
           ),
         ),
       ),
     );
   }
 
+  /*
+  * This Widget is Represent the AppBar of User Profile Screen
+  * Y.G
+  * */
   Widget _sliverAppBar() {
     return SliverAppBar(
       backgroundColor: Colors.white,
@@ -110,6 +109,7 @@ class _UserProfileState extends State<UserProfile> {
             AssetImage("assets/images/settings.png"),
             size: 20,
             color: Colors.grey[800],
+
           ),
         ),
       ],
