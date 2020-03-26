@@ -1,9 +1,9 @@
 import 'package:ameen/helpers/ui/app_color.dart';
 import 'package:ameen/ui/widgets/bottom_navigation.dart';
 import 'package:ameen/ui/widgets/custom_app_bar.dart';
-import 'package:ameen/ui/widgets/head_of_post.dart';
-import 'package:ameen/ui/widgets/create_post_or_comment_widget.dart';
-import 'package:ameen/ui/widgets/reactions_button_row.dart';
+import 'package:ameen/ui/widgets/post_widgets/head_of_post.dart';
+import 'package:ameen/ui/widgets/news_feed_widgets/create_post_or_comment_widget.dart';
+import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
