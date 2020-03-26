@@ -35,21 +35,21 @@ class _ContactListState extends State<ContactList> {
             ),
           ],
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.arrow_forward),
-            color: Colors.white,
-            disabledColor: Colors.white,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NewsFeed(),
-                ),
-              );
-            },
-          ),
-        ],
+//        actions: <Widget>[
+//          IconButton(
+//            icon: Icon(Icons.arrow_forward),
+//            color: Colors.white,
+//            disabledColor: Colors.white,
+//            onPressed: () {
+//              Navigator.push(
+//                context,
+//                MaterialPageRoute(
+//                  builder: (context) => NewsFeed(),
+//                ),
+//              );
+//            },
+//          ),
+//        ],
       ),
       body: Container(
         child: Container(
@@ -65,80 +65,48 @@ class _ContactListState extends State<ContactList> {
                   hasUnreadMessage: true,
                   image: AssetImage('assets/images/person_test.png'),
                   lastMessage:
-                  "Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
-                  name: "Bree Jarvis",
+                  "السلام عليكم ورحمة الله وبركاته ",
+                  name: "محمد أحمد ",
                   newMesssageCount: 8,
                   time: "19:27 PM",),
                 ChatListViewItem(
                   hasUnreadMessage: true,
                   image: AssetImage('assets/images/person_test.png'),
                   lastMessage:
-                  "Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
-                  name: "Bree Jarvis",
+                  "السلام عليكم ورحمة الله وبركاته ",
+                  name: "محمد أحمد ",
                   newMesssageCount: 8,
                   time: "19:27 PM",),
                 ChatListViewItem(
                   hasUnreadMessage: true,
                   image: AssetImage('assets/images/person_test.png'),
                   lastMessage:
-                  "Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
-                  name: "Bree Jarvis",
+                  "السلام عليكم ورحمة الله وبركاته ",
+                  name: "محمد أحمد ",
                   newMesssageCount: 8,
                   time: "19:27 PM",),
                 ChatListViewItem(
                   hasUnreadMessage: true,
                   image: AssetImage('assets/images/person_test.png'),
                   lastMessage:
-                  "Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
-                  name: "Bree Jarvis",
+                  "السلام عليكم ورحمة الله وبركاته ",
+                  name: "محمد أحمد ",
                   newMesssageCount: 8,
                   time: "19:27 PM",),
                 ChatListViewItem(
                   hasUnreadMessage: true,
                   image: AssetImage('assets/images/person_test.png'),
                   lastMessage:
-                  "Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
-                  name: "Bree Jarvis",
+                  "السلام عليكم ورحمة الله وبركاته ",
+                  name: "محمد أحمد ",
                   newMesssageCount: 8,
                   time: "19:27 PM",),
                 ChatListViewItem(
                   hasUnreadMessage: true,
                   image: AssetImage('assets/images/person_test.png'),
                   lastMessage:
-                  "Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
-                  name: "Bree Jarvis",
-                  newMesssageCount: 8,
-                  time: "19:27 PM",),
-                ChatListViewItem(
-                  hasUnreadMessage: true,
-                  image: AssetImage('assets/images/person_test.png'),
-                  lastMessage:
-                  "Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
-                  name: "Bree Jarvis",
-                  newMesssageCount: 8,
-                  time: "19:27 PM",),
-                ChatListViewItem(
-                  hasUnreadMessage: true,
-                  image: AssetImage('assets/images/person_test.png'),
-                  lastMessage:
-                  "Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
-                  name: "Bree Jarvis",
-                  newMesssageCount: 8,
-                  time: "19:27 PM",),
-                ChatListViewItem(
-                  hasUnreadMessage: true,
-                  image: AssetImage('assets/images/person_test.png'),
-                  lastMessage:
-                  "Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
-                  name: "Bree Jarvis",
-                  newMesssageCount: 8,
-                  time: "19:27 PM",),
-                ChatListViewItem(
-                  hasUnreadMessage: true,
-                  image: AssetImage('assets/images/person_test.png'),
-                  lastMessage:
-                  "Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
-                  name: "Bree Jarvis",
+                  "السلام عليكم ورحمة الله وبركاته ",
+                  name: "محمد أحمد ",
                   newMesssageCount: 8,
                   time: "19:27 PM",),
 

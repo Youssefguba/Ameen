@@ -1,7 +1,6 @@
 import 'package:ameen/blocs/models/choice.dart';
-import 'package:ameen/helpers/ui/app_color.dart';
-import 'package:ameen/ui/widgets/bottom_navigation.dart';
-import 'package:ameen/ui/widgets/choice_card.dart';
+import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
 import 'package:ameen/ui/widgets/profile_app_bar.dart';
 import 'package:flutter/material.dart';
 
@@ -27,8 +26,32 @@ class _UserProfileState extends State<UserProfile> {
             body: TabBarView(
               children: choices.map((Choice choice) {
                 return Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ChoiceCard(choice: choice),
+                  padding: const EdgeInsets.symmetric(vertical: 5.0),
+                  child: ListView(
+                    children: <Widget>[
+                      PostWidget(
+                        name: "محمد أحمد",
+                        time: "12:20",
+                        image: AssetImage("assets/images/person_test.png"),
+                        content:
+                            "اللهم أنت ربي لا إلة الا انت خلقتني وانا عبدك وانا على عهدك ووعدك ما استطعت اعوذ بك من شر ما صنعت وأبوك لك بنعمتك علي وأبوء بذنبي فاغفر لي فإنه لا يغفر الذنوب إلا أنت",
+                      ),
+                      PostWidget(
+                        name: "محمد أحمد",
+                        time: "12:20",
+                        image: AssetImage("assets/images/person_test.png"),
+                        content:
+                            "اللهم أنت ربي لا إلة الا انت خلقتني وانا عبدك وانا على عهدك ووعدك ما استطعت اعوذ بك من شر ما صنعت وأبوك لك بنعمتك علي وأبوء بذنبي فاغفر لي فإنه لا يغفر الذنوب إلا أنت",
+                      ),
+                      PostWidget(
+                        name: "محمد أحمد",
+                        time: "12:20",
+                        image: AssetImage("assets/images/person_test.png"),
+                        content:
+                            "اللهم أنت ربي لا إلة الا انت خلقتني وانا عبدك وانا على عهدك ووعدك ما استطعت اعوذ بك من شر ما صنعت وأبوك لك بنعمتك علي وأبوء بذنبي فاغفر لي فإنه لا يغفر الذنوب إلا أنت",
+                      ),
+                    ],
+                  ),
                 );
               }).toList(),
             ),
@@ -47,8 +70,8 @@ class _UserProfileState extends State<UserProfile> {
       centerTitle: true,
       expandedHeight: 290.0,
       bottom: TabBar(
-        labelColor: cGreen,
-        indicatorColor: cGreen,
+        labelColor: myColors.green[800],
+        indicatorColor: myColors.green[800],
         unselectedLabelColor: Colors.grey[400],
         labelStyle: TextStyle(
           fontSize: 13.0,
@@ -57,10 +80,11 @@ class _UserProfileState extends State<UserProfile> {
         ),
         tabs: [
           Tab(
-            text: "الأدعية المحفوظة",
-          ),
-          Tab(
             text: "المنشورات",
+          ),
+
+          Tab(
+            text: "الأدعية المحفوظة",
           ),
         ],
       ),
@@ -79,32 +103,16 @@ class _UserProfileState extends State<UserProfile> {
           color: Colors.black,
         ),
       ),
-      leading: GestureDetector(
-        onTap: () {},
-        child: IconButton(
-          icon: Image.asset(
-            'images/settings-52x52.png',
-            width: 20.0,
-            height: 20.0,
-          ),
-        ),
-      ),
+
       actions: <Widget>[
         IconButton(
-          icon: Image.asset(
-            'images/arrow_back.png',
-            width: 20.0,
-            height: 20.0,
+          icon: ImageIcon(
+            AssetImage("assets/images/settings.png"),
+            size: 20,
+            color: Colors.grey[800],
           ),
         ),
       ],
     );
   }
-
-  Widget _horizontalLine() =>
-      Container(
-        height: 1.0,
-        margin: EdgeInsets.symmetric(vertical: 10),
-        color: Colors.grey.shade300,
-      );
 }
