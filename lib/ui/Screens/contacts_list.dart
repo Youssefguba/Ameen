@@ -1,4 +1,5 @@
 import 'package:ameen/helpers/ui/app_color.dart';
+import 'package:ameen/ui/Screens/news_feed.dart';
 import 'package:ameen/ui/widgets/bottom_navigation.dart';
 import 'package:ameen/ui/widgets/chat_widgets/chat_list_view_item.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,6 @@ class _ContactListState extends State<ContactList> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: cGreen,
-      bottomNavigationBar: BottomNavigation(0),
       appBar: AppBar(
         elevation: 0.0,
         backgroundColor: cGreen,
@@ -40,6 +40,14 @@ class _ContactListState extends State<ContactList> {
             icon: Icon(Icons.arrow_forward),
             color: Colors.white,
             disabledColor: Colors.white,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NewsFeed(),
+                ),
+              );
+            },
           ),
         ],
       ),
@@ -85,6 +93,55 @@ class _ContactListState extends State<ContactList> {
                   name: "Bree Jarvis",
                   newMesssageCount: 8,
                   time: "19:27 PM",),
+                ChatListViewItem(
+                  hasUnreadMessage: true,
+                  image: AssetImage('assets/images/person_test.png'),
+                  lastMessage:
+                  "Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
+                  name: "Bree Jarvis",
+                  newMesssageCount: 8,
+                  time: "19:27 PM",),
+                ChatListViewItem(
+                  hasUnreadMessage: true,
+                  image: AssetImage('assets/images/person_test.png'),
+                  lastMessage:
+                  "Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
+                  name: "Bree Jarvis",
+                  newMesssageCount: 8,
+                  time: "19:27 PM",),
+                ChatListViewItem(
+                  hasUnreadMessage: true,
+                  image: AssetImage('assets/images/person_test.png'),
+                  lastMessage:
+                  "Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
+                  name: "Bree Jarvis",
+                  newMesssageCount: 8,
+                  time: "19:27 PM",),
+                ChatListViewItem(
+                  hasUnreadMessage: true,
+                  image: AssetImage('assets/images/person_test.png'),
+                  lastMessage:
+                  "Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
+                  name: "Bree Jarvis",
+                  newMesssageCount: 8,
+                  time: "19:27 PM",),
+                ChatListViewItem(
+                  hasUnreadMessage: true,
+                  image: AssetImage('assets/images/person_test.png'),
+                  lastMessage:
+                  "Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
+                  name: "Bree Jarvis",
+                  newMesssageCount: 8,
+                  time: "19:27 PM",),
+                ChatListViewItem(
+                  hasUnreadMessage: true,
+                  image: AssetImage('assets/images/person_test.png'),
+                  lastMessage:
+                  "Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
+                  name: "Bree Jarvis",
+                  newMesssageCount: 8,
+                  time: "19:27 PM",),
+
               ],
             ),
         ),

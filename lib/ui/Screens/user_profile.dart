@@ -16,7 +16,6 @@ class _UserProfileState extends State<UserProfile> {
     return MaterialApp(
       home: Scaffold(
         backgroundColor: Color.fromRGBO(222, 222, 222, 1),
-        bottomNavigationBar: BottomNavigation(2),
         body: DefaultTabController(
           length: 2,
           child: NestedScrollView(
@@ -67,7 +66,7 @@ class _UserProfileState extends State<UserProfile> {
       ),
       flexibleSpace: FlexibleSpaceBar(
         background: ProfileAppBar(),
-        collapseMode: CollapseMode.none,
+        collapseMode: CollapseMode.pin,
         centerTitle: true,
       ),
       title: Text(

@@ -1,5 +1,6 @@
-import 'package:ameen/helpers/ui/app_color.dart';
+import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 import 'package:flutter/material.dart';
+
 
 Widget CustomAppBar() {
   return AppBar(
@@ -14,7 +15,7 @@ Widget CustomAppBar() {
           fontSize: 16.0,
           fontFamily: 'Dubai',
           fontWeight: FontWeight.w700,
-          color: cGreen,
+          color:  myColors.green[700],
         ),
       ),
     ),

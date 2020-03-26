@@ -1,6 +1,7 @@
 import 'package:ameen/helpers/ui/app_color.dart';
 import 'package:ameen/ui/Screens/chat_page.dart';
 import 'package:ameen/ui/Screens/contacts_list.dart';
+import 'package:ameen/ui/Screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Color.fromRGBO(62, 146, 42, 1),
       ),
       debugShowCheckedModeBanner: false,
-      home: ChatPage(),
+      home: Home(),
     );
   }
 }
