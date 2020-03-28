@@ -59,10 +59,13 @@ class AddNewPostWidget extends StatelessWidget {
                   ),
                 ),
               ),
-          Image(
-            image: AssetImage('assets/images/person_test.png'),
+          Container(
+            width: 55,
             height: 60,
-            width: 60,
+            child: CircleAvatar(
+              backgroundImage: AssetImage('assets/images/person_test.png'),
+              backgroundColor: Colors.transparent,
+            ),
           ),
         ],
       ),

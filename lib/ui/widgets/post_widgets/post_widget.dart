@@ -167,12 +167,12 @@ class _PostWidgetState extends State<PostWidget> {
               ],
             ),
             Container(
-              height: 50,
-              width: 50,
+              width: 55,
+              height: 55,
               margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-              child: Image(
-                image: image,
-//                AssetImage('assets/images/person_test.png'),
+              child: CircleAvatar(
+                backgroundImage: image,
+                backgroundColor: Colors.transparent,
               ),
             ),
           ],
