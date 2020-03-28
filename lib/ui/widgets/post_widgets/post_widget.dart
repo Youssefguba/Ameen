@@ -82,7 +82,7 @@ class _PostWidgetState extends State<PostWidget> {
               ),
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 7.0),
