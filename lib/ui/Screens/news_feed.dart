@@ -17,7 +17,7 @@ class NewsFeed extends StatelessWidget {
       body: ListView.builder(
           itemCount: DemoValues.posts.length,
           itemBuilder: (BuildContext context, int index){
-            return PostWidget(postModel: DemoValues.posts[index],);
+            return PostWidget(postModel: DemoValues.posts[index]);
           }
        ),
     );
