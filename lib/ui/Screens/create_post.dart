@@ -2,12 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 
-class CreatePost extends StatefulWidget {
-  @override
-  _CreatePostState createState() => _CreatePostState();
-}
-
-class _CreatePostState extends State<CreatePost> {
+class CreatePost extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

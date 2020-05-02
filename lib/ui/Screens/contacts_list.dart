@@ -9,12 +9,7 @@ import 'package:flutter/material.dart';
 * Y.G
 * */
 
-class ContactList extends StatefulWidget {
-  @override
-  _ContactListState createState() => _ContactListState();
-}
-
-class _ContactListState extends State<ContactList> {
+class ContactList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

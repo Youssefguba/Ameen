@@ -4,8 +4,6 @@ import 'package:ameen/ui/Screens/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 
-
-
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();

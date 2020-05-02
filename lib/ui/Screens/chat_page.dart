@@ -3,26 +3,17 @@ import 'package:ameen/ui/widgets/chat_widgets/received_message_widget.dart';
 import 'package:ameen/ui/widgets/chat_widgets/sended_message_widget.dart';
 import 'package:flutter/material.dart';
 
-class ChatPage extends StatefulWidget {
+class ChatPage extends StatelessWidget {
   final String username;
 
-  const ChatPage({
-    Key key,
-    this.username,
-  }) : super(key: key);
-
-  @override
-  _ChatPageState createState() => _ChatPageState();
-}
-
-class _ChatPageState extends State<ChatPage> {
   TextEditingController _text = new TextEditingController();
   ScrollController _scrollController = ScrollController();
   var childList = <Widget>[];
 
+  ChatPage({Key key, this.username}) : super(key: key);
+
   @override
   void initState() {
-    super.initState();
     childList.add(Align(
         alignment: Alignment(0, 0),
         child: Container(
@@ -163,10 +154,10 @@ class _ChatPageState extends State<ChatPage> {
     ));
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
+//  @override
+//  void dispose() {
+//    super.dispose();
+//  }
 
   @override
   Widget build(BuildContext context) {
@@ -204,7 +195,7 @@ class _ChatPageState extends State<ChatPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Text(
-                                widget.username ?? "محمد أحمد",
+                                username ?? "محمد أحمد",
                                 style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'Dubai'),
                               ),
                               Text(

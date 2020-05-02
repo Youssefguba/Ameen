@@ -5,12 +5,8 @@ import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
 import 'package:ameen/ui/widgets/profile_app_bar.dart';
 import 'package:flutter/material.dart';
 
-class UserProfile extends StatefulWidget {
-  @override
-  _UserProfileState createState() => _UserProfileState();
-}
 
-class _UserProfileState extends State<UserProfile> {
+class UserProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,29 +22,7 @@ class _UserProfileState extends State<UserProfile> {
               ];
             },
             body: ListView(
-                  children: <Widget>[
-                    PostWidget(
-                      name: "محمد أحمد",
-                      time: "12:20",
-                      image: AssetImage("assets/images/person_test.png"),
-                      content:
-                          "اللهم أنت ربي لا إلة الا انت خلقتني وانا عبدك وانا على عهدك ووعدك ما استطعت اعوذ بك من شر ما صنعت وأبوك لك بنعمتك علي وأبوء بذنبي فاغفر لي فإنه لا يغفر الذنوب إلا أنت",
-                    ),
-                    PostWidget(
-                      name: "محمد أحمد",
-                      time: "12:20",
-                      image: AssetImage("assets/images/person_test.png"),
-                      content:
-                          "اللهم أنت ربي لا إلة الا انت خلقتني وانا عبدك وانا على عهدك ووعدك ما استطعت اعوذ بك من شر ما صنعت وأبوك لك بنعمتك علي وأبوء بذنبي فاغفر لي فإنه لا يغفر الذنوب إلا أنت",
-                    ),
-                    PostWidget(
-                      name: "محمد أحمد",
-                      time: "12:20",
-                      image: AssetImage("assets/images/person_test.png"),
-                      content:
-                          "اللهم أنت ربي لا إلة الا انت خلقتني وانا عبدك وانا على عهدك ووعدك ما استطعت اعوذ بك من شر ما صنعت وأبوك لك بنعمتك علي وأبوء بذنبي فاغفر لي فإنه لا يغفر الذنوب إلا أنت",
-                    ),
-                  ],
+                  children: <Widget>[],
                 ),
           ),
         ),
