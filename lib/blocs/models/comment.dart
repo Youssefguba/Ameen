@@ -1,4 +1,4 @@
-import 'package:ameen/blocs/models/user_model.dart';
+import 'package:ameen/blocs/models/user_data.dart';
 
 class Comment {
   String commentId, commentBody;

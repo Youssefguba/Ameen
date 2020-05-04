@@ -1,12 +1,18 @@
 import 'package:ameen/helpers/ui/app_color.dart';
-import 'package:ameen/ui/Screens/chat_page.dart';
-import 'package:ameen/ui/Screens/contacts_list.dart';
-import 'package:ameen/ui/Screens/create_post.dart';
+import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/Screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 
-void main() => runApp(MyApp());
+void setupLocator(){
+    GetIt.I.registerLazySingleton(() => PostsService());
+}
+
+void main() {
+  setupLocator();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override

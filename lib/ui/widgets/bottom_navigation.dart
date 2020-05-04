@@ -3,29 +3,38 @@ import 'package:ameen/ui/Screens/contacts_list.dart';
 import 'package:ameen/ui/Screens/news_feed.dart';
 import 'package:ameen/ui/Screens/user_profile.dart';
 import 'package:flutter/material.dart';
+import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 
-class BottomNavigation extends StatefulWidget {
+
+class CustomBottomNavigation extends StatefulWidget {
+
+  const CustomBottomNavigation({Key key}) : super (key: key);
 
   @override
-  _BottomNavigationState createState() => _BottomNavigationState();
+  _CustomBottomNavigationState createState() => _CustomBottomNavigationState();
 
 }
 
-class _BottomNavigationState extends State<BottomNavigation> {
-  int _currentIndex = 0;
+class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
+  int _currentIndex = 1;
+
+  final List<Widget> _pages = [
+    ContactList(),
+    NewsFeed(),
+    UserProfile(),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      selectedItemColor: cGreen,
+    return  BottomNavigationBar(
+      selectedItemColor: myColors.green[800],
       currentIndex: _currentIndex, //
       onTap: _onTabTapped,
       items: [
         BottomNavigationBarItem(
-
           icon: ImageIcon (
-              AssetImage("assets/images/email.png"),
-              size: 24,
+            AssetImage("assets/images/email.png"),
+            size: 24,
           ),
           title: new Text(
             'الرسائل',

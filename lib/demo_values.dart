@@ -1,4 +1,4 @@
-import 'package:ameen/blocs/models/post.dart';
+import 'package:ameen/blocs/models/post_data.dart';
 import 'package:flutter/cupertino.dart';
 
 class DemoValues {

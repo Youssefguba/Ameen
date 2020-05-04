@@ -1,13 +1,13 @@
-import 'package:ameen/blocs/models/post.dart';
+import 'package:ameen/blocs/models/post_data.dart';
 import 'package:flutter/material.dart';
 
 class InheritedPostModel extends InheritedWidget{
-  final PostData postModel;
+  final PostData postData;
   final Widget child;
 
   InheritedPostModel({
     Key key,
-    @required this.postModel,
+    @required this.postData,
     this.child
 }) : super(key: key, child: child);
 
