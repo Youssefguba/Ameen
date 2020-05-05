@@ -2,6 +2,7 @@ import 'package:ameen/blocs/models/post_data.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_model.dart';
 import 'package:ameen/ui/widgets/news_feed_widgets/add_new_post_widget.dart';
 import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 /*
@@ -114,12 +115,13 @@ class _HeadOfPost extends StatelessWidget {
               ],
             ),
             Container(
-              width: 55,
-              height: 55,
-              margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+              width: 45,
+              height: 45,
+              margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: CircleAvatar(
-                backgroundImage: postData.authorPhoto,
+                backgroundImage: NetworkImage("https://quiet-tundra-98924.herokuapp.com/users/5eb0c28fe1be6b44a094cbf7/images/5eb0db541495e11b5c3e2694"),
                 backgroundColor: Colors.transparent,
+                radius: 30.0,
               ),
             ),
           ],
@@ -128,6 +130,7 @@ class _HeadOfPost extends StatelessWidget {
     );
   }
 }
+
 /*
 * Time of post created..
 * */

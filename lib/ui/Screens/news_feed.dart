@@ -46,7 +46,12 @@ class _NewsFeedState extends State<NewsFeed> {
       appBar: CustomAppBar(),
       body: Builder(builder: (context) {
         if (_isLoading) {
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator(
+            backgroundColor: myColors.cGreen,
+          ));
+        }
+        if(_apiResponse.error){
+          return Center(child: Text(_apiResponse.errorMessage));
         }
 
         return ListView.builder(

@@ -27,6 +27,7 @@ dependencies:
   intl: ^0.16.1
   get_it: ^4.0.2
   http: ^0.12.1
+  cached_network_image: ^2.2.0
 
 
 dev_dependencies:

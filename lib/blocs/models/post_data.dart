@@ -8,7 +8,7 @@ class PostData {
   final String postBody;
   final String authorName ;
   final String authorId ;
-  final ImageProvider authorPhoto ;
+  final String authorPhoto ;
   final DateTime postTime ;
   final UserModel author;
   final Comment comment;
