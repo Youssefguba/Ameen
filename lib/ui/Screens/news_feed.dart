@@ -45,31 +45,37 @@ class _NewsFeedState extends State<NewsFeed> {
     return Scaffold(
       backgroundColor: myColors.cBackground,
       appBar: CustomAppBar(),
-      body: Builder(builder: (context) {
-        if (_isLoading) {
-          return Center(
-              child: CircularProgressIndicator(
-            backgroundColor: myColors.cGreen,
-          ));
-        }
-        if (_apiResponse.error) {
-          return Center(child: Text(_apiResponse.errorMessage));
-        }
+      body: RefreshIndicator(
+          onRefresh: () async {
+            return await services.getPostsList();
+          },
+          child: Builder(builder: (context) {
+          if (_isLoading) {
+            return Center(
+                child: CircularProgressIndicator(
+                  backgroundColor: myColors.cGreen,
+                  valueColor: new AlwaysStoppedAnimation<Color>(myColors.cBackground),
+                ));
+          }
+          if (_apiResponse.error) {
+            return Center(child: Text(_apiResponse.errorMessage));
+          }
 
-        return ListView.builder(
-            itemCount: _apiResponse.data.length,
-            itemBuilder: (BuildContext context, int index) {
-              return GestureDetector(
-                child: PostWidget(postModel: _apiResponse.data[index]),
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (_) => PostPage(
-                            postId: _apiResponse.data[index].postId,
-                          )));
-                },
-              );
-            });
-      }),
+          return ListView.builder(
+              itemCount: _apiResponse.data.length,
+              itemBuilder: (BuildContext context, int index) {
+                return GestureDetector(
+                  child: PostWidget(postModel: _apiResponse.data[index]),
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => PostPage(
+                              postId: _apiResponse.data[index].postId,
+                            )));
+                  },
+                );
+              });
+        }),
+      ),
     );
   }
 }

@@ -6,8 +6,11 @@ import 'package:flutter/material.dart';
   *       (Like, Comment, Share)
   * */
 
-Row reactionsButtonRow(ImageProvider image, String label) {
-  return  Row(
+Widget reactionsButtonRow(ImageProvider image, String label) {
+  return Container(
+    margin: EdgeInsets.symmetric(vertical: 5),
+    padding: EdgeInsets.symmetric(horizontal: 7.0),
+    child: Row(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -32,6 +35,6 @@ Row reactionsButtonRow(ImageProvider image, String label) {
         ),
         VerticalDivider(width: 5.0, color: Colors.transparent, indent: 1.0),
       ],
-
+    ),
   );
 }

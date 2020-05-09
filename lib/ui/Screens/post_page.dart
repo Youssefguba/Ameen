@@ -23,9 +23,7 @@ class _PostPageState extends State<PostPage> {
   APIResponse<PostDetails> _apiResponse;
   String errorMessage;
   PostDetails postDetails;
-
   bool _isLoading = false;
-
 
   @override
   void initState() {
@@ -36,7 +34,7 @@ class _PostPageState extends State<PostPage> {
     _fetchPost();
   }
 
-  _fetchPost() async{
+  _fetchPost() async {
     await services.getPostsDetails(widget.postId).then((response) {
       setState(() {
         _isLoading = false;
@@ -52,6 +50,7 @@ class _PostPageState extends State<PostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: myColors.cBackground,
       appBar: AppBar(
         title: Text("Youssef",
             textDirection: TextDirection.rtl,
@@ -65,74 +64,80 @@ class _PostPageState extends State<PostPage> {
           disabledColor: myColors.cBackground,
         ),
       ),
-      body: Builder(builder: (context){
-        if(_isLoading){
-          return Center(
-              child: CircularProgressIndicator(
-                backgroundColor: myColors.cGreen,
-              ));
-        }
-        return InheritedPostModel(
-          postDetails: postDetails,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey,
-                  blurRadius: 1.0, // has the effect of softening the shadow
-                  offset: new Offset(1.0, 1.0),
-                ),
-              ],
-            ),
-            margin: EdgeInsets.symmetric(vertical: 10),
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 13),
-                ),
-                /*
-               * The top Section of Post (Photo, Time, Settings, Name)
-               * */
-                _HeadOfPost(),
-
-                /*
-              * The Beginning of Text of the Post
-              * */
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                  padding: EdgeInsets.symmetric(horizontal: 13),
-                  child: Text(
-                    postDetails.postBody,
-                    style: TextStyle(
-                      fontFamily: 'Dubai',
-                      fontSize: 15,
-                    ),
-                    textDirection: TextDirection.rtl,
+      body: RefreshIndicator(
+          onRefresh: () async {
+            return await Future.delayed(Duration(seconds: 3));
+          },
+        child: Builder(builder: (context) {
+          if (_isLoading) {
+            return Center(
+                child: CircularProgressIndicator(
+                  valueColor: new AlwaysStoppedAnimation<Color>(myColors.cBackground),
+                  backgroundColor: myColors.cGreen,
+            ));
+          }
+          return InheritedPostModel(
+            postDetails: postDetails,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.white10,
+                    blurRadius: 0.1, // has the effect of softening the shadow
+                    offset: new Offset(0.1, 0.1),
                   ),
-                ),
-                /*
-              * The End of Text of the Post
-              * */
+                ],
+              ),
 
-                /*
-              * The Beginning of Reaction Buttons Row
-              * */
-                SizedBox(
-                  height: 8,
-                ),
-                _ReactionsButtons(),
-                /*
-              * The End of Reaction Buttons Row
-              * */
-                AddNewPostWidget("أكتب تعليقا ...", Colors.grey[300]),
-              ],
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 13),
+                  ),
+                  /*
+                 * The top Section of Post (Photo, Time, Settings, Name)
+                 * */
+                  _HeadOfPost(),
+
+                  /*
+                * The Beginning of Text of the Post
+                * */
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                    padding: EdgeInsets.symmetric(horizontal: 13),
+                    child: Text(
+                      postDetails.postBody,
+                      style: TextStyle(
+                        fontFamily: 'Dubai',
+                        fontSize: 15,
+                      ),
+                      textDirection: TextDirection.rtl,
+                    ),
+                  ),
+                  /*
+                * The End of Text of the Post
+                * */
+
+                  /*
+                * The Beginning of Reaction Buttons Row
+                * */
+                  SizedBox(
+                    height: 12,
+                  ),
+                  _ReactionsButtons(),
+                  /*
+                * The End of Reaction Buttons Row
+                * */
+                ],
+              ),
             ),
-          ),
-        );
-      },
-
+          );
+        }),
       ),
+      bottomNavigationBar:
+          AddNewPostWidget("أكتب تعليقا ...", Colors.grey[300]),
     );
   }
 }
@@ -144,7 +149,6 @@ class _HeadOfPost extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final PostDetails postDetails = InheritedPostModel.of(context).postDetails;
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -200,7 +204,8 @@ class _PostTimeStamp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final PostDetails postDetails = InheritedPostModel.of(context).postDetails;
-    var timeTheme = new TextStyle( fontFamily: 'Dubai', fontSize: 13, color: Colors.grey.shade500);
+    var timeTheme = new TextStyle(
+        fontFamily: 'Dubai', fontSize: 13, color: Colors.grey.shade500);
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
@@ -227,38 +232,15 @@ class __ReactionsButtonsState extends State<_ReactionsButtons> {
           top: BorderSide(
             color: Colors.grey[300],
           ),
-          bottom: BorderSide(
-            color: Colors.grey[300],
-          ),
         ),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 7.0),
-            decoration: BoxDecoration(
-              border: Border(
-                right: BorderSide(
-                  color: Colors.grey[300],
-                ),
-              ),
-            ),
-            child: reactionsButtonRow(
-                AssetImage("assets/images/share_icon.png"), 'مشاركة'),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 7.0),
-            decoration: BoxDecoration(
-              border: Border(
-                right: BorderSide(
-                  color: Colors.grey[300],
-                ),
-              ),
-            ),
-            child: reactionsButtonRow(
-                AssetImage("assets/images/comment.png"), 'تعليق'),
-          ),
+          reactionsButtonRow(
+              AssetImage("assets/images/share_icon.png"), 'مشاركة'),
+          reactionsButtonRow(
+              AssetImage("assets/images/comment.png"), 'تعليق'),
           reactionsButtonRow(
               AssetImage("assets/images/pray_icon.png"), 'آمين'),
         ],
@@ -266,4 +248,3 @@ class __ReactionsButtonsState extends State<_ReactionsButtons> {
     );
   }
 }
-
