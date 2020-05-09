@@ -6,6 +6,7 @@ const cGreenDark = Color(0xFF3E922A);
 const cBackground = Color(0xFFDEDEDE);
 const cFacebookColor = Color.fromRGBO(59, 89, 152, 1);
 const cTextColor = Color(0xFF4A4A4A);
+const cBlack = Color(0xFF000000);
 
 
 const MaterialColor green = const MaterialColor(0xFF3E922A, const <int, Color>{
