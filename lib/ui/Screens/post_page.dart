@@ -20,7 +20,6 @@ class PostPage extends StatefulWidget {
 
 class _PostPageState extends State<PostPage> {
   PostsService get services => GetIt.I<PostsService>();
-  APIResponse<PostDetails> _apiResponse;
   String errorMessage;
   PostDetails postDetails;
   bool _isLoading = false;
@@ -34,6 +33,7 @@ class _PostPageState extends State<PostPage> {
     _fetchPost();
   }
 
+  // Called When Clicked on the post from the newsfeed page to get the details and enter the Post Page.
   _fetchPost() async {
     await services.getPostsDetails(widget.postId).then((response) {
       setState(() {
@@ -52,90 +52,86 @@ class _PostPageState extends State<PostPage> {
     return Scaffold(
       backgroundColor: myColors.cBackground,
       appBar: AppBar(
-        title: Text("Youssef",
+        title: Text ( //Put the name of the author's post on the Appbar
+            postDetails.authorName,
             textDirection: TextDirection.rtl,
             style: TextStyle(
                 fontSize: 16.0,
                 fontFamily: 'Dubai',
                 fontWeight: FontWeight.w700,
-                color: myColors.green[700])),
+                color: myColors.cBackground)),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           disabledColor: myColors.cBackground,
         ),
       ),
-      body: RefreshIndicator(
-          onRefresh: () async {
-            return await Future.delayed(Duration(seconds: 3));
-          },
-        child: Builder(builder: (context) {
-          if (_isLoading) {
-            return Center(
-                child: CircularProgressIndicator(
-                  valueColor: new AlwaysStoppedAnimation<Color>(myColors.cBackground),
-                  backgroundColor: myColors.cGreen,
-            ));
-          }
-          return InheritedPostModel(
-            postDetails: postDetails,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.white10,
-                    blurRadius: 0.1, // has the effect of softening the shadow
-                    offset: new Offset(0.1, 0.1),
-                  ),
-                ],
-              ),
-
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 13),
-                  ),
-                  /*
-                 * The top Section of Post (Photo, Time, Settings, Name)
-                 * */
-                  _HeadOfPost(),
-
-                  /*
-                * The Beginning of Text of the Post
-                * */
-                  Container(
-                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                    padding: EdgeInsets.symmetric(horizontal: 13),
-                    child: Text(
-                      postDetails.postBody,
-                      style: TextStyle(
-                        fontFamily: 'Dubai',
-                        fontSize: 15,
-                      ),
-                      textDirection: TextDirection.rtl,
-                    ),
-                  ),
-                  /*
-                * The End of Text of the Post
-                * */
-
-                  /*
-                * The Beginning of Reaction Buttons Row
-                * */
-                  SizedBox(
-                    height: 12,
-                  ),
-                  _ReactionsButtons(),
-                  /*
-                * The End of Reaction Buttons Row
-                * */
-                ],
-              ),
+      body: Builder(builder: (context) {
+        if (_isLoading) {
+          return Center(
+              child: CircularProgressIndicator(
+                backgroundColor: myColors.cBackground,
+                valueColor: new  AlwaysStoppedAnimation<Color>(myColors.cGreen),
+          ));
+        }
+        return InheritedPostModel(
+          postDetails: postDetails,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.white10,
+                  blurRadius: 0.1, // has the effect of softening the shadow
+                  offset: new Offset(0.1, 0.1),
+                ),
+              ],
             ),
-          );
-        }),
-      ),
+
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 13),
+                ),
+                /*
+               * The top Section of Post (Photo, Time, Settings, Name)
+               * */
+                _HeadOfPost(),
+
+                /*
+              * The Beginning of Text of the Post
+              * */
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                  padding: EdgeInsets.symmetric(horizontal: 13),
+                  child: Text(
+                    postDetails.postBody,
+                    style: TextStyle(
+                      fontFamily: 'Dubai',
+                      fontSize: 15,
+                    ),
+                    textDirection: TextDirection.rtl,
+                  ),
+                ),
+                /*
+              * The End of Text of the Post
+              * */
+
+                /*
+              * The Beginning of Reaction Buttons Row
+              * */
+                SizedBox(
+                  height: 12,
+                ),
+                _ReactionsButtons(),
+                /*
+              * The End of Reaction Buttons Row
+              * */
+              ],
+            ),
+          ),
+        );
+      }),
       bottomNavigationBar:
           AddNewPostWidget("أكتب تعليقا ...", Colors.grey[300]),
     );

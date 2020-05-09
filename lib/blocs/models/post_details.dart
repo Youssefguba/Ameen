@@ -32,4 +32,14 @@ class PostDetails {
       postTime: DateTime.parse(item['createdAt']),
     );
   }
+
+  Map<String, dynamic> toJson(){
+    return {
+      "body": postBody,
+      "createdAt": postTime,
+      "authorName": authorName,
+      "authorId": authorId,
+      "authorPhoto": authorPhoto,
+    };
+  }
 }
