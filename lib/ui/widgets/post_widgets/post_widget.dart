@@ -3,8 +3,11 @@ import 'package:ameen/blocs/models/post_details.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_model.dart';
 import 'package:ameen/ui/widgets/news_feed_widgets/add_new_post_widget.dart';
 import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+
 
 /*
 * This class represent the UI of Post and every thing related with it..
@@ -26,12 +29,12 @@ class PostWidget extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: Colors.grey,
-              blurRadius: 1.0, // has the effect of softening the shadow
-              offset: new Offset(1.0, 1.0),
+              blurRadius: 0.5, // has the effect of softening the shadow
+              offset: new Offset(0.5, 0.5),
             ),
           ],
         ),
-        margin: EdgeInsets.symmetric(vertical: 10),
+        margin: EdgeInsets.symmetric(vertical: 5),
         child: Column(
           children: <Widget>[
             Padding(
@@ -46,10 +49,10 @@ class PostWidget extends StatelessWidget {
             * The Beginning of Text of the Post
             * */
             Container(
-              margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-              padding: EdgeInsets.symmetric(horizontal: 13),
+              margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+              padding: EdgeInsets.symmetric(horizontal: 15),
               child: Text(
-                postModel.postBody,
+                postModel.body,
                 style: TextStyle(
                   fontFamily: 'Dubai',
                   fontSize: 15,
@@ -67,7 +70,7 @@ class PostWidget extends StatelessWidget {
             SizedBox(
               height: 8,
             ),
-            _ReactionsButtons(),
+            ReactionsButtons(),
             /*
             * The End of Reaction Buttons Row
             * */
@@ -147,64 +150,6 @@ class _PostTimeStamp extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
       child: Text(postData.postTimeFormatted, style: timeTheme),
-    );
-  }
-}
-
-/*
-* Reactions Buttons Widget (Ameen, Comment, Share)
-* */
-class _ReactionsButtons extends StatefulWidget {
-  @override
-  __ReactionsButtonsState createState() => __ReactionsButtonsState();
-}
-
-class __ReactionsButtonsState extends State<_ReactionsButtons> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(
-            color: Colors.grey[300],
-          ),
-          bottom: BorderSide(
-            color: Colors.grey[300],
-          ),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 7.0),
-            decoration: BoxDecoration(
-              border: Border(
-                right: BorderSide(
-                  color: Colors.grey[300],
-                ),
-              ),
-            ),
-            child: reactionsButtonRow(
-                AssetImage("assets/images/share_icon.png"), 'مشاركة'),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 7.0),
-            decoration: BoxDecoration(
-              border: Border(
-                right: BorderSide(
-                  color: Colors.grey[300],
-                ),
-              ),
-            ),
-            child: reactionsButtonRow(
-                AssetImage("assets/images/comment.png"), 'تعليق'),
-          ),
-          reactionsButtonRow(
-              AssetImage("assets/images/pray_icon.png"), 'آمين'),
-        ],
-      ),
     );
   }
 }

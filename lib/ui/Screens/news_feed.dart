@@ -11,6 +11,7 @@ import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
+import 'package:logger/logger.dart';
 
 class NewsFeed extends StatefulWidget {
   const NewsFeed({Key key}) : super(key: key);
@@ -24,16 +25,19 @@ class _NewsFeedState extends State<NewsFeed> {
   APIResponse<List<PostData>> _apiResponse;
   bool _isLoading = false;
 
+  var logger = Logger();
+
   @override
   void initState() {
-    _fetchPosts();
     super.initState();
+    _fetchPosts();
   }
 
   _fetchPosts() async {
     setState(() {
       _isLoading = true;
     });
+
     _apiResponse = await services.getPostsList();
 
     setState(() {
@@ -48,10 +52,9 @@ class _NewsFeedState extends State<NewsFeed> {
       appBar: CustomAppBar(),
       body: RefreshIndicator(
           onRefresh: () async {
-            return await services.getPostsList();
+            return _fetchPosts();
           },
           child: Builder(builder: (context) {
-
           if (_isLoading) {
             return Center(
                 child: CircularProgressIndicator(
@@ -62,7 +65,6 @@ class _NewsFeedState extends State<NewsFeed> {
           if (_apiResponse.error) {
             return Center(child: Text(_apiResponse.errorMessage));
           }
-
           return Column(
               children: <Widget>[
                 Expanded(
@@ -75,9 +77,10 @@ class _NewsFeedState extends State<NewsFeed> {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (_) => PostPage(
                                           postId: _apiResponse.data[index].postId,
-                                        ))).then((_){
+                                        ))).then((_) {
                                           _fetchPosts();
                                 });
+                                logger.v("Home", _apiResponse.data[index].authorName);
                               },
                             );
                           }

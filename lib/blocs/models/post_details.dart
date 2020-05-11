@@ -3,18 +3,18 @@ import 'package:ameen/blocs/models/user_data.dart';
 import 'package:intl/intl.dart';
 
 class PostDetails {
-  final String postId;
-  final String postBody;
-  final String authorName;
-  final String authorId;
-  final String authorPhoto;
-  final DateTime postTime;
+  String postId;
+  String body;
+  String authorName;
+  String authorId;
+  String authorPhoto;
+  DateTime postTime;
   UserModel author;
   Comment comments;
 
   PostDetails({
     this.postId,
-    this.postBody,
+    this.body,
     this.authorName,
     this.authorPhoto,
     this.postTime,
@@ -26,16 +26,16 @@ class PostDetails {
   factory PostDetails.fromJson(Map<String, dynamic> item) {
     return PostDetails(
       postId: item['_id'],
-      postBody: item['body'],
+      body: item['body'],
       authorName: item['authorName'],
-      authorId: item['authorId'],
+      authorId: item['authorId'] ,
       postTime: DateTime.parse(item['createdAt']),
     );
   }
 
   Map<String, dynamic> toJson(){
     return {
-      "body": postBody,
+      "body": body,
       "createdAt": postTime,
       "authorName": authorName,
       "authorId": authorId,

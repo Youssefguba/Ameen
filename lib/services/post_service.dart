@@ -11,10 +11,11 @@ class PostsService{
   static const headers = {
     'Content-Type': 'application/json'
   };
+  String errorMessage = "يوجد مشكلة ما في الاتصال بالانترنت";
 
   // Get List of posts to NewsFeed from the main API
-  Future<APIResponse<List<PostData>>> getPostsList() {
-      return http.get(API).then((data) {
+  Future<APIResponse<List<PostData>>> getPostsList() async {
+      return await http.get(API).then((data) {
           if(data.statusCode == 200 ){
             final jsonData = json.decode(data.body);
             final posts = <PostData>[];
@@ -23,30 +24,31 @@ class PostsService{
             }
             return APIResponse<List<PostData>>(data: posts);
           }
-          return APIResponse<List<PostData>>(error: true, errorMessage: "An error occured");
-      }).catchError((_) =>  APIResponse<List<PostData>>(error: true, errorMessage: "An error occured"));
+          return APIResponse<List<PostData>>(error: true, errorMessage: errorMessage);
+      }).catchError((_) =>  APIResponse<List<PostData>>(error: true, errorMessage: errorMessage));
   }
 
   // Call when Clicked on Post to enter the Post Page to get more details of post..
-  Future<APIResponse<PostDetails>> getPostsDetails(String postId) {
-    return http.get(API + postId).then((data) {
+  Future<APIResponse<PostDetails>> getPostsDetails(String postId) async {
+    return await http.get(API + postId).then((data) {
       if(data.statusCode == 200 ){
         final jsonData = json.decode(data.body);
+        print(jsonData);
           var post = PostDetails.fromJson(jsonData);
             return APIResponse<PostDetails>(data: post);
       }
-      return APIResponse<PostDetails>(error: true, errorMessage: "An error occured");
-    }).catchError((_) =>  APIResponse<PostDetails>(error: true, errorMessage: "An error occured"));
+      return APIResponse<PostDetails>(error: true, errorMessage: errorMessage);
+    }).catchError((_) =>  APIResponse<PostDetails>(error: true, errorMessage: errorMessage));
   }
 
   // Called When User create a Post to put it on the user profile and Newsfeed..
   //TODO => You should put the userId variable insted of Hardcode..
-  Future<APIResponse<bool>> createPost(PostInsert post) {
-    return http.post(API + 'users/5eb0c28fe1be6b44a094cbf7/', headers: headers, body: json.encode(post.toJson() ) ).then((data) {
+  Future<APIResponse<bool>> createPost(PostInsert post) async {
+    return await http.post(API + 'users/5eb0c28fe1be6b44a094cbf7/', headers: headers, body: json.encode(post.toJson() ) ).then((data) {
       if(data.statusCode == 201 ){
         return APIResponse<bool>(data: true);
       }
-      return APIResponse<bool>(error: true, errorMessage: "An error occured");
-    }).catchError((_) =>  APIResponse<bool>(error: true, errorMessage: "An error occured"));
+      return APIResponse<bool>(error: true, errorMessage: errorMessage);
+    }).catchError((_) =>  APIResponse<bool>(error: true, errorMessage: errorMessage));
   }
 }

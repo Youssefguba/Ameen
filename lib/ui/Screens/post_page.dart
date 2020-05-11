@@ -1,6 +1,7 @@
 import 'package:ameen/blocs/models/api_response.dart';
 import 'package:ameen/blocs/models/post_data.dart';
 import 'package:ameen/blocs/models/post_details.dart';
+import 'package:ameen/services/connection_check.dart';
 import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_model.dart';
 import 'package:ameen/ui/widgets/news_feed_widgets/add_new_post_widget.dart';
@@ -9,9 +10,10 @@ import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
 import 'package:flutter/material.dart';
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 import 'package:get_it/get_it.dart';
+import 'package:logger/logger.dart';
 
 class PostPage extends StatefulWidget {
-  String postId = "5eb0be302bde512e94206279";
+  final String postId;
   PostPage({this.postId});
 
   @override
@@ -23,27 +25,31 @@ class _PostPageState extends State<PostPage> {
   String errorMessage;
   PostDetails postDetails;
   bool _isLoading = false;
-
+  var logger = Logger();
   @override
-  void initState() {
+  void  initState(){
     super.initState();
+
     setState(() {
       _isLoading = true;
     });
     _fetchPost();
+
   }
 
   // Called When Clicked on the post from the newsfeed page to get the details and enter the Post Page.
   _fetchPost() async {
-    await services.getPostsDetails(widget.postId).then((response) {
-      setState(() {
-        _isLoading = false;
-      });
 
+    await services.getPostsDetails(widget.postId).then((response) {
+      logger.v("PostPage",response.data);
       if (response.error) {
         errorMessage = response.errorMessage ?? 'An error occurred';
       }
       postDetails = response.data;
+
+      setState(() {
+        _isLoading = false;
+      });
     });
   }
 
@@ -65,73 +71,77 @@ class _PostPageState extends State<PostPage> {
           disabledColor: myColors.cBackground,
         ),
       ),
-      body: Builder(builder: (context) {
-        if (_isLoading) {
-          return Center(
-              child: CircularProgressIndicator(
-                backgroundColor: myColors.cBackground,
-                valueColor: new  AlwaysStoppedAnimation<Color>(myColors.cGreen),
-          ));
-        }
-        return InheritedPostModel(
-          postDetails: postDetails,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.white10,
-                  blurRadius: 0.1, // has the effect of softening the shadow
-                  offset: new Offset(0.1, 0.1),
-                ),
-              ],
-            ),
+      body: ConnectivityCheck(
+          child: Builder(builder: (context) {
+            if (_isLoading) {
+              return Center(
+                  child: CircularProgressIndicator(
+                    backgroundColor: myColors.cBackground,
+                    valueColor: new  AlwaysStoppedAnimation<Color>(myColors.cGreen),
+              ));
+            }
 
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 13),
-                ),
-                /*
-               * The top Section of Post (Photo, Time, Settings, Name)
-               * */
-                _HeadOfPost(),
-
-                /*
-              * The Beginning of Text of the Post
-              * */
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                  padding: EdgeInsets.symmetric(horizontal: 13),
-                  child: Text(
-                    postDetails.postBody,
-                    style: TextStyle(
-                      fontFamily: 'Dubai',
-                      fontSize: 15,
+            return InheritedPostModel(
+              postDetails: postDetails,
+              child: Container(
+                margin: EdgeInsets.only(top: 5),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.white10,
+                      blurRadius: 0.1, // has the effect of softening the shadow
+                      offset: new Offset(0.1, 0.1),
                     ),
-                    textDirection: TextDirection.rtl,
-                  ),
+                  ],
                 ),
-                /*
-              * The End of Text of the Post
-              * */
 
-                /*
-              * The Beginning of Reaction Buttons Row
-              * */
-                SizedBox(
-                  height: 12,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 13),
+                    ),
+                    /*
+                   * The top Section of Post (Photo, Time, Settings, Name)
+                   * */
+                    _HeadOfPost(),
+
+                    /*
+                  * The Beginning of Text of the Post
+                  * */
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                      padding: EdgeInsets.symmetric(horizontal: 13),
+                      child: Text(
+                        postDetails.body,
+                        style: TextStyle(
+                          fontFamily: 'Dubai',
+                          fontSize: 15,
+                        ),
+                        textDirection: TextDirection.rtl,
+                      ),
+                    ),
+                    /*
+                  * The End of Text of the Post
+                  * */
+
+                    /*
+                  * The Beginning of Reaction Buttons Row
+                  * */
+                    SizedBox(
+                      height: 12,
+                    ),
+                    ReactionsButtons(),
+                    /*
+                  * The End of Reaction Buttons Row
+                  * */
+                  ],
                 ),
-                _ReactionsButtons(),
-                /*
-              * The End of Reaction Buttons Row
-              * */
-              ],
-            ),
-          ),
-        );
-      }),
+              ),
+            );
+          }),
+        ),
       bottomNavigationBar:
           AddNewPostWidget("أكتب تعليقا ...", Colors.grey[300]),
     );
@@ -210,37 +220,3 @@ class _PostTimeStamp extends StatelessWidget {
   }
 }
 
-/*
-* Reactions Buttons Widget (Ameen, Comment, Share)
-* */
-class _ReactionsButtons extends StatefulWidget {
-  @override
-  __ReactionsButtonsState createState() => __ReactionsButtonsState();
-}
-
-class __ReactionsButtonsState extends State<_ReactionsButtons> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(
-            color: Colors.grey[300],
-          ),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          reactionsButtonRow(
-              AssetImage("assets/images/share_icon.png"), 'مشاركة'),
-          reactionsButtonRow(
-              AssetImage("assets/images/comment.png"), 'تعليق'),
-          reactionsButtonRow(
-              AssetImage("assets/images/pray_icon.png"), 'آمين'),
-        ],
-      ),
-    );
-  }
-}
