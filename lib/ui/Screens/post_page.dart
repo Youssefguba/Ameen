@@ -1,14 +1,15 @@
-import 'package:ameen/blocs/models/api_response.dart';
-import 'package:ameen/blocs/models/post_data.dart';
 import 'package:ameen/blocs/models/post_details.dart';
 import 'package:ameen/services/connection_check.dart';
 import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_model.dart';
 import 'package:ameen/ui/widgets/news_feed_widgets/add_new_post_widget.dart';
-import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
 import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
 import 'package:flutter/material.dart';
+
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+import 'package:ameen/helpers/ui/text_styles.dart' as mytextStyle;
+import 'package:ameen/helpers/ui/images.dart' as myImages;
+
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 
@@ -99,43 +100,21 @@ class _PostPageState extends State<PostPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 13),
-                    ),
-                    /*
-                   * The top Section of Post (Photo, Time, Settings, Name)
-                   * */
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 13)),
+
+                    // The top Section of Post (Photo, Time, Settings, Name)
                     _HeadOfPost(),
 
-                    /*
-                  * The Beginning of Text of the Post
-                  * */
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                      padding: EdgeInsets.symmetric(horizontal: 13),
-                      child: Text(
-                        postDetails.body,
-                        style: TextStyle(
-                          fontFamily: 'Dubai',
-                          fontSize: 15,
-                        ),
-                        textDirection: TextDirection.rtl,
-                      ),
-                    ),
-                    /*
-                  * The End of Text of the Post
-                  * */
+                    // The post of the Post
+                    _postBody(),
 
-                    /*
-                  * The Beginning of Reaction Buttons Row
-                  * */
-                    SizedBox(
-                      height: 12,
-                    ),
+                    _reactAndCommentCounter(),
+
+                    // The Beginning of Reaction Buttons Row
+                    SizedBox(height: 12),
+
                     ReactionsButtons(),
-                    /*
-                  * The End of Reaction Buttons Row
-                  * */
+
                   ],
                 ),
               ),
@@ -144,6 +123,30 @@ class _PostPageState extends State<PostPage> {
         ),
       bottomNavigationBar:
           AddNewPostWidget("أكتب تعليقا ...", Colors.grey[300]),
+    );
+  }
+}
+
+
+/*
+*  The  Body of the Post
+ * */
+class _postBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final PostDetails postDetails = InheritedPostModel.of(context).postDetails;
+
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+      padding: EdgeInsets.symmetric(horizontal: 13),
+      child: Text(
+        postDetails.body,
+        style: TextStyle(
+          fontFamily: 'Dubai',
+          fontSize: 15,
+        ),
+        textDirection: TextDirection.rtl,
+      ),
     );
   }
 }
@@ -216,6 +219,95 @@ class _PostTimeStamp extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
       child: Text(postDetails.postTimeFormatted, style: timeTheme),
+    );
+  }
+}
+
+/*
+* react counter
+* */
+class _reactAndCommentCounter extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 20,
+      margin: EdgeInsets.all(8),
+      child: Row(
+        textDirection: TextDirection.rtl,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          // Container of Numbers and Reactions Icons
+          Visibility(
+            maintainSize: true,
+            maintainAnimation: true,
+            maintainState: true,
+            visible: true,
+            child: Container(
+              margin: EdgeInsets.only(right: 5, left: 5),
+              child: Row(
+                children: <Widget>[
+                  // Counter of Reaction (Numbers)
+                  Container(
+                    margin: EdgeInsets.only(right: 2, left: 2),
+                    child: Text(
+                      '15',
+                      style: mytextStyle.reactCounterTextStyle,
+                    ),
+                  ),
+
+                  // Counter of Reaction (Icons)
+                  Container(
+                    child: Row(
+                      textDirection: TextDirection.rtl,
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+
+                        // Ameen React
+                        Visibility(
+                          maintainSize: true,
+                          maintainAnimation: true,
+                          maintainState: true,
+                          visible: true,
+                          child: myImages.ameenIconReactCounter,
+                        ),
+
+                        // Recommend React
+                        Visibility(
+                          visible: false,
+                          child: myImages.recommendIconReactCounter,
+                        ),
+
+                        // Forbidden React
+                        Visibility(
+                          visible: false,
+                          child: myImages.forbiddenIconReactCounter,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Counter of Comments (Numbers)
+          Visibility(
+              child: Container(
+                child: Row(
+                  textDirection: TextDirection.rtl,
+                  children: <Widget>[
+                    // Number of comments
+                    Text('15', style: mytextStyle.reactCounterTextStyle),
+
+                    // "Comment Word"
+                    Text('تعليق', style: mytextStyle.reactCounterTextStyle),
+                  ],
+                ),
+              ),
+          ),
+        ],
+      ),
     );
   }
 }

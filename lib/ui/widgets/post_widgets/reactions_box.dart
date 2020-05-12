@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:ameen/helpers/ui/text_styles.dart';
-import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+import 'package:ameen/helpers/ui/text_styles.dart' as mytextStyle;
 
 class Reaction extends StatelessWidget {
   @override
@@ -359,7 +358,7 @@ class _ReactionsBoxState extends State<ReactionsBox> with TickerProviderStateMix
                     ),
                     Text(
                       'آمين',
-                      style: reactionsTextStyle,
+                      style: mytextStyle.reactionsButtonsTextStyle,
                     )
                   ],
                 ),
@@ -387,7 +386,7 @@ class _ReactionsBoxState extends State<ReactionsBox> with TickerProviderStateMix
                     ),
                     Text(
                       'أرشحه للجميع',
-                      style: reactionsTextStyle,
+                      style: mytextStyle.reactionsButtonsTextStyle,
                     )
                   ],
                 ),
@@ -415,7 +414,7 @@ class _ReactionsBoxState extends State<ReactionsBox> with TickerProviderStateMix
                     ),
                     Text(
                       'إحذر هذا الدعاء',
-                      style: reactionsTextStyle,
+                      style: mytextStyle.reactionsButtonsTextStyle,
                     )
                   ],
                 ),
@@ -478,11 +477,9 @@ class _ReactionsBoxState extends State<ReactionsBox> with TickerProviderStateMix
                     fit: BoxFit.contain,
                     color: getTintColorIconBtn(),
                   ),
-                  angle:
-                  !isLongPress ? handleOutputRangeTiltIconAmeen(tiltIconAmeenInBtn2.value) : tiltIconAmeenInBtn.value,
+                  angle: !isLongPress ? handleOutputRangeTiltIconAmeen(tiltIconAmeenInBtn2.value) : tiltIconAmeenInBtn.value,
                 ),
-                scale:
-                !isLongPress ? handleOutputRangeZoomInIconAmeen(zoomIconAmeenInBtn2.value) : zoomIconAmeenInBtn.value,
+                scale: !isLongPress ? handleOutputRangeZoomInIconAmeen(zoomIconAmeenInBtn2.value) : zoomIconAmeenInBtn.value,
               ),
 
             ],

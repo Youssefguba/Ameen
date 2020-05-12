@@ -1,12 +1,9 @@
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
-import 'package:ameen/ui/widgets/post_widgets/fb_reaction_box.dart';
-import 'package:ameen/ui/widgets/post_widgets/reactions_box.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class ReactionsButtonRow extends StatelessWidget {
-  Image image;
-  Text label;
+  Widget image;
+  Widget label;
   ReactionsButtonRow({this.image, this.label});
 
   @override
@@ -44,7 +41,12 @@ class ReactionsButtons extends StatefulWidget {
 }
 
 class _ReactionsButtonsState extends State<ReactionsButtons> {
+  final ameenImage = "assets/images/pray_icon.png";
+  final commentImage = "assets/images/comment.png";
+  final shareImage = "assets/images/share_icon.png";
   bool isPressed = false;
+
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -56,46 +58,30 @@ class _ReactionsButtonsState extends State<ReactionsButtons> {
           ),
         ),
       ),
+
+      // Reactions Buttons => [Ameen - Comment - Share]
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
+        textDirection: TextDirection.rtl,
         children: <Widget>[
-          ReactionsButtonRow(
-            image: Image.asset("assets/images/share_icon.png",
-                width: 20, height: 20),
-            label: Text("مشاركة",
-                style: TextStyle(
-                  fontFamily: 'Dubai',
-                  fontSize: 13,
-                  color: myColors.cTextColor,
-                )),
-          ),
-          ReactionsButtonRow(
-            image:
-                Image.asset("assets/images/comment.png", width: 20, height: 20),
-            label: Text("تعليق",
-                style: TextStyle(
-                  fontFamily: 'Dubai',
-                  fontSize: 13,
-                  color: myColors.cTextColor,
-                )),
-          ),
+          //Ameen Button
           InkWell(
-            child: FlatButton(
-              child: ReactionsButtonRow(
-                image: Image.asset("assets/images/pray_icon.png",
-                    color: (isPressed) ? myColors.cGreen : myColors.cTextColor,
-                    width: 20,
-                    height: 20),
-                label: Text("آمين",
-                    style: TextStyle(
-                      fontFamily: 'Dubai',
-                      fontSize: 13,
-                      color:
-                          (isPressed) ? myColors.cGreen : myColors.cTextColor,
-                      fontWeight:
-                          (isPressed) ? FontWeight.w600 : FontWeight.normal,
-                    )),
+            child: ReactionsButtonRow(
+              image: Image.asset(ameenImage,
+                  color: (isPressed) ? myColors.cGreen : myColors.cTextColor,
+                  fit: BoxFit.contain,
+                  width: 20,
+                  height: 20
               ),
+              label: Text("آمين",
+                  style: TextStyle(
+                    fontFamily: 'Dubai',
+                    fontSize: 13,
+                    color:
+                    (isPressed) ? myColors.cGreen : myColors.cTextColor,
+                    fontWeight:
+                    (isPressed) ? FontWeight.w600 : FontWeight.normal,
+                  )),
             ),
             onTap: () {
               if (!isPressed) {
@@ -108,6 +94,30 @@ class _ReactionsButtonsState extends State<ReactionsButtons> {
                 });
               }
             },
+          ),
+
+          //Comment Button
+          ReactionsButtonRow(
+            image:
+            Image.asset(commentImage, width: 20, height: 20),
+            label: Text("تعليق",
+                style: TextStyle(
+                  fontFamily: 'Dubai',
+                  fontSize: 13,
+                  color: myColors.cTextColor,
+                )),
+          ),
+
+          //Share Button
+          ReactionsButtonRow(
+            image: Image.asset(shareImage,
+                width: 20, height: 20),
+            label: Text("مشاركة",
+                style: TextStyle(
+                  fontFamily: 'Dubai',
+                  fontSize: 13,
+                  color: myColors.cTextColor,
+                )),
           ),
         ],
       ),

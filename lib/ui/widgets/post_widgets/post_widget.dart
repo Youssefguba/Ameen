@@ -1,13 +1,11 @@
 import 'package:ameen/blocs/models/post_data.dart';
-import 'package:ameen/blocs/models/post_details.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_model.dart';
 import 'package:ameen/ui/widgets/news_feed_widgets/add_new_post_widget.dart';
 import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
-
+import 'package:ameen/helpers/ui/images.dart' as myImages;
+import 'package:ameen/helpers/ui/text_styles.dart' as mytextStyle;
 
 /*
 * This class represent the UI of Post and every thing related with it..
@@ -48,22 +46,12 @@ class PostWidget extends StatelessWidget {
             /*
             * The Beginning of Text of the Post
             * */
-            Container(
-              margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
-              padding: EdgeInsets.symmetric(horizontal: 15),
-              child: Text(
-                postModel.body,
-                style: TextStyle(
-                  fontFamily: 'Dubai',
-                  fontSize: 15,
-                ),
-                textDirection: TextDirection.rtl,
-              ),
-            ),
+            _postBody(),
             /*
             * The End of Text of the Post
             * */
 
+            _reactAndCommentCounter(),
             /*
             * The Beginning of Reaction Buttons Row
             * */
@@ -77,6 +65,30 @@ class PostWidget extends StatelessWidget {
             AddNewPostWidget("أكتب تعليقا ...", Colors.grey[300]),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/*
+*  The  Body of the Post
+ * */
+class _postBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final PostData postData = InheritedPostModel.of(context).postData;
+
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+      padding: EdgeInsets.symmetric(horizontal: 15),
+      alignment: Alignment.topRight,
+      child: Text(
+        postData.body,
+        style: TextStyle(
+          fontFamily: 'Dubai',
+          fontSize: 15,
+        ),
+        textDirection: TextDirection.rtl,
       ),
     );
   }
@@ -145,11 +157,102 @@ class _PostTimeStamp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final PostData postData = InheritedPostModel.of(context).postData;
-    var timeTheme = new TextStyle( fontFamily: 'Dubai', fontSize: 13, color: Colors.grey.shade500);
+    var timeTheme = new TextStyle(
+        fontFamily: 'Dubai', fontSize: 13, color: Colors.grey.shade500);
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
       child: Text(postData.postTimeFormatted, style: timeTheme),
+    );
+  }
+}
+
+/*
+* react counter
+* */
+class _reactAndCommentCounter extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 20,
+      margin: EdgeInsets.all(8),
+      child: Row(
+        textDirection: TextDirection.rtl,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          // Container of Numbers and Reactions Icons
+          Visibility(
+            maintainSize: true,
+            maintainAnimation: true,
+            maintainState: true,
+            visible: true,
+            child: Container(
+              margin: EdgeInsets.only(right: 5, left: 5),
+              child: Row(
+                children: <Widget>[
+                  // Counter of Reaction (Numbers)
+                  Container(
+                    margin: EdgeInsets.only(right: 2, left: 2),
+                    child: Text(
+                      '15',
+                      style: mytextStyle.reactCounterTextStyle,
+                    ),
+                  ),
+
+                  // Counter of Reaction (Icons)
+                  Container(
+                    child: Row(
+                      textDirection: TextDirection.rtl,
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+
+                        // Ameen React
+                        Visibility(
+                          maintainSize: true,
+                          maintainAnimation: true,
+                          maintainState: true,
+                          visible: true,
+                          child: myImages.ameenIconReactCounter,
+                        ),
+
+                        // Recommend React
+                        Visibility(
+                          visible: false,
+                          child: myImages.recommendIconReactCounter,
+                        ),
+
+                        // Forbidden React
+                        Visibility(
+                          visible: false,
+                          child: myImages.forbiddenIconReactCounter,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Counter of Comments (Numbers)
+          Visibility(
+              child: Container(
+                  child: Row(
+                    textDirection: TextDirection.rtl,
+                    children: <Widget>[
+                      // Number of comments
+                      Text('15', style: mytextStyle.reactCounterTextStyle),
+
+                      // "Comment Word"
+                      Text('تعليق', style: mytextStyle.reactCounterTextStyle),
+                    ],
+                  ),
+
+              )
+          ),
+        ],
+      ),
     );
   }
 }
