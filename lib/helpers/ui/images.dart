@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+/*
+* Icons React Counter - Begin
+* */
 final ameenIconReactCounter = Image.asset(
     'assets/images/pray_color.png',
     width: 12,
@@ -20,3 +23,9 @@ final forbiddenIconReactCounter = Image.asset(
   height: 12,
   semanticLabel: 'Ameen',
 );
+/*
+* Icons React Counter - End
+* */
+
+
+

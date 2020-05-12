@@ -80,7 +80,6 @@ class _NewsFeedState extends State<NewsFeed> {
                                         ))).then((_) {
                                           _fetchPosts();
                                 });
-                                logger.v("Home", _apiResponse.data[index].authorName);
                               },
                             );
                           }

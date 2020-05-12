@@ -1,5 +1,7 @@
 import 'package:ameen/blocs/models/comment.dart';
 import 'package:ameen/blocs/models/user_data.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
 class PostDetails {
@@ -9,8 +11,7 @@ class PostDetails {
   String authorId;
   String authorPhoto;
   DateTime postTime;
-  UserModel author;
-  Comment comments;
+  List<CommentModel> comments;
 
   PostDetails({
     this.postId,
@@ -19,21 +20,26 @@ class PostDetails {
     this.authorPhoto,
     this.postTime,
     this.authorId,
+    this.comments
   });
 
+//  String get postTimeFormatted => DateFormat('hh:mm dd-MMM-yyyy ', 'ar_EG').format(postTime);
   String get postTimeFormatted => DateFormat.yMd().format(postTime);
+
 
   factory PostDetails.fromJson(Map<String, dynamic> item) {
     return PostDetails(
       postId: item['_id'],
       body: item['body'],
       authorName: item['authorName'],
-      authorId: item['authorId'] ,
+      authorId: item['authorId'],
       postTime: DateTime.parse(item['createdAt']),
+      comments:(item['comments'] as List).map((i) => CommentModel.fromJson(i)).toList(),
+
     );
   }
 
-  Map<String, dynamic> toJson(){
+  Map<String, dynamic> toJson() {
     return {
       "body": body,
       "createdAt": postTime,

@@ -9,8 +9,7 @@ class PostData {
   String authorId ;
   String authorPhoto ;
   DateTime postTime ;
-  UserModel author;
-  Comment comments;
+  List<CommentModel> comments;
 
   PostData ({
       this.postId,
@@ -21,7 +20,8 @@ class PostData {
       this.authorId,
   });
 
-  String get postTimeFormatted => DateFormat.yMd().format(postTime);
+  String get postTimeFormatted => DateFormat('hh:mm dd-MMM-yyyy ').format(postTime);
+//  String get postTimeFormatted => DateFormat.yMd().format(postTime);
 
   factory PostData.fromJson(Map<String, dynamic> item) {
     return PostData(

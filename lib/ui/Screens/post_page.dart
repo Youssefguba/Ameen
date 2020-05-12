@@ -1,6 +1,9 @@
+import 'package:ameen/blocs/models/api_response.dart';
+import 'package:ameen/blocs/models/comment.dart';
 import 'package:ameen/blocs/models/post_details.dart';
 import 'package:ameen/services/connection_check.dart';
 import 'package:ameen/services/post_service.dart';
+import 'package:ameen/ui/widgets/comment/comment_widget.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_model.dart';
 import 'package:ameen/ui/widgets/news_feed_widgets/add_new_post_widget.dart';
 import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
@@ -24,25 +27,26 @@ class PostPage extends StatefulWidget {
 class _PostPageState extends State<PostPage> {
   PostsService get services => GetIt.I<PostsService>();
   String errorMessage;
+  CommentModel commentModel;
   PostDetails postDetails;
+  APIResponse<List<CommentModel>> _apiResponse;
+
   bool _isLoading = false;
   var logger = Logger();
-  @override
-  void  initState(){
-    super.initState();
 
+  @override
+  void initState() {
+    _fetchPost();
+    super.initState();
     setState(() {
       _isLoading = true;
     });
-    _fetchPost();
-
   }
 
   // Called When Clicked on the post from the newsfeed page to get the details and enter the Post Page.
   _fetchPost() async {
-
     await services.getPostsDetails(widget.postId).then((response) {
-      logger.v("PostPage",response.data);
+//      logger.v("PostPage",response.data);
       if (response.error) {
         errorMessage = response.errorMessage ?? 'An error occurred';
       }
@@ -54,13 +58,27 @@ class _PostPageState extends State<PostPage> {
     });
   }
 
+//  _fetchComments() async {
+//    setState(() {
+//      _isLoading = true;
+//    });
+//
+//    _apiResponse = await services.getCommentList(widget.postId);
+//      logger.v("CommentsOfPost", _apiResponse);
+//
+//    setState(() {
+//      _isLoading = false;
+//    });
+//  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: myColors.cBackground,
-      appBar: AppBar(
-        title: Text ( //Put the name of the author's post on the Appbar
-            postDetails.authorName,
+        backgroundColor: myColors.cBackground,
+        appBar: AppBar(
+        title: _isLoading ? Text('') : Text(
+          //Put the name of the author's post on the Appbar
+            postDetails.authorName ??= '',
             textDirection: TextDirection.rtl,
             style: TextStyle(
                 fontSize: 16.0,
@@ -72,61 +90,80 @@ class _PostPageState extends State<PostPage> {
           disabledColor: myColors.cBackground,
         ),
       ),
-      body: ConnectivityCheck(
+        body: ConnectivityCheck(
           child: Builder(builder: (context) {
             if (_isLoading) {
               return Center(
                   child: CircularProgressIndicator(
-                    backgroundColor: myColors.cBackground,
-                    valueColor: new  AlwaysStoppedAnimation<Color>(myColors.cGreen),
+                backgroundColor: myColors.cBackground,
+                valueColor:
+                    new AlwaysStoppedAnimation<Color>(myColors.cGreen),
               ));
             }
+            return Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  InheritedPostModel(
+                    postDetails: postDetails,
+                    child: Container(
+                      margin: EdgeInsets.only(top: 5),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.white10,
+                            blurRadius:
+                                0.1, // has the effect of softening the shadow
+                            offset: new Offset(0.1, 0.1),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 13)),
 
-            return InheritedPostModel(
-              postDetails: postDetails,
-              child: Container(
-                margin: EdgeInsets.only(top: 5),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.white10,
-                      blurRadius: 0.1, // has the effect of softening the shadow
-                      offset: new Offset(0.1, 0.1),
+                          // The top Section of Post (Photo, Time, Settings, Name)
+                          _HeadOfPost(),
+
+                          // The post of the Post
+                          _postBody(),
+
+                          _reactAndCommentCounter(),
+
+                          // The Beginning of Reaction Buttons Row
+                          SizedBox(height: 12),
+
+                          ReactionsButtons(),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                  SizedBox(height: 8),
+                  Expanded(
+                    child: ListView.builder(
+                        itemCount: postDetails.comments.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return GestureDetector(
+                            child: CommentWidget(commentModel: postDetails.comments[index]),
 
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 13)),
-
-                    // The top Section of Post (Photo, Time, Settings, Name)
-                    _HeadOfPost(),
-
-                    // The post of the Post
-                    _postBody(),
-
-                    _reactAndCommentCounter(),
-
-                    // The Beginning of Reaction Buttons Row
-                    SizedBox(height: 12),
-
-                    ReactionsButtons(),
-
-                  ],
-                ),
+                          );
+                        }
+                    ),
+                  ),
+                ],
               ),
             );
           }),
         ),
+
       bottomNavigationBar:
-          AddNewPostWidget("أكتب تعليقا ...", Colors.grey[300]),
-    );
+            AddNewPostWidget("أكتب تعليقا ...", Colors.grey[300]),
+      );
   }
 }
-
 
 /*
 *  The  Body of the Post
@@ -137,6 +174,7 @@ class _postBody extends StatelessWidget {
     final PostDetails postDetails = InheritedPostModel.of(context).postDetails;
 
     return Container(
+      alignment: AlignmentDirectional.topEnd,
       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
       padding: EdgeInsets.symmetric(horizontal: 13),
       child: Text(
@@ -154,6 +192,7 @@ class _postBody extends StatelessWidget {
 /*
   * The top Section of Post (Photo, Time, Settings, Name)
   * */
+
 class _HeadOfPost extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -262,7 +301,6 @@ class _reactAndCommentCounter extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-
                         // Ameen React
                         Visibility(
                           maintainSize: true,
@@ -293,22 +331,21 @@ class _reactAndCommentCounter extends StatelessWidget {
 
           // Counter of Comments (Numbers)
           Visibility(
-              child: Container(
-                child: Row(
-                  textDirection: TextDirection.rtl,
-                  children: <Widget>[
-                    // Number of comments
-                    Text('15', style: mytextStyle.reactCounterTextStyle),
+            child: Container(
+              child: Row(
+                textDirection: TextDirection.rtl,
+                children: <Widget>[
+                  // Number of comments
+                  Text('15', style: mytextStyle.reactCounterTextStyle),
 
-                    // "Comment Word"
-                    Text('تعليق', style: mytextStyle.reactCounterTextStyle),
-                  ],
-                ),
+                  // "Comment Word"
+                  Text('تعليق', style: mytextStyle.reactCounterTextStyle),
+                ],
               ),
+            ),
           ),
         ],
       ),
     );
   }
 }
-

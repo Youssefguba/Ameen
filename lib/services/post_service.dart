@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ameen/blocs/models/api_response.dart';
+import 'package:ameen/blocs/models/comment.dart';
 import 'package:ameen/blocs/models/insert_post.dart';
 import 'package:ameen/blocs/models/post_data.dart';
 import 'package:ameen/blocs/models/post_details.dart';
@@ -33,7 +34,6 @@ class PostsService{
     return await http.get(API + postId).then((data) {
       if(data.statusCode == 200 ){
         final jsonData = json.decode(data.body);
-        print(jsonData);
           var post = PostDetails.fromJson(jsonData);
             return APIResponse<PostDetails>(data: post);
       }
@@ -51,4 +51,16 @@ class PostsService{
       return APIResponse<bool>(error: true, errorMessage: errorMessage);
     }).catchError((_) =>  APIResponse<bool>(error: true, errorMessage: errorMessage));
   }
+
+//  // Get List of Comments of Post from the main API
+//  Future<APIResponse<List<CommentModel>>> getCommentList(String postId) async {
+//    return await http.get(API + postId).then((data) {
+//      if(data.statusCode == 200 ){
+//
+//        return APIResponse<List<CommentModel>>(data: comments);
+//      }
+//      return APIResponse<List<CommentModel>>(error: true, errorMessage: errorMessage);
+//    }).catchError((_) => APIResponse<List<CommentModel>>(error: true, errorMessage: errorMessage));
+//  }
+
 }

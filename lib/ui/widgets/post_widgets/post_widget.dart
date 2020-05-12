@@ -1,4 +1,5 @@
 import 'package:ameen/blocs/models/post_data.dart';
+import 'package:ameen/blocs/models/post_details.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_model.dart';
 import 'package:ameen/ui/widgets/news_feed_widgets/add_new_post_widget.dart';
 import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
@@ -81,7 +82,7 @@ class _postBody extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
       padding: EdgeInsets.symmetric(horizontal: 15),
-      alignment: Alignment.topRight,
+      alignment: AlignmentDirectional.topEnd,
       child: Text(
         postData.body,
         style: TextStyle(
@@ -173,6 +174,8 @@ class _PostTimeStamp extends StatelessWidget {
 class _reactAndCommentCounter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final PostDetails postDetails = InheritedPostModel.of(context).postDetails;
+
     return Container(
       height: 20,
       margin: EdgeInsets.all(8),
@@ -242,7 +245,7 @@ class _reactAndCommentCounter extends StatelessWidget {
                     textDirection: TextDirection.rtl,
                     children: <Widget>[
                       // Number of comments
-                      Text('15', style: mytextStyle.reactCounterTextStyle),
+                      Text("15", style: mytextStyle.reactCounterTextStyle),
 
                       // "Comment Word"
                       Text('تعليق', style: mytextStyle.reactCounterTextStyle),
