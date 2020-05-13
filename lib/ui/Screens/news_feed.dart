@@ -24,7 +24,6 @@ class _NewsFeedState extends State<NewsFeed> {
   PostsService get services => GetIt.I<PostsService>();
   APIResponse<List<PostData>> _apiResponse;
   bool _isLoading = false;
-
   var logger = Logger();
 
   @override
@@ -39,7 +38,6 @@ class _NewsFeedState extends State<NewsFeed> {
     });
 
     _apiResponse = await services.getPostsList();
-
     setState(() {
       _isLoading = false;
     });

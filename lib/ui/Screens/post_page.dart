@@ -58,19 +58,6 @@ class _PostPageState extends State<PostPage> {
     });
   }
 
-//  _fetchComments() async {
-//    setState(() {
-//      _isLoading = true;
-//    });
-//
-//    _apiResponse = await services.getCommentList(widget.postId);
-//      logger.v("CommentsOfPost", _apiResponse);
-//
-//    setState(() {
-//      _isLoading = false;
-//    });
-//  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -192,7 +179,6 @@ class _postBody extends StatelessWidget {
 /*
   * The top Section of Post (Photo, Time, Settings, Name)
   * */
-
 class _HeadOfPost extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -268,6 +254,8 @@ class _PostTimeStamp extends StatelessWidget {
 class _reactAndCommentCounter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final PostDetails postDetails = InheritedPostModel.of(context).postDetails;
+
     return Container(
       height: 20,
       margin: EdgeInsets.all(8),
@@ -331,12 +319,13 @@ class _reactAndCommentCounter extends StatelessWidget {
 
           // Counter of Comments (Numbers)
           Visibility(
+            visible: postDetails.comments.length > 1 ? true : false,
             child: Container(
               child: Row(
                 textDirection: TextDirection.rtl,
                 children: <Widget>[
                   // Number of comments
-                  Text('15', style: mytextStyle.reactCounterTextStyle),
+                  Text(postDetails.comments.length.toString(), style: mytextStyle.reactCounterTextStyle),
 
                   // "Comment Word"
                   Text('تعليق', style: mytextStyle.reactCounterTextStyle),

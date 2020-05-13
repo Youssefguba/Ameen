@@ -1,8 +1,36 @@
 import 'package:ameen/blocs/models/comment.dart';
-import 'package:ameen/blocs/models/user_data.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/date_symbol_data_local.dart';
+import 'package:ameen/blocs/models/reaction_model.dart';
+import 'package:ameen/ui/widgets/post_widgets/reactions_box.dart';
 import 'package:intl/intl.dart';
+
+// Model of Post
+// ignore: slash_for_doc_comments
+/***
+* {
+    "_id": {},
+    "reactions": {
+        "ameen": [],
+        "recommended": [],
+        "forbidden": []
+    },
+    "createdAt": { Date.now() },
+    *
+    "authorId": {  "$oid"  },
+
+    "body": String,
+    "authorName": String,
+    "comments": [
+        {
+            "_id": {},
+            "comment_body": String,
+            "authorId": {},
+            "authorName": String,
+            "createdAt": { Date.now() }
+        }
+    ]
+}
+*
+**/
 
 class PostDetails {
   String postId;
@@ -20,12 +48,12 @@ class PostDetails {
     this.authorPhoto,
     this.postTime,
     this.authorId,
-    this.comments
+    this.comments,
   });
 
 //  String get postTimeFormatted => DateFormat('hh:mm dd-MMM-yyyy ', 'ar_EG').format(postTime);
-  String get postTimeFormatted => DateFormat.yMd().format(postTime);
-
+  String get postTimeFormatted =>
+      DateFormat('hh:mm dd-MMM-yyyy ').format(postTime);
 
   factory PostDetails.fromJson(Map<String, dynamic> item) {
     return PostDetails(
@@ -35,6 +63,7 @@ class PostDetails {
       authorId: item['authorId'],
       postTime: DateTime.parse(item['createdAt']),
       comments:(item['comments'] as List).map((i) => CommentModel.fromJson(i)).toList(),
+
 
     );
   }

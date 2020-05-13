@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 import 'package:ameen/helpers/ui/images.dart' as myImages;
 import 'package:ameen/helpers/ui/text_styles.dart' as mytextStyle;
+import 'package:logger/logger.dart';
 
 /*
 * This class represent the UI of Post and every thing related with it..
@@ -172,9 +173,17 @@ class _PostTimeStamp extends StatelessWidget {
 * react counter
 * */
 class _reactAndCommentCounter extends StatelessWidget {
+
+  var logger = Logger();
+
   @override
   Widget build(BuildContext context) {
-    final PostDetails postDetails = InheritedPostModel.of(context).postDetails;
+    final PostData postData = InheritedPostModel.of(context).postData;
+    var ameenCounter     = postData.ameenReaction.length;
+    var recommendCounter = postData.recommendReaction.length;
+    var forbiddenCounter = postData.forbiddenReaction.length;
+    var totalReactions =  ameenCounter + recommendCounter + forbiddenCounter;
+
 
     return Container(
       height: 20,
@@ -196,8 +205,9 @@ class _reactAndCommentCounter extends StatelessWidget {
                   // Counter of Reaction (Numbers)
                   Container(
                     margin: EdgeInsets.only(right: 2, left: 2),
-                    child: Text(
-                      '15',
+                    child: Text( //Check if the Total Reactions = 0 or not
+                      totalReactions >= 1 ?
+                      totalReactions.toString() : '',
                       style: mytextStyle.reactCounterTextStyle,
                     ),
                   ),
@@ -209,25 +219,24 @@ class _reactAndCommentCounter extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-
                         // Ameen React
                         Visibility(
                           maintainSize: true,
                           maintainAnimation: true,
                           maintainState: true,
-                          visible: true,
+                          visible: ameenCounter >= 1 ? true : false,
                           child: myImages.ameenIconReactCounter,
                         ),
 
                         // Recommend React
                         Visibility(
-                          visible: false,
+                          visible: recommendCounter >= 1 ? true : false,
                           child: myImages.recommendIconReactCounter,
                         ),
 
                         // Forbidden React
                         Visibility(
-                          visible: false,
+                          visible: forbiddenCounter >= 1 ? true : false,
                           child: myImages.forbiddenIconReactCounter,
                         ),
                       ],
@@ -240,12 +249,13 @@ class _reactAndCommentCounter extends StatelessWidget {
 
           // Counter of Comments (Numbers)
           Visibility(
+              visible: postData.comments.length >= 1 ? true : false,
               child: Container(
                   child: Row(
                     textDirection: TextDirection.rtl,
                     children: <Widget>[
                       // Number of comments
-                      Text("15", style: mytextStyle.reactCounterTextStyle),
+                      Text(postData.comments.length.toString(), style: mytextStyle.reactCounterTextStyle),
 
                       // "Comment Word"
                       Text('تعليق', style: mytextStyle.reactCounterTextStyle),

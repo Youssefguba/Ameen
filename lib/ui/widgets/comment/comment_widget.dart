@@ -35,6 +35,7 @@ class CommentWidget extends StatelessWidget {
             Expanded(
               child: Container(
                 child: ClipRRect(
+
                   borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(23),
                       bottomRight: Radius.circular(23),

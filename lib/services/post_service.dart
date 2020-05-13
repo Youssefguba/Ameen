@@ -12,6 +12,7 @@ class PostsService{
   static const headers = {
     'Content-Type': 'application/json'
   };
+
   String errorMessage = "يوجد مشكلة ما في الاتصال بالانترنت";
 
   // Get List of posts to NewsFeed from the main API
@@ -51,16 +52,4 @@ class PostsService{
       return APIResponse<bool>(error: true, errorMessage: errorMessage);
     }).catchError((_) =>  APIResponse<bool>(error: true, errorMessage: errorMessage));
   }
-
-//  // Get List of Comments of Post from the main API
-//  Future<APIResponse<List<CommentModel>>> getCommentList(String postId) async {
-//    return await http.get(API + postId).then((data) {
-//      if(data.statusCode == 200 ){
-//
-//        return APIResponse<List<CommentModel>>(data: comments);
-//      }
-//      return APIResponse<List<CommentModel>>(error: true, errorMessage: errorMessage);
-//    }).catchError((_) => APIResponse<List<CommentModel>>(error: true, errorMessage: errorMessage));
-//  }
-
 }
