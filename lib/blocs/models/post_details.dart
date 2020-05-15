@@ -39,7 +39,11 @@ class PostDetails {
   String authorId;
   String authorPhoto;
   DateTime postTime;
+  AmeenReaction isAmeen;
   List<CommentModel> comments;
+  List<AmeenReaction> ameenReaction;
+  List<RecommendReaction> recommendReaction;
+  List<ForbiddenReaction> forbiddenReaction;
 
   PostDetails({
     this.postId,
@@ -49,6 +53,9 @@ class PostDetails {
     this.postTime,
     this.authorId,
     this.comments,
+    this.ameenReaction,
+    this.recommendReaction,
+    this.forbiddenReaction,
   });
 
 //  String get postTimeFormatted => DateFormat('hh:mm dd-MMM-yyyy ', 'ar_EG').format(postTime);
@@ -63,8 +70,9 @@ class PostDetails {
       authorId: item['authorId'],
       postTime: DateTime.parse(item['createdAt']),
       comments:(item['comments'] as List).map((i) => CommentModel.fromJson(i)).toList(),
-
-
+      ameenReaction:     (item['ameenReaction']     as List).map((i) => AmeenReaction.fromJson(i)).toList(),
+      recommendReaction: (item['recommendReaction'] as List).map((i) => RecommendReaction.fromJson(i)).toList(),
+      forbiddenReaction: (item['forbiddenReaction'] as List).map((i) => ForbiddenReaction.fromJson(i)).toList(),
     );
   }
 

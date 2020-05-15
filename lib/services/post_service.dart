@@ -14,7 +14,7 @@ class PostsService {
 
   String errorMessage = "يوجد مشكلة ما في الاتصال بالانترنت";
 
-  // Get List of posts to NewsFeed from the main API
+  /// Get List of posts to NewsFeed from the main API
   Future<APIResponse<List<PostData>>> getPostsList() async {
     return await http.get(API).then((data) {
       if (data.statusCode == 200) {
@@ -31,7 +31,7 @@ class PostsService {
         APIResponse<List<PostData>>(error: true, errorMessage: errorMessage));
   }
 
-  // Call when Clicked on Post to enter the Post Page to get more details of post..
+  /// Call when Clicked on Post to enter the Post Page to get more details of post..
   Future<APIResponse<PostDetails>> getPostsDetails(String postId) async {
     return await http.get(API + postId).then((data) {
       if (data.statusCode == 200) {
@@ -59,7 +59,7 @@ class PostsService {
             (_) => APIResponse<bool>(error: true, errorMessage: errorMessage));
   }
 
-// Ameen React..
+/// Ameen React..
   Future<APIResponse<bool>> ameenReact(String postId, AmeenReaction ameenReact) async {
     return await http.post(API + 'users/5eb0c28fe1be6b44a094cbf7/' + postId + '/reactions', headers: headers,
         body: json.encode(ameenReact.toJson())).then((data) {
@@ -71,10 +71,23 @@ class PostsService {
             (_) => APIResponse<bool>(error: true, errorMessage: errorMessage));
   }
 
-  // Remove Ameen React..
-  Future<APIResponse<bool>> removeAmeenReact(String postId, AmeenReaction ameenReaction, String ameenId) async {
-    return await http.delete(API + 'users/5eb0c28fe1be6b44a094cbf7/' + postId + '/reactions' + ameenId, headers: headers).then((data) {
+  /// Remove Ameen React..
+  Future<APIResponse<bool>> removeAmeenReact(String postId, String reactionId) async {
+    return await http.delete(API + 'users/5eb0c28fe1be6b44a094cbf7/' + postId + '/reactions/' + reactionId , headers: headers).then((data) {
       if (data.statusCode == 204) {
+        return APIResponse<bool>(data: true);
+      }
+      return APIResponse<bool>(error: true, errorMessage: errorMessage);
+    }).catchError(
+            (_) => APIResponse<bool>(error: true, errorMessage: errorMessage));
+  }
+
+  // Called When User create a Post to put it on the user profile and Newsfeed..
+  //TODO => You should put the userId variable insted of Hardcode..
+  Future<APIResponse<bool>> addComment(CommentModel commentModel, String postId) async {
+    return await http.post(API + 'users/5eb0c28fe1be6b44a094cbf7/' + postId + '/comments', headers: headers, body: json.encode(commentModel.toJson()))
+        .then((data) {
+      if (data.statusCode == 201) {
         return APIResponse<bool>(data: true);
       }
       return APIResponse<bool>(error: true, errorMessage: errorMessage);

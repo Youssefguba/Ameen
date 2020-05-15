@@ -3,7 +3,8 @@ import 'package:ameen/blocs/models/reaction_model.dart';
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_model.dart';
-import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
+import 'package:ameen/ui/widgets/inherited_widgets/inherited_reaction_model.dart';
+import 'package:ameen/ui/widgets/post_widgets/reactions_box.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
@@ -58,13 +59,13 @@ class ReactionsButtonsState extends State<ReactionsButtons> with TickerProviderS
   var recommendCounter;
   var forbiddenCounter;
   var totalReactions;
+  AmeenReaction ameenReaction;
 
   bool isPressed = false;
   final ameenReact = AmeenReaction();
   var logger = Logger();
 
   int durationAnimationBtnShortPress = 500;
-
   //Animation
   Animation zoomIconAmeenInBtn2, tiltIconAmeenInBtn2;
   AnimationController animControlBtnShortPress;
@@ -105,8 +106,6 @@ class ReactionsButtonsState extends State<ReactionsButtons> with TickerProviderS
         totalReactions =  ameenCounter + recommendCounter + forbiddenCounter;
       });
 
-
-
     return Container(
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
@@ -124,7 +123,6 @@ class ReactionsButtonsState extends State<ReactionsButtons> with TickerProviderS
         children: <Widget>[
           //Ameen Button
           InkWell(
-
             child: ReactionsButtonRow(
               image: Transform.scale(
                 scale: (isPressed ) ? handleOutputRangeZoomInIconAmeen(zoomIconAmeenInBtn2.value) : zoomIconAmeenInBtn2.value,
@@ -153,6 +151,7 @@ class ReactionsButtonsState extends State<ReactionsButtons> with TickerProviderS
               if (!isPressed) {
                 setState(() {
                   isPressed = true;
+                  logger.v("When Pressed", ameenReact.ameenId);
                   services.ameenReact(postData.postId, ameenReact);
                   animControlBtnShortPress.forward();
 
@@ -161,7 +160,8 @@ class ReactionsButtonsState extends State<ReactionsButtons> with TickerProviderS
                 setState(() {
                   isPressed = false;
                   animControlBtnShortPress.reverse();
-                  // services.removeAmeenReact(postId, ameenReact, ameenId); //TODO => Remove Ameen Reaction from List
+                  logger.v("When un Pressed", ameenReact.ameenId.toString());
+//                  services.removeAmeenReact(postData.postId, ameenReact.ameenId); //TODO => Remove Ameen Reaction from List
                 });
               }
             },

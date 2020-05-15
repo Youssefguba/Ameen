@@ -16,6 +16,7 @@ class AddNewPostWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 9.0),
       decoration: BoxDecoration(

@@ -8,7 +8,6 @@ import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/Screens/create_post.dart';
 import 'package:ameen/ui/Screens/post_page.dart';
 import 'package:ameen/ui/widgets/custom_app_bar.dart';
-import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_id.dart';
 import 'package:ameen/ui/widgets/news_feed_widgets/add_new_post_widget.dart';
 import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
 import 'package:flutter/material.dart';
@@ -35,8 +34,9 @@ class _NewsFeedState extends State<NewsFeed> {
   var logger = Logger();
   @override
   void initState() {
-    super.initState();
     _fetchPosts();
+    super.initState();
+
   }
 
   _fetchPosts() async {
@@ -82,35 +82,36 @@ class _NewsFeedState extends State<NewsFeed> {
 
           return Container(
             child: Column(
-              children: <Widget>[
+                children: <Widget>[
 
-                /// Add New Post Widget at the Top and Fixed when Scrolling
-                AddNewPostWidget(),
+                  /// Add New Post Widget at the Top and Fixed when Scrolling
+                  AddNewPostWidget(),
+                  SizedBox(height: 0.5),
 
-                /// List of Posts of Users
-                Expanded(
-                  child: AnimatedList(
-                      key: listKey,
-                      controller: ScrollController(),
-                      initialItemCount: _apiResponse.data.length,
-                      physics: AlwaysScrollableScrollPhysics(),
-                      itemBuilder: (BuildContext context, int index, Animation anim) {
-                        return GestureDetector(
-                          child: PostWidget(postModel: _apiResponse.data[index]),
-                          onTap: () {
-                            Navigator.of(context)
-                                .push(MaterialPageRoute(
-                                    builder: (_) => PostPage(
-                                          postId: _apiResponse.data[index].postId,
-                                        )))
-                                .then((_) {
-                              _fetchPosts();
-                            });
-                          },
-                        );
-                      }),
-                ),
-              ],
+                  /// List of Posts of Users
+                  Expanded(
+                    child: AnimatedList(
+                        key: listKey,
+                        controller: ScrollController(),
+                        initialItemCount: _apiResponse.data.length,
+                        physics: AlwaysScrollableScrollPhysics(),
+                        itemBuilder: (BuildContext context, int index, Animation anim) {
+                          return GestureDetector(
+                            child: PostWidget(postModel: _apiResponse.data[index]),
+                            onTap: () {
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(
+                                      builder: (_) => PostPage(
+                                            postId: _apiResponse.data[index].postId,
+                                          )))
+                                  .then((_) {
+                                _fetchPosts();
+                              });
+                            },
+                          );
+                        }),
+                  ),
+                ],
             ),
           );
         }),

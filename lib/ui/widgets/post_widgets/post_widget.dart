@@ -52,7 +52,7 @@ class PostWidget extends StatelessWidget {
             * The End of Text of the Post
             * */
 
-            ReactAndCommentCounter(),
+            _reactAndCommentCounter(),
             /*
             * The Beginning of Reaction Buttons Row
             * */
@@ -171,22 +171,22 @@ class _PostTimeStamp extends StatelessWidget {
 /*
 * react counter
 * */
-class ReactAndCommentCounter extends StatefulWidget {
+class _reactAndCommentCounter extends StatefulWidget {
   String reactionCounter;
-  ReactAndCommentCounter({Key key , this.reactionCounter}) :super(key: key);
+  _reactAndCommentCounter({Key key , this.reactionCounter}) :super(key: key);
 
   @override
   _reactAndCommentCounterState createState() => _reactAndCommentCounterState();
 }
 
-class _reactAndCommentCounterState extends State<ReactAndCommentCounter> {
+class _reactAndCommentCounterState extends State<_reactAndCommentCounter> {
   var logger = Logger();
 
   @override
   Widget build(BuildContext context) {
 
     final PostData postData = InheritedPostModel.of(context).postData;
-    var _ameenCounter   ;
+    var _ameenCounter;
     var _recommendCounter = postData.recommendReaction.length;
     var _forbiddenCounter = postData.forbiddenReaction.length;
     var _totalReactions = 0;

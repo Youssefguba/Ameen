@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 class AddNewCommentWidget extends StatelessWidget {
   final String hintText = "أكتب تعليقا ...";
   final Color color = Colors.grey[300];
-  AddNewCommentWidget();
+
+  final imageOfUser = 'assets/images/person_test.png';
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +18,7 @@ class AddNewCommentWidget extends StatelessWidget {
         color: Colors.white,
       ),
 
+      /// Row Contains Image of User and Container of Comment
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -44,7 +46,7 @@ class AddNewCommentWidget extends StatelessWidget {
             width: 55,
             height: 60,
             child: CircleAvatar(
-              backgroundImage: AssetImage('assets/images/person_test.png'),
+              backgroundImage: AssetImage(imageOfUser),
               backgroundColor: Colors.transparent,
             ),
           ),

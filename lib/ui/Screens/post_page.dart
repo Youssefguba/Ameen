@@ -1,13 +1,17 @@
 import 'package:ameen/blocs/models/api_response.dart';
 import 'package:ameen/blocs/models/comment.dart';
+import 'package:ameen/blocs/models/post_data.dart';
 import 'package:ameen/blocs/models/post_details.dart';
+import 'package:ameen/blocs/models/reaction_model.dart';
 import 'package:ameen/services/connection_check.dart';
 import 'package:ameen/services/post_service.dart';
+import 'package:ameen/ui/Screens/news_feed.dart';
 import 'package:ameen/ui/widgets/comment/comment_widget.dart';
-import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_id.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_model.dart';
+import 'package:ameen/ui/widgets/inherited_widgets/inherited_reaction_model.dart';
 import 'package:ameen/ui/widgets/news_feed_widgets/add_new_post_widget.dart';
 import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
@@ -15,7 +19,9 @@ import 'package:ameen/helpers/ui/text_styles.dart' as mytextStyle;
 import 'package:ameen/helpers/ui/images.dart' as myImages;
 
 import 'package:get_it/get_it.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:logger/logger.dart';
+import 'dart:math';
 
 class PostPage extends StatefulWidget {
   final String postId;
@@ -44,21 +50,18 @@ class _PostPageState extends State<PostPage> {
     });
   }
 
-  // Called When Clicked on the post from the newsfeed page to get the details and enter the Post Page.
+  /// Called When Clicked on the post from the NewsFeed page to get the details and enter the Post Page.
   _fetchPost() async {
     await services.getPostsDetails(widget.postId).then((response) {
-//      logger.v("PostPage",response.data);
       if (response.error) {
         errorMessage = response.errorMessage ?? 'An error occurred';
       }
       postDetails = response.data;
-
       setState(() {
         _isLoading = false;
       });
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,60 +91,70 @@ class _PostPageState extends State<PostPage> {
                     new AlwaysStoppedAnimation<Color>(myColors.cGreen),
               ));
             }
-            return Container(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  InheritedPostModel(
-                    postDetails: postDetails,
-                    child: Container(
-                      margin: EdgeInsets.only(top: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.white10,
-                            blurRadius:
-                                0.1, // has the effect of softening the shadow
-                            offset: new Offset(0.1, 0.1),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 13)),
+            return RefreshIndicator(
+              color:  myColors.cGreen,
+              backgroundColor: Colors.white,
+              onRefresh: () async {
+                await _fetchPost();
+              },
+              child: Container(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    InheritedPostModel(
+                      postDetails: postDetails,
+                      child: Container(
+                        margin: EdgeInsets.only(top: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.white10,
+                              blurRadius:
+                                  0.1, // has the effect of softening the shadow
+                              offset: new Offset(0.1, 0.1),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 13)),
 
-                          // The top Section of Post (Photo, Time, Settings, Name)
-                          _HeadOfPost(),
+                            // The top Section of Post (Photo, Time, Settings, Name)
+                            _HeadOfPost(),
 
-                          // The post of the Post
-                          _postBody(),
+                            // The post of the Post
+                            _postBody(),
 
-                          _reactAndCommentCounter(),
+                            _reactAndCommentCounter(),
 
-                          // The Beginning of Reaction Buttons Row
-                          SizedBox(height: 12),
+                            // The Beginning of Reaction Buttons Row
+                            SizedBox(height: 12),
 
-                          ReactionsButtons(),
-                        ],
+                            _reactionsButtons(),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 8),
-                  Expanded(
-                    child: ListView.builder(
-                        itemCount: postDetails.comments.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return GestureDetector(
-                            child: CommentWidget(commentModel: postDetails.comments[index]),
+                    SizedBox(height: 8),
+                    Expanded(
+                      child: ListView.builder(
+                          itemCount: postDetails.comments.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return GestureDetector(
+                              child: CommentWidget(commentModel: postDetails.comments[index]),
 
-                          );
-                        }
+                            );
+                          }
+                      ),
                     ),
-                  ),
-                ],
+                    InheritedPostModel(
+                        postDetails: postDetails,
+                        child: _writeAComment()),
+                  ],
+                ),
               ),
             );
           }),
@@ -252,10 +265,35 @@ class _PostTimeStamp extends StatelessWidget {
 /*
 * react counter
 * */
-class _reactAndCommentCounter extends StatelessWidget {
+class _reactAndCommentCounter extends StatefulWidget {
+  // Reaction Counter
+  @override
+  __reactAndCommentCounterState createState() => __reactAndCommentCounterState();
+}
+
+/*
+* react counter
+* */
+class __reactAndCommentCounterState extends State<_reactAndCommentCounter> {
+  var _ameenCounter;
+
+  var _recommendCounter;
+
+  var _forbiddenCounter;
+
+  var _totalReactions;
+
   @override
   Widget build(BuildContext context) {
     final PostDetails postDetails = InheritedPostModel.of(context).postDetails;
+    _ameenCounter     = postDetails.ameenReaction.length;
+    _recommendCounter = postDetails.recommendReaction.length;
+    _forbiddenCounter = postDetails.forbiddenReaction.length;
+    _totalReactions =  _ameenCounter + _recommendCounter + _forbiddenCounter;
+
+    setState(() {
+      _totalReactions =  _ameenCounter + _recommendCounter + _forbiddenCounter;
+    });
 
     return Container(
       height: 20,
@@ -278,7 +316,8 @@ class _reactAndCommentCounter extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.only(right: 2, left: 2),
                     child: Text(
-                      '15',
+                      _totalReactions >= 1 ?
+                      "$_totalReactions" : '',
                       style: mytextStyle.reactCounterTextStyle,
                     ),
                   ),
@@ -295,19 +334,19 @@ class _reactAndCommentCounter extends StatelessWidget {
                           maintainSize: true,
                           maintainAnimation: true,
                           maintainState: true,
-                          visible: true,
+                          visible: _ameenCounter >= 1 ? true : false,
                           child: myImages.ameenIconReactCounter,
                         ),
 
                         // Recommend React
                         Visibility(
-                          visible: false,
+                          visible: _recommendCounter >= 1 ? true : false,
                           child: myImages.recommendIconReactCounter,
                         ),
 
                         // Forbidden React
                         Visibility(
-                          visible: false,
+                          visible: _forbiddenCounter >= 1 ? true : false,
                           child: myImages.forbiddenIconReactCounter,
                         ),
                       ],
@@ -337,5 +376,261 @@ class _reactAndCommentCounter extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/*
+* Add a Comment Widget
+* */
+class _writeAComment extends StatelessWidget {
+  PostsService get services => GetIt.I<PostsService>();
+  TextEditingController _text = new TextEditingController();
+
+  final logger = Logger();
+
+  @override
+  Widget build(BuildContext context) {
+    final PostDetails postDetails = InheritedPostModel.of(context).postDetails;
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+      ),
+      height: 60,
+      child: Container(
+
+        margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 2),
+        decoration: BoxDecoration(
+          color: myColors.cBackground,
+          borderRadius: BorderRadius.circular(30)
+        ),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: TextField(
+                maxLines: 20,
+                dragStartBehavior: DragStartBehavior.down,
+                textAlign: TextAlign.right,
+                textDirection: TextDirection.rtl,
+                showCursor: true,
+                cursorColor: myColors.cGreenDark,
+                controller: _text,
+                scrollPhysics: ScrollPhysics(),
+                autofocus: true,
+                enabled: true,
+
+                scrollController: ScrollController(),
+                decoration: InputDecoration(
+                  prefixIcon: IconButton(
+                    iconSize:24,
+                    focusColor: myColors.cGreen,
+                    splashColor: myColors.cGreen,
+                    disabledColor: myColors.cGreen,
+                    icon: Icon(Icons.send, color: myColors.cGreenDark, size: 24, textDirection: TextDirection.rtl),
+                    onPressed: () async {
+                      final comment = CommentModel(
+                        commentBody: _text.text,
+                      );
+                      await services.addComment(comment, postDetails.postId);
+                      logger.v("Comment", comment);
+                      Navigator.of(context).pop(NewsFeed);
+
+                    },
+                  ),
+                  border: InputBorder.none,
+                  hintText: " ... أكتب رسالتك ",
+
+                  hintStyle: TextStyle(
+                    fontFamily: 'Dubai',
+                  ),
+
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+  }
+}
+
+
+/*
+ *  Action Buttons Widgets like..
+ *       (Like, Comment, Share)
+ **/
+class _reactionsButtons extends StatefulWidget {
+  @override
+  _reactionsButtonsState createState() => _reactionsButtonsState();
+}
+
+
+/*
+ *  Action Buttons Widgets like..
+ *       (Like, Comment, Share)
+ **/
+class _reactionsButtonsState extends State<_reactionsButtons> with TickerProviderStateMixin {
+  PostsService get services => GetIt.I<PostsService>();
+  // Reactions Icon
+  final ameenImage = "assets/images/pray_icon.png";
+  final commentImage = "assets/images/comment.png";
+  final shareImage = "assets/images/share_icon.png";
+
+  // Reaction Counter
+  var ameenCounter;
+  var recommendCounter;
+  var forbiddenCounter;
+  var totalReactions;
+
+  var ameenReact = AmeenReaction ();
+  bool isPressed = false;
+  var logger = Logger();
+
+  int durationAnimationBtnShortPress = 500;
+
+  //Animation
+  Animation zoomIconAmeenInBtn2, tiltIconAmeenInBtn2;
+  AnimationController animControlBtnShortPress;
+
+
+  @override
+  void initState() {
+    super.initState();
+    initAmeenBtn();
+  }
+
+  initAmeenBtn(){
+    // short press
+    animControlBtnShortPress =
+        AnimationController(vsync: this, duration: Duration(milliseconds: durationAnimationBtnShortPress));
+    zoomIconAmeenInBtn2 = Tween(begin: 1.0, end: 0.2).animate(animControlBtnShortPress);
+    tiltIconAmeenInBtn2 = Tween(begin: 0.0, end: 0.8).animate(animControlBtnShortPress);
+    zoomIconAmeenInBtn2.addListener(() {
+      setState(() {});
+    });
+    tiltIconAmeenInBtn2.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final PostDetails postDetails = InheritedPostModel.of(context).postDetails;
+    ameenCounter     = postDetails.ameenReaction.length;
+    recommendCounter = postDetails.recommendReaction.length;
+    forbiddenCounter = postDetails.forbiddenReaction.length;
+    totalReactions =  ameenCounter + recommendCounter + forbiddenCounter;
+
+    setState(() {
+      totalReactions =  ameenCounter + recommendCounter + forbiddenCounter;
+    });
+
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: Colors.grey[300],
+          ),
+        ),
+      ),
+
+      // Reactions Buttons => [Ameen - Comment - Share]
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        textDirection: TextDirection.rtl,
+        children: <Widget>[
+          //Ameen Button
+          InkWell(
+            child: ReactionsButtonRow(
+              image: Transform.scale(
+                scale: (isPressed ) ? handleOutputRangeZoomInIconAmeen(zoomIconAmeenInBtn2.value) : zoomIconAmeenInBtn2.value,
+                child: Transform.rotate(
+                  angle: (isPressed ) ?  handleOutputRangeTiltIconAmeen(tiltIconAmeenInBtn2.value) : tiltIconAmeenInBtn2.value,
+                  child: Image.asset(ameenImage,
+                      color: (isPressed) ? myColors.cGreen : myColors.cTextColor,
+                      fit: BoxFit.contain,
+                      width: 20,
+                      height: 20
+                  ),
+                ),
+              ),
+              label: Transform.scale(
+                scale: handleOutputRangeZoomInIconAmeen(zoomIconAmeenInBtn2.value),
+                child: Text("آمين",
+                    style: TextStyle(
+                      fontFamily: 'Dubai',
+                      fontSize: 13,
+                      color: (isPressed) ? myColors.cGreen : myColors.cTextColor,
+                      fontWeight: (isPressed) ? FontWeight.w600 : FontWeight.normal,
+                    )),
+              ),
+            ),
+            onTap: () {
+              if (!isPressed) {
+                setState(() {
+                  isPressed = true;
+                  services.ameenReact(postDetails.postId, ameenReact);
+                  postDetails.ameenReaction.add(ameenReact);
+                  animControlBtnShortPress.forward();
+                });
+              } else {
+                setState(() {
+                  isPressed = false;
+                  animControlBtnShortPress.reverse();
+                     services.removeAmeenReact(postDetails.postId, "5eb0c28fe1be6b44a094cbf7");
+
+                });
+              }
+            },
+          ),
+
+          //Comment Button
+          ReactionsButtonRow(
+            image:
+            Image.asset(commentImage, width: 20, height: 20),
+            label: Text("تعليق",
+                style: TextStyle(
+                  fontFamily: 'Dubai',
+                  fontSize: 13,
+                  color: myColors.cTextColor,
+                )),
+          ),
+
+          //Share Button
+          ReactionsButtonRow(
+            image: Image.asset(shareImage,
+                width: 20, height: 20),
+            label: Text("مشاركة",
+                style: TextStyle(
+                  fontFamily: 'Dubai',
+                  fontSize: 13,
+                  color: myColors.cTextColor,
+                )),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+  double handleOutputRangeTiltIconAmeen(double value) {
+    if (value <= 0.2) {
+      return value;
+    } else if (value <= 0.6) {
+      return 0.4 - value;
+    } else {
+      return -(0.8 - value);
+    }
+  }
+
+  double handleOutputRangeZoomInIconAmeen(double value) {
+    if (value >= 0.8) {
+      return value;
+    } else if (value >= 0.4) {
+      return 1.6 - value;
+    } else {
+      return 0.8 + value;
+    }
   }
 }
