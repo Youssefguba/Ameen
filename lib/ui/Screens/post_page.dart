@@ -4,6 +4,7 @@ import 'package:ameen/blocs/models/post_details.dart';
 import 'package:ameen/services/connection_check.dart';
 import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/widgets/comment/comment_widget.dart';
+import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_id.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_model.dart';
 import 'package:ameen/ui/widgets/news_feed_widgets/add_new_post_widget.dart';
 import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
@@ -146,8 +147,8 @@ class _PostPageState extends State<PostPage> {
           }),
         ),
 
-      bottomNavigationBar:
-            AddNewPostWidget("أكتب تعليقا ...", Colors.grey[300]),
+//      bottomNavigationBar:
+//            AddNewPostWidget("أكتب تعليقا ...", Colors.grey[300]),
       );
   }
 }

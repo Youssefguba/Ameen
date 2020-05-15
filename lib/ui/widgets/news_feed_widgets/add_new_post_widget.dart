@@ -5,14 +5,14 @@ import 'package:flutter/widgets.dart';
 
 
 
-/// This Class to represent the Widget of Adding Post Rectangle beside the Profile Picture
-/// of the user and *Redirect* him to Creating Post Screen..
+/// This Class to represent the Widget of Adding comment Rectangle beside the Profile Picture
+/// of the user and *Redirect* him to Post Page..
 ///                           Y.G
 
 class AddNewPostWidget extends StatelessWidget {
-  final String hintText;
-  final Color color;
-  AddNewPostWidget(this.hintText, this.color);
+  final String hintText = "انشر الدعاء الذي تتمنى أن يتحقق ";
+  final Color color =  Colors.black;
+  AddNewPostWidget();
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +30,9 @@ class AddNewPostWidget extends StatelessWidget {
       ),
 
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Expanded(
               child:InkWell(

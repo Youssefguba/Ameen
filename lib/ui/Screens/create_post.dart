@@ -32,6 +32,7 @@ class _CreatePostState extends State<CreatePost> {
                 postBody: _postBodyController.text);
 
           final result = await services.createPost(post);
+
           Navigator.of(context).pop();
           final text = result.error
               ? (result.errorMessage ?? 'حدث خلل ما ')
@@ -40,8 +41,8 @@ class _CreatePostState extends State<CreatePost> {
           if (result.data) {
             Navigator.of(context).pop(NewsFeed);
           }
-
         },
+
         padding: EdgeInsets.symmetric(vertical: 10),
         color: myColors.cGreen,
         disabledColor: myColors.cGreen,

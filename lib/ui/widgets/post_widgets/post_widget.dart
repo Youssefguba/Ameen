@@ -1,5 +1,6 @@
 import 'package:ameen/blocs/models/post_data.dart';
 import 'package:ameen/blocs/models/post_details.dart';
+import 'package:ameen/ui/widgets/comment/add_new_comment.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_model.dart';
 import 'package:ameen/ui/widgets/news_feed_widgets/add_new_post_widget.dart';
 import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
@@ -13,10 +14,8 @@ import 'package:logger/logger.dart';
 * This class represent the UI of Post and every thing related with it..
 * Y.G
 * */
-
 class PostWidget extends StatelessWidget {
   final PostData postModel;
-//  final PostDetails postDetails;
   const PostWidget({Key key, this.postModel}) : super(key: key);
 
   @override
@@ -53,7 +52,7 @@ class PostWidget extends StatelessWidget {
             * The End of Text of the Post
             * */
 
-            _reactAndCommentCounter(),
+            ReactAndCommentCounter(),
             /*
             * The Beginning of Reaction Buttons Row
             * */
@@ -64,7 +63,7 @@ class PostWidget extends StatelessWidget {
             /*
             * The End of Reaction Buttons Row
             * */
-            AddNewPostWidget("أكتب تعليقا ...", Colors.grey[300]),
+            AddNewCommentWidget(),
           ],
         ),
       ),
@@ -73,8 +72,8 @@ class PostWidget extends StatelessWidget {
 }
 
 /*
-*  The  Body of the Post
- * */
+*  The Body of the Post ..
+**/
 class _postBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -172,99 +171,114 @@ class _PostTimeStamp extends StatelessWidget {
 /*
 * react counter
 * */
-class _reactAndCommentCounter extends StatelessWidget {
+class ReactAndCommentCounter extends StatefulWidget {
+  String reactionCounter;
+  ReactAndCommentCounter({Key key , this.reactionCounter}) :super(key: key);
 
+  @override
+  _reactAndCommentCounterState createState() => _reactAndCommentCounterState();
+}
+
+class _reactAndCommentCounterState extends State<ReactAndCommentCounter> {
   var logger = Logger();
 
   @override
   Widget build(BuildContext context) {
+
     final PostData postData = InheritedPostModel.of(context).postData;
-    var ameenCounter     = postData.ameenReaction.length;
-    var recommendCounter = postData.recommendReaction.length;
-    var forbiddenCounter = postData.forbiddenReaction.length;
-    var totalReactions =  ameenCounter + recommendCounter + forbiddenCounter;
+    var _ameenCounter   ;
+    var _recommendCounter = postData.recommendReaction.length;
+    var _forbiddenCounter = postData.forbiddenReaction.length;
+    var _totalReactions = 0;
 
+    setState(() {
+      _ameenCounter    = postData.ameenReaction.length;
+      _totalReactions  = _ameenCounter + _recommendCounter + _forbiddenCounter;
+    });
 
-    return Container(
-      height: 20,
-      margin: EdgeInsets.all(8),
-      child: Row(
-        textDirection: TextDirection.rtl,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          // Container of Numbers and Reactions Icons
-          Visibility(
-            maintainSize: true,
-            maintainAnimation: true,
-            maintainState: true,
-            visible: true,
-            child: Container(
-              margin: EdgeInsets.only(right: 5, left: 5),
-              child: Row(
-                children: <Widget>[
-                  // Counter of Reaction (Numbers)
-                  Container(
-                    margin: EdgeInsets.only(right: 2, left: 2),
-                    child: Text( //Check if the Total Reactions = 0 or not
-                      totalReactions >= 1 ?
-                      totalReactions.toString() : '',
-                      style: mytextStyle.reactCounterTextStyle,
+    return InheritedPostModel(
+      postData: postData,
+      child: Container(
+        height: 20,
+        margin: EdgeInsets.all(8),
+        child: Row(
+          textDirection: TextDirection.rtl,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            // Container of Numbers and Reactions Icons
+            Visibility(
+              maintainSize: true,
+              maintainAnimation: true,
+              maintainState: true,
+              visible: true,
+              child: Container(
+                margin: EdgeInsets.only(right: 5, left: 5),
+                child: Row(
+                  children: <Widget>[
+                    // Counter of Reaction (Numbers)
+                    Container(
+                      margin: EdgeInsets.only(right: 2, left: 2),
+                      child: Text(
+                        //Check if the Total Reactions = 0 or not
+                        _totalReactions >= 1 ?
+                        "$_ameenCounter" : '',
+                        style: mytextStyle.reactCounterTextStyle,
+                      ),
                     ),
-                  ),
 
-                  // Counter of Reaction (Icons)
-                  Container(
-                    child: Row(
-                      textDirection: TextDirection.rtl,
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        // Ameen React
-                        Visibility(
-                          maintainSize: true,
-                          maintainAnimation: true,
-                          maintainState: true,
-                          visible: ameenCounter >= 1 ? true : false,
-                          child: myImages.ameenIconReactCounter,
-                        ),
+                    // Counter of Reaction (Icons)
+                    Container(
+                      child: Row(
+                        textDirection: TextDirection.rtl,
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          // Ameen React
+                          Visibility(
+                            maintainSize: true,
+                            maintainAnimation: true,
+                            maintainState: true,
+                            visible: _ameenCounter >= 1 ? true : false,
+                            child: myImages.ameenIconReactCounter,
+                          ),
 
-                        // Recommend React
-                        Visibility(
-                          visible: recommendCounter >= 1 ? true : false,
-                          child: myImages.recommendIconReactCounter,
-                        ),
+                          // Recommend React
+                          Visibility(
+                            visible: _recommendCounter >= 1 ? true : false,
+                            child: myImages.recommendIconReactCounter,
+                          ),
 
-                        // Forbidden React
-                        Visibility(
-                          visible: forbiddenCounter >= 1 ? true : false,
-                          child: myImages.forbiddenIconReactCounter,
-                        ),
-                      ],
+                          // Forbidden React
+                          Visibility(
+                            visible: _forbiddenCounter >= 1 ? true : false,
+                            child: myImages.forbiddenIconReactCounter,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
 
-          // Counter of Comments (Numbers)
-          Visibility(
-              visible: postData.comments.length >= 1 ? true : false,
-              child: Container(
-                  child: Row(
-                    textDirection: TextDirection.rtl,
-                    children: <Widget>[
-                      // Number of comments
-                      Text(postData.comments.length.toString(), style: mytextStyle.reactCounterTextStyle),
+            // Counter of Comments (Numbers)
+            Visibility(
+                visible: postData.comments.length >= 1 ? true : false,
+                child: Container(
+                    child: Row(
+                      textDirection: TextDirection.rtl,
+                      children: <Widget>[
+                        // Number of comments
+                        Text(postData.comments.length.toString(), style: mytextStyle.reactCounterTextStyle),
+                        // "Comment Word"
+                        Text('تعليق', style: mytextStyle.reactCounterTextStyle),
+                      ],
+                    ),
 
-                      // "Comment Word"
-                      Text('تعليق', style: mytextStyle.reactCounterTextStyle),
-                    ],
-                  ),
-
-              )
-          ),
-        ],
+                )
+            ),
+          ],
+        ),
       ),
     );
   }

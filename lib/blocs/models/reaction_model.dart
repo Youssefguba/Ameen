@@ -1,4 +1,3 @@
-
 /*
 * Reaction Model contain Arrays of Reaction [AmeenReaction, RecommendReaction, ForbiddenReaction]
 *
@@ -13,19 +12,32 @@
 * */
 
 class AmeenReaction {
-  String userName;
+  String ameenId;
+  String username;
+  String userId;
+  String postId;
   String profile_pic;
 
   AmeenReaction({
-    this.userName,
-    this.profile_pic,
+    this.ameenId,
+    this.userId,
+    this.postId,
+    this.username,
   });
 
   factory AmeenReaction.fromJson(Map<String, dynamic> item) {
     return AmeenReaction(
-        userName: item['username'],
-        profile_pic: item['profilePic'],
+      ameenId: item['_id'],
+      username: item['username'],
+      userId: item['userId'],
+      postId: item['postId'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'username': "Youssef",
+    };
   }
 }
 
@@ -44,8 +56,12 @@ class RecommendReaction {
       profile_pic: item['profilePic'],
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'username': userName,
+    };
+  }
 }
-
 
 class ForbiddenReaction {
   String userName;
@@ -62,6 +78,10 @@ class ForbiddenReaction {
       profile_pic: item['profilePic'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'username': userName,
+    };
+  }
 }
-
-
