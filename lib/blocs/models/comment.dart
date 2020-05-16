@@ -1,5 +1,6 @@
 import 'package:ameen/blocs/models/user_data.dart';
 import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';  //for date locale
 import 'dart:convert';
 
 CommentModel commentFromJson(String str) => CommentModel.fromJson(json.decode(str));
@@ -19,7 +20,9 @@ class CommentModel {
     this.authorPhoto,
   });
 
-  String get postTimeFormatted => DateFormat('hh:mm dd-MMM-yyyy ', 'ar_EG').format(createdAt);
+
+  String get postTimeFormatted =>
+      DateFormat.yMMMd('ar').add_jm().format(createdAt);
 
   factory CommentModel.fromJson(Map<String, dynamic> item) {
     return CommentModel(

@@ -101,6 +101,8 @@ class _NewsFeedState extends State<NewsFeed> {
                             onTap: () {
                               Navigator.of(context)
                                   .push(MaterialPageRoute(
+                                      fullscreenDialog: true,
+                                      maintainState: true ,
                                       builder: (_) => PostPage(
                                             postId: _apiResponse.data[index].postId,
                                           )))

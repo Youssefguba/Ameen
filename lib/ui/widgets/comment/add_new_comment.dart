@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 
 /// This Class to represent the Widget of Adding Post Rectangle beside the Profile Picture
 /// of the user and *Redirect* him to Creating Post Screen..
@@ -8,7 +9,7 @@ class AddNewCommentWidget extends StatelessWidget {
   final String hintText = "أكتب تعليقا ...";
   final Color color = Colors.grey[300];
 
-  final imageOfUser = 'assets/images/person_test.png';
+  final imageOfUser = 'assets/images/icon_person.png';
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +30,7 @@ class AddNewCommentWidget extends StatelessWidget {
               padding: EdgeInsets.all(18),
               height: 50,
               decoration: BoxDecoration(
-                  color: Colors.grey[200],
+                  color: myColors.cBackground,
                   borderRadius: BorderRadius.circular(20.0),
                   border: Border.all(color: Colors.black12)
               ),
@@ -43,8 +44,8 @@ class AddNewCommentWidget extends StatelessWidget {
             ),
           ),
           Container(
-            width: 55,
-            height: 60,
+            width: 45,
+            height: 45,
             child: CircleAvatar(
               backgroundImage: AssetImage(imageOfUser),
               backgroundColor: Colors.transparent,

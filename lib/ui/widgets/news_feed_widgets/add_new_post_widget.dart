@@ -49,7 +49,7 @@ class AddNewPostWidget extends StatelessWidget {
                   padding: EdgeInsets.all(18),
                   height: 50,
                   decoration: BoxDecoration(
-                    color: Colors.grey[200],
+                    color: myColors.cBackground,
                     borderRadius: BorderRadius.circular(20.0),
                     border: Border.all(color: Colors.black12)
                     ),
@@ -64,10 +64,10 @@ class AddNewPostWidget extends StatelessWidget {
                 ),
               ),
           Container(
-            width: 55,
-            height: 60,
+            width: 45,
+            height: 45,
             child: CircleAvatar(
-              backgroundImage: AssetImage('assets/images/person_test.png'),
+              backgroundImage: AssetImage('assets/images/icon_person.png'),
               backgroundColor: Colors.transparent,
             ),
           ),

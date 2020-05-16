@@ -1,10 +1,9 @@
 import 'package:ameen/blocs/models/post_data.dart';
-import 'package:ameen/blocs/models/post_details.dart';
 import 'package:ameen/ui/widgets/comment/add_new_comment.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_model.dart';
-import 'package:ameen/ui/widgets/news_feed_widgets/add_new_post_widget.dart';
 import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';  //for date locale
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 import 'package:ameen/helpers/ui/images.dart' as myImages;
 import 'package:ameen/helpers/ui/text_styles.dart' as mytextStyle;
@@ -138,6 +137,7 @@ class _HeadOfPost extends StatelessWidget {
               child: CircleAvatar(
                 backgroundColor: Colors.transparent,
                 radius: 30.0,
+                backgroundImage: AssetImage('assets/images/icon_person.png'),
               ),
             ),
           ],
@@ -161,6 +161,7 @@ class _PostTimeStamp extends StatelessWidget {
     var timeTheme = new TextStyle(
         fontFamily: 'Dubai', fontSize: 13, color: Colors.grey.shade500);
 
+    initializeDateFormatting('ar');
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
       child: Text(postData.postTimeFormatted, style: timeTheme),

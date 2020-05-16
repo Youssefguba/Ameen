@@ -60,7 +60,7 @@ class PostDetails {
 
 //  String get postTimeFormatted => DateFormat('hh:mm dd-MMM-yyyy ', 'ar_EG').format(postTime);
   String get postTimeFormatted =>
-      DateFormat('hh:mm dd-MMM-yyyy ').format(postTime);
+      DateFormat.yMMMd('ar').add_jm().format(postTime);
 
   factory PostDetails.fromJson(Map<String, dynamic> item) {
     return PostDetails(

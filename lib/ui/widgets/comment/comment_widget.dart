@@ -2,6 +2,7 @@ import 'package:ameen/blocs/models/comment.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_comment_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+import 'package:intl/date_symbol_data_local.dart';
 
 class CommentWidget extends StatelessWidget {
    CommentModel commentModel;
@@ -9,6 +10,8 @@ class CommentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    initializeDateFormatting('ar');
+
     return InheritedCommentModel(
       commentModel: commentModel,
       child: Container(
@@ -24,9 +27,9 @@ class CommentWidget extends StatelessWidget {
             // TODO => Put here the Image of User Account.
             Container (
                 child: Image.asset(
-              'assets/images/person_test.png',
-                 width: 60,
-                 height: 60,
+                'assets/images/icon_person.png',
+                 width: 45,
+                 height: 45,
                  alignment: Alignment.topRight,
                  fit: BoxFit.contain,
             )),
@@ -35,7 +38,6 @@ class CommentWidget extends StatelessWidget {
             Expanded(
               child: Container(
                 child: ClipRRect(
-
                   borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(23),
                       bottomRight: Radius.circular(23),
@@ -65,6 +67,9 @@ class CommentWidget extends StatelessWidget {
   }
 
   Widget _headerOfComment() {
+
+    initializeDateFormatting('ar');
+
     return Container(
       child: Column(
         children: <Widget>[
@@ -82,7 +87,7 @@ class CommentWidget extends StatelessWidget {
           Container(
             alignment: Alignment.topRight,
             child: Text(
-              commentModel.createdAt.toString(),
+              commentModel.postTimeFormatted,
               style: TextStyle(
                   fontFamily: 'Dubai',
                   fontSize: 11.0,

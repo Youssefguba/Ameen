@@ -1,5 +1,7 @@
 import 'package:ameen/blocs/models/comment.dart';
 import 'package:ameen/blocs/models/reaction_model.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';  //for date locale
 import 'package:intl/intl.dart';
 
 // Model of Post
@@ -55,7 +57,7 @@ class PostData {
   });
 
   String get postTimeFormatted =>
-      DateFormat('hh:mm dd-MMM-yyyy ').format(postTime);
+      DateFormat.yMMMd('ar').add_jm().format(postTime);
 //  String get postTimeFormatted => DateFormat.yMd().format(postTime);
 
   factory PostData.fromJson(Map<String, dynamic> item) {

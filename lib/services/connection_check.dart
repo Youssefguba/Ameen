@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class ConnectivityCheck extends StatelessWidget {
   final Widget child;
 
-  ConnectivityCheck({@required this.child});
+  ConnectivityCheck({this.child});
 
   @override
   Widget build(BuildContext context) {
