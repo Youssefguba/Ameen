@@ -4,8 +4,6 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 
 class SplashScreen extends StatelessWidget {
-
-
   @override
   Widget build(BuildContext context) {
     void navigate (){
@@ -27,7 +25,7 @@ class SplashScreen extends StatelessWidget {
                 textStyle: TextStyle(
                   color: myColors.cGreen,
                   fontSize: 80.0,
-                  fontFamily: "Dubai",
+                  fontFamily: "Tajawal",
                   fontWeight: FontWeight.bold,
                 ),
                 colors: [Colors.white, myColors.cGreen],

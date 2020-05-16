@@ -74,14 +74,23 @@ flutter:
         - asset: assets/fonts/Cairo.ttf
         - asset: assets/fonts/Cairo_Bold.ttf
 
-
     - family: Dubai
       fonts:
         - asset: assets/fonts/Dubai_Regular.ttf
         - asset: assets/fonts/Dubai_Bold.ttf
         - asset: assets/fonts/Dubai_Light.ttf
 
+    - family: Tajawal
+      fonts:
+        - asset: assets/fonts/Tajawal-Regular.ttf
 
+    - family: Ruqaa
+      fonts:
+        - asset: assets/fonts/ArefRuqaa-Regular.ttf
+
+    - family: Kufi
+      fonts:
+        - asset: assets/fonts/ReemKufi-Regular.ttf
 
   #   - family: Schyler
   #     fonts:
