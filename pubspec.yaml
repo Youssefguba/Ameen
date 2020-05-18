@@ -35,7 +35,7 @@ dependencies:
   liquid_pull_to_refresh: ^2.0.0
   fluttertoast: ^4.0.1
   animated_text_kit: ^2.0.1
-
+  bubble: ^1.1.9+1
 
 dev_dependencies:
   flutter_test:

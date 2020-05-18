@@ -1,5 +1,6 @@
 import 'package:ameen/blocs/models/comment.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_comment_widget.dart';
+import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 import 'package:intl/date_symbol_data_local.dart';
@@ -37,16 +38,15 @@ class CommentWidget extends StatelessWidget {
             // User comment
             Expanded(
               child: Container(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(23),
-                      bottomRight: Radius.circular(23),
-                      topLeft: Radius.circular(23),
-                      topRight: Radius.circular(0)),
+                child: Bubble(
+                  margin: BubbleEdges.only(top: 10),
+                  color: Colors.white,
+                  stick:  false,
+                  radius: Radius.circular(20.0),
+                  elevation: 1.0,
                   child: Container(
                     padding: EdgeInsets.only(right: 10, left: 10, top: 3),
                     margin: EdgeInsets.only(left: 5, right: 5),
-                    decoration: BoxDecoration(color: Colors.white),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
                       child: Column(

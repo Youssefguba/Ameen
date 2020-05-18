@@ -21,7 +21,7 @@ class SplashScreen extends StatelessWidget {
                 isRepeatingAnimation: false,
                 onFinished: navigate,
                 speed: Duration(milliseconds: 900),
-                text: ["آمين", "Ameen"],
+                text: ["آمين", "Amen"],
                 textStyle: TextStyle(
                   color: myColors.cGreen,
                   fontSize: 80.0,
