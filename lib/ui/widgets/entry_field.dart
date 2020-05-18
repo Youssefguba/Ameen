@@ -7,9 +7,10 @@ class EntryField extends StatelessWidget {
   TextInputType textInputType;
   bool isPassword;
   Icon visibleIcon;
+  TextEditingController editingController;
 
   EntryField(this.title, this.inputIcon, {this.textInputType = TextInputType.text, this.isPassword = false
-  , this.visibleIcon});
+  , this.visibleIcon, this.editingController});
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +27,12 @@ class EntryField extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           TextField(
+              controller: editingController,
               textAlign: TextAlign.right,
               textDirection: TextDirection.rtl,
               obscureText: isPassword,
               autocorrect: true,
+
               keyboardType: textInputType,
               cursorColor:Color.fromRGBO(0, 153, 51, 1),
               style: TextStyle(fontFamily: 'Dubai', fontSize: 15),

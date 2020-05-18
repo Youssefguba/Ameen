@@ -5,9 +5,16 @@ import 'package:ameen/ui/widgets/or_line.dart';
 import 'package:ameen/ui/widgets/submit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
-class SignUp extends StatelessWidget {
+class SignUp extends StatefulWidget {
+  @override
+  _SignUpState createState() => _SignUpState();
+}
+
+class _SignUpState extends State<SignUp> {
+
   Widget _loginAccountLabel() {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 20),
@@ -95,7 +102,9 @@ class SignUp extends StatelessWidget {
                     SizedBox(
                       height: 10,
                     ),
-                    SubmitButton(cGreen, "إنشاء حساب"),
+
+                    //TODO => There is Button Here
+//                    SubmitButton(cGreen, "إنشاء حساب"),
                     SizedBox(
                       height: 10,
                     ),
@@ -107,12 +116,16 @@ class SignUp extends StatelessWidget {
                     SizedBox(
                       height: 10,
                     ),
-                    SubmitButton(cFacebookColor,
-                        "التسجيل بواسطة الفيسبوك"),
+
+                    //TODO => There is Button Here
+//                    SubmitButton(cFacebookColor,
+//                        "التسجيل بواسطة الفيسبوك"),
                     SizedBox(
                       height: 13,
                     ),
-                    SubmitButton(Colors.grey.shade700, "الدخول كمستخدم خفي")
+
+                    //TODO => There is Button Here
+//                    SubmitButton(Colors.grey.shade700, "الدخول كمستخدم خفي")
                   ],
                 ),
               ),

@@ -1,12 +1,14 @@
 import 'package:ameen/helpers/ui/app_color.dart';
+import 'package:ameen/services/connection_check.dart';
 import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/Screens/home.dart';
-import 'package:ameen/ui/Screens/post_page.dart';
-import 'package:ameen/ui/Screens/splash_screen.dart';
-import 'package:ameen/ui/widgets/post_widgets/reactions_box.dart';
+import 'package:ameen/ui/Screens/login.dart';
+import 'package:ameen/ui/Screens/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void setupLocator(){
     GetIt.I.registerLazySingleton(() => PostsService());
@@ -37,7 +39,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Color.fromRGBO(62, 146, 42, 1),
       ),
       debugShowCheckedModeBanner: false,
-      home: Home(),
+      home: Login(),
     );
   }
 }

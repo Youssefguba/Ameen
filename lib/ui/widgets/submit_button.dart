@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 
 class SubmitButton extends StatelessWidget {
-  var color;
-  var title;
+  final color;
+  final title;
+  final GestureTapCallback gestureTapCallback;
 
-  SubmitButton(this.color, this.title);
+  SubmitButton(this.color, this.title, this.gestureTapCallback);
 
   @override
   Widget build(BuildContext context) {
@@ -15,23 +17,23 @@ class SubmitButton extends StatelessWidget {
     return Center(
       child: Container(
         width: 180,
-        padding: EdgeInsets.symmetric(vertical: 12),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
+        height: 50,
+        child: RaisedButton(
+          padding: EdgeInsets.symmetric(vertical: 12),
+          shape: StadiumBorder(),
           color: color,
-          borderRadius: BorderRadius.all(Radius.circular(30)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.shade200,
-                offset: Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
-          ],
-        ),
-        child: Text(
-          title,
-          style:
-          TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'Dubai', fontWeight: FontWeight.bold ),
+          disabledColor: color,
+          splashColor: Colors.white70,
+          hoverColor: Colors.white70,
+          focusColor: Colors.white70,
+          highlightColor: myColors.green[50],
+
+          onPressed: gestureTapCallback,
+          child: Text(
+            title,
+            style:
+            TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'Dubai', fontWeight: FontWeight.bold ),
+          ),
         ),
       ),
     );
