@@ -15,7 +15,6 @@ import 'package:http/http.dart' as http;
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 import 'package:toast/toast.dart';
 
-
 class SignUp extends StatefulWidget {
   @override
   _SignUpState createState() => _SignUpState();
@@ -83,11 +82,21 @@ class _SignUpState extends State<SignUp> {
   Widget _emailPasswordWidget() {
     return Column(
       children: <Widget>[
-        EntryField("إسم المستخدم", Icon(Icons.person), editingController: userNameController),
-        EntryField("البريد الإلكتروني", Icon(Icons.email),
-            textInputType: TextInputType.emailAddress, editingController: emailController,),
-        EntryField("إنشاء كلمة سر", Icon(Icons.lock),
-            isPassword: true, visibleIcon: Icon(Icons.visibility_off), editingController: passwordController,),
+        EntryField("إسم المستخدم", Icon(Icons.person),
+            editingController: userNameController),
+        EntryField(
+          "البريد الإلكتروني",
+          Icon(Icons.email),
+          textInputType: TextInputType.emailAddress,
+          editingController: emailController,
+        ),
+        EntryField(
+          "إنشاء كلمة سر",
+          Icon(Icons.lock),
+          isPassword: true,
+          visibleIcon: Icon(Icons.visibility_off),
+          editingController: passwordController,
+        ),
       ],
     );
   }
@@ -100,53 +109,59 @@ class _SignUpState extends State<SignUp> {
           height: MediaQuery.of(context).size.height,
           child: Stack(
             children: <Widget>[
-              (_isLoading) ? Center(child: CircularProgressIndicator(
-                backgroundColor: myColors.cBackground,
-                valueColor: new AlwaysStoppedAnimation<Color>(myColors.cGreen),
-              )): Container(
-                padding: EdgeInsets.symmetric(horizontal: 21),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    _title(),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    _emailPasswordWidget(),
-                    SizedBox(
-                      height: 10,
-                    ),
+              (_isLoading)
+                  ? Center(
+                      child: CircularProgressIndicator(
+                      backgroundColor: myColors.cBackground,
+                      valueColor:
+                          new AlwaysStoppedAnimation<Color>(myColors.cGreen),
+                    ))
+                  : Container(
+                      padding: EdgeInsets.symmetric(horizontal: 21),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          _title(),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          _emailPasswordWidget(),
+                          SizedBox(
+                            height: 10,
+                          ),
 
-                    //TODO => There is Button Here
-                    SubmitButton(cGreen, "إنشاء حساب", createAccountButton),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    _loginAccountLabel(),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    OrLine(),
-                    SizedBox(
-                      height: 10,
-                    ),
+                          //TODO => There is Button Here
+                          SubmitButton(
+                              cGreen, "إنشاء حساب", createAccountButton),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          _loginAccountLabel(),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          OrLine(),
+                          SizedBox(
+                            height: 10,
+                          ),
 
-                    //TODO => There is Button Here
-                    SubmitButton(cFacebookColor,
-                        "التسجيل بواسطة الفيسبوك", faceBookLoginButton),
-                    SizedBox(
-                      height: 13,
-                    ),
+                          //TODO => There is Button Here
+                          SubmitButton(cFacebookColor,
+                              "التسجيل بواسطة الفيسبوك", faceBookLoginButton),
+                          SizedBox(
+                            height: 13,
+                          ),
 
-                    //TODO => There is Button Here
-                    SubmitButton(Colors.grey.shade700, "الدخول كمستخدم خفي", anonymousLoginButton)
-                  ],
-                ),
-              ),
+                          //TODO => There is Button Here
+                          SubmitButton(Colors.grey.shade700,
+                              "الدخول كمستخدم خفي", anonymousLoginButton)
+                        ],
+                      ),
+                    ),
             ],
           ),
         ),
@@ -157,28 +172,29 @@ class _SignUpState extends State<SignUp> {
   /* Handle Normal Login Function */
   /// handle Response of Sign In and Compare tokens..
   signUp(UserModel userModel) async {
-//    Map data = {'username': username, 'email': email, 'password': password};
-
-    await http.post(PostsService.API + 'auth/signup', headers: PostsService.headers,
-        body: json.encode(userModel.toJson())).then((data) {
-      if(data.statusCode == 200 ) {
+    await http
+        .post(PostsService.API + 'auth/signup',
+            headers: PostsService.headers,
+            body: json.encode(userModel.toJson()))
+        .then((data) {
+      if (data.statusCode == 200) {
         var jsonResponse = json.decode(data.body);
         if (jsonResponse != null) {
           setState(() {
             _isLoading = false;
           });
           status = data.body.contains('error');
-          if(status){
+          if (status) {
             print('data : ${jsonResponse["error"]}');
-          }else {
+          } else {
             print('data : ${jsonResponse["token"]}');
             _save(jsonResponse["token"]);
           }
 
           // After Save the User redirect to Home Page.
           Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                  builder: (BuildContext buildContext) => Home()), (route) => false);
+              MaterialPageRoute(builder: (BuildContext buildContext) => Home()),
+              (route) => false);
         }
       }
 
@@ -188,7 +204,7 @@ class _SignUpState extends State<SignUp> {
           _isLoading = true;
         });
         Toast.show(
-         'هذا الحساب موجود بالفعل',
+          'هذا الحساب موجود بالفعل',
           context,
           backgroundColor: Colors.red.shade700,
           textColor: Colors.white,
@@ -218,14 +234,15 @@ class _SignUpState extends State<SignUp> {
         });
       }
     });
-
   }
 
   /// Normal Login Button Function
-  void  createAccountButton() {
-    if(userNameController.text == '' || emailController.text == "" || passwordController.text == ''){
+  void createAccountButton() {
+    if (userNameController.text == '' ||
+        emailController.text == "" ||
+        passwordController.text == '') {
       Toast.show(
-         'ارجوا عدم ترك الايميل الالكتروني او الرقم السري فارغا',
+        'ارجوا عدم ترك الايميل الالكتروني او الرقم السري فارغا',
         context,
         backgroundColor: Colors.red.shade700,
         textColor: Colors.white,
@@ -236,18 +253,20 @@ class _SignUpState extends State<SignUp> {
       setState(() {
         _isLoading = true;
       });
-      var user = UserModel (
+      var user = UserModel(
         userEmail: emailController.text,
         username: userNameController.text,
-        password:  passwordController.text,
+        password: passwordController.text,
       );
       signUp(user);
     }
   }
-  void faceBookLoginButton () {}
 
+  /// Facebook Login Button Function
+  void faceBookLoginButton() {}
+
+  /// Anonymous Login Button Function
   void anonymousLoginButton() {}
-
 }
 
 //function save

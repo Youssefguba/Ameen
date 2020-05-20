@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:ameen/blocs/global/global.dart';
 import 'package:ameen/blocs/models/api_response.dart';
 import 'package:ameen/blocs/models/comment.dart';
 import 'package:ameen/blocs/models/insert_post.dart';
@@ -61,8 +62,9 @@ class PostsService {
 
 /// Ameen React..
   Future<APIResponse<bool>> ameenReact(String postId, AmeenReaction ameenReact) async {
-    return await http.post(API + 'users/5eb0c28fe1be6b44a094cbf7/' + postId + '/reactions', headers: headers,
+    return await http.post(API + 'users/' + GlobalVariable.userId + '/' + postId + '/reactions', headers: headers,
         body: json.encode(ameenReact.toJson())).then((data) {
+          print(GlobalVariable.userId);
       if (data.statusCode == 201) {
         return APIResponse<bool>(data: true);
       }
@@ -73,7 +75,7 @@ class PostsService {
 
   /// Remove Ameen React..
   Future<APIResponse<bool>> removeAmeenReact(String postId, String reactionId) async {
-    return await http.delete(API + 'users/5eb0c28fe1be6b44a094cbf7/' + postId + '/reactions/' + reactionId , headers: headers).then((data) {
+    return await http.delete(API + 'users/' + GlobalVariable.userId + '/' + postId + '/reactions/' + reactionId , headers: headers).then((data) {
       if (data.statusCode == 204) {
         return APIResponse<bool>(data: true);
       }
@@ -85,7 +87,7 @@ class PostsService {
   // Called When User create a Post to put it on the user profile and Newsfeed..
   //TODO => You should put the userId variable insted of Hardcode..
   Future<APIResponse<bool>> addComment(CommentModel commentModel, String postId) async {
-    return await http.post(API + 'users/5eb0c28fe1be6b44a094cbf7/' + postId + '/comments', headers: headers, body: json.encode(commentModel.toJson()))
+    return await http.post(API + 'users/'+ GlobalVariable.userId + '/' + postId + '/comments', headers: headers, body: json.encode(commentModel.toJson()))
         .then((data) {
       if (data.statusCode == 201) {
         return APIResponse<bool>(data: true);

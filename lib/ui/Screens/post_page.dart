@@ -91,90 +91,88 @@ class _PostPageState extends State<PostPage> {
           disabledColor: myColors.cBackground,
         ),
       ),
-      body: ConnectivityCheck(
-        child: Builder(builder: (context) {
-          if (_isLoading) {
-            return Center(
-                child: CircularProgressIndicator(
-              backgroundColor: myColors.cBackground,
-              valueColor: new AlwaysStoppedAnimation<Color>(myColors.cGreen),
-            ));
-          }
-          return RefreshIndicator(
-            color: myColors.cGreen,
-            backgroundColor: Colors.white,
-            onRefresh: () async {
-              await _fetchPost();
-            },
-            child: Container(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  InheritedPostModel(
-                    postDetails: postDetails,
-                    child: Container(
-                      margin: EdgeInsets.only(top: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.white10,
-                            blurRadius:
-                                0.1, // has the effect of softening the shadow
-                            offset: new Offset(0.1, 0.1),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 13)),
+      body: Builder(builder: (context) {
+        if (_isLoading) {
+          return Center(
+              child: CircularProgressIndicator(
+            backgroundColor: myColors.cBackground,
+            valueColor: new AlwaysStoppedAnimation<Color>(myColors.cGreen),
+          ));
+        }
+        return RefreshIndicator(
+          color: myColors.cGreen,
+          backgroundColor: Colors.white,
+          onRefresh: () async {
+            await _fetchPost();
+          },
+          child: Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                InheritedPostModel(
+                  postDetails: postDetails,
+                  child: Container(
+                    margin: EdgeInsets.only(top: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.white10,
+                          blurRadius:
+                              0.1, // has the effect of softening the shadow
+                          offset: new Offset(0.1, 0.1),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 13)),
 
-                          // The top Section of Post (Photo, Time, Settings, Name)
-                          _HeadOfPost(),
+                        // The top Section of Post (Photo, Time, Settings, Name)
+                        _HeadOfPost(),
 
-                          // The post of the Post
-                          _postBody(),
+                        // The post of the Post
+                        _postBody(),
 
-                          // React and Comment Counter
-                          _reactAndCommentCounter(),
+                        // React and Comment Counter
+                        _reactAndCommentCounter(),
 
-                          // The Beginning of Reaction Buttons Row
-                          SizedBox(height: 12),
+                        // The Beginning of Reaction Buttons Row
+                        SizedBox(height: 12),
 
-                          _reactionsButtons(),
-                        ],
-                      ),
+                        _reactionsButtons(),
+                      ],
                     ),
                   ),
+                ),
 
-                  SizedBox(height: 8),
+                SizedBox(height: 8),
 
-                  // List of a comments
-                  Expanded(
-                    child: AnimatedList(
-                        initialItemCount: postDetails.comments.length,
-                        itemBuilder:
-                            (BuildContext context, int index, Animation anim) {
-                          return SizeTransition(
-                            axis: Axis.vertical,
-                            sizeFactor: anim,
-                            child: CommentWidget(
-                                commentModel: postDetails.comments[index]),
-                          );
-                        }),
-                  ),
+                // List of a comments
+                Expanded(
+                  child: AnimatedList(
+                      initialItemCount: postDetails.comments.length,
+                      itemBuilder:
+                          (BuildContext context, int index, Animation anim) {
+                        return SizeTransition(
+                          axis: Axis.vertical,
+                          sizeFactor: anim,
+                          child: CommentWidget(
+                              commentModel: postDetails.comments[index]),
+                        );
+                      }),
+                ),
 
-                  // Write a Comment Widget
-                  InheritedPostModel(
-                      postDetails: postDetails, child: _writeAComment()),
-                ],
-              ),
+                // Write a Comment Widget
+                InheritedPostModel(
+                    postDetails: postDetails, child: _writeAComment()),
+              ],
             ),
-          );
-        }),
-      ),
+          ),
+        );
+      }),
 
 //      bottomNavigationBar:
 //            AddNewPostWidget("أكتب تعليقا ...", Colors.grey[300]),

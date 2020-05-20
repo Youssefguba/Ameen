@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:ui';
+import 'package:ameen/blocs/global/global.dart';
 import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/Screens/home.dart';
 import 'package:ameen/ui/widgets/entry_field.dart';
@@ -170,24 +171,51 @@ class _LoginState extends State<Login> {
     Map data = {'email': email, 'password': password};
 
     var jsonResponse;
-    var response = await http.post(PostsService.API + 'auth/signin', body: data);
-    if(response.statusCode == 200 ) {
-      jsonResponse = json.decode(response.body);
-      if (jsonResponse != null) {
-        setState(() {
-          _isLoading = false;
-        });
-        sharedPreferences.setString("token", jsonResponse['token']);
+    await http.post(PostsService.API + 'auth/signin', body: data).then((response) {
+      if(response.statusCode == 200 ) {
+        jsonResponse = json.decode(response.body);
+         GlobalVariable.userId = jsonResponse['userId'];
+
+        print('Res body token: ${jsonResponse['token']}');
+        if (jsonResponse != null) {
+          setState(() {
+            _isLoading = false;
+          });
+          sharedPreferences.setString("token", jsonResponse['token']);
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
                 builder: (BuildContext buildContext) => Home()), (route) => false);
+        }
       }
-    } else {
+      else if (response.statusCode == 404){
         setState(() {
           _isLoading = false;
         });
-        print(response.body);
-    }
+        Toast.show(
+          'هذا الإيميل غير مسجل',
+          context,
+          backgroundColor: Colors.red.shade700,
+          textColor: Colors.white,
+          gravity: Toast.BOTTOM,
+          duration: Toast.LENGTH_LONG,
+        );
+      }
+      else {
+        setState(() {
+          _isLoading = false;
+        });
+        Toast.show(
+          'حدث خطأ ما حاول مرة أخرى',
+          context,
+          backgroundColor: Colors.red.shade700,
+          textColor: Colors.white,
+          gravity: Toast.BOTTOM,
+          duration: Toast.LENGTH_LONG,
+        );
+      }
+    });
+
+
   }
 
   /// Normal Login Button Function
