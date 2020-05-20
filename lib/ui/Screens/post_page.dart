@@ -1,6 +1,5 @@
 import 'package:ameen/blocs/models/api_response.dart';
 import 'package:ameen/blocs/models/comment.dart';
-import 'package:ameen/blocs/models/post_data.dart';
 import 'package:ameen/blocs/models/post_details.dart';
 import 'package:ameen/blocs/models/reaction_model.dart';
 import 'package:ameen/services/connection_check.dart';
@@ -8,8 +7,6 @@ import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/Screens/news_feed.dart';
 import 'package:ameen/ui/widgets/comment/comment_widget.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_model.dart';
-import 'package:ameen/ui/widgets/inherited_widgets/inherited_reaction_model.dart';
-import 'package:ameen/ui/widgets/news_feed_widgets/add_new_post_widget.dart';
 import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -17,13 +14,11 @@ import 'package:flutter/material.dart';
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 import 'package:ameen/helpers/ui/text_styles.dart' as mytextStyle;
 import 'package:ameen/helpers/ui/images.dart' as myImages;
-import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:get_it/get_it.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:logger/logger.dart';
-import 'dart:math';
+import 'package:toast/toast.dart';
 
 class PostPage extends StatefulWidget {
   final String postId;
@@ -457,13 +452,13 @@ class __writeACommentState extends State<_writeAComment> {
 
                   /// Check if Text Field is Empty or not..
                   if (_text.text.isEmpty) {
-                    Fluttertoast.showToast(
-                      msg: "التعليق ليس به أي محتوى",
-                      toastLength: Toast.LENGTH_LONG,
-                      gravity: ToastGravity.BOTTOM,
-                      backgroundColor: Colors.black87,
+                    Toast.show(
+                      "التعليق ليس به أي محتوى",
+                      context,
+                      backgroundColor: Colors.red.shade700,
                       textColor: Colors.white,
-                      fontSize: 16.0,
+                      gravity: Toast.BOTTOM,
+                      duration: Toast.LENGTH_SHORT,
                     );
                   } else {
                     final comment = CommentModel(commentBody: _text.text);

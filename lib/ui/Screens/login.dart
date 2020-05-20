@@ -7,10 +7,10 @@ import 'package:ameen/ui/widgets/or_line.dart';
 import 'package:ameen/ui/widgets/submit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+import 'package:toast/toast.dart';
 
 
 class Login extends StatefulWidget {
@@ -163,11 +163,13 @@ class _LoginState extends State<Login> {
     );
   }
 
+  /* Handle Normal Login Function */
+  /// handle Response of Sign In and Compare tokens..
   signIn(String email, password) async {
    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     Map data = {'email': email, 'password': password};
 
-    var jsonResponse = null;
+    var jsonResponse;
     var response = await http.post(PostsService.API + 'auth/signin', body: data);
     if(response.statusCode == 200 ) {
       jsonResponse = json.decode(response.body);
@@ -188,17 +190,16 @@ class _LoginState extends State<Login> {
     }
   }
 
-  void faceBookLoginButton() {}
-
+  /// Normal Login Button Function
   void  LoginButton() {
     if(emailController.text == "" || passwordController.text == ''){
-      Fluttertoast.showToast(
-        msg: 'ارجوا عدم ترك الايميل الالكتروني او ال الرقم السري فارغا',
-        fontSize: 15,
-        backgroundColor: Colors.red,
+      Toast.show(
+         'ارجوا عدم ترك الايميل الالكتروني او ال الرقم السري فارغا',
+        context,
+        backgroundColor: Colors.red.shade700,
         textColor: Colors.white,
-        gravity: ToastGravity.BOTTOM,
-        toastLength: Toast.LENGTH_LONG,
+        gravity: Toast.BOTTOM,
+        duration: Toast.LENGTH_SHORT,
       );
     } else {
       setState(() {
@@ -207,6 +208,9 @@ class _LoginState extends State<Login> {
       signIn(emailController.text, passwordController.text);
     }
   }
+
+  /// Facebook Login Button
+  void faceBookLoginButton() {}
 
 }
 

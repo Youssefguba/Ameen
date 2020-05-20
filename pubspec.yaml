@@ -33,11 +33,11 @@ dependencies:
   path_provider: ^1.5.1
   audioplayers: ^0.13.5
   liquid_pull_to_refresh: ^2.0.0
-  fluttertoast: ^4.0.1
   animated_text_kit: ^2.0.1
   bubble: ^1.1.9+1
   provider: ^4.1.2
   shared_preferences: ^0.5.7+2
+  toast: ^0.1.5
 
 dev_dependencies:
   flutter_test:
