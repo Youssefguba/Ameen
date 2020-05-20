@@ -29,10 +29,7 @@ class EntryField extends StatelessWidget {
           TextField(
               controller: editingController,
               textAlign: TextAlign.right,
-              textDirection: TextDirection.rtl,
               obscureText: isPassword,
-              autocorrect: true,
-
               keyboardType: textInputType,
               cursorColor:Color.fromRGBO(0, 153, 51, 1),
               style: TextStyle(fontFamily: 'Dubai', fontSize: 15),

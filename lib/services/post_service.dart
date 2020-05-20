@@ -48,10 +48,8 @@ class PostsService {
   // Called When User create a Post to put it on the user profile and Newsfeed..
   //TODO => You should put the userId variable insted of Hardcode..
   Future<APIResponse<bool>> createPost(PostInsert post) async {
-    return await http
-        .post(API + 'users/5eb0c28fe1be6b44a094cbf7/',
-            headers: headers, body: json.encode(post.toJson()))
-        .then((data) {
+    return await http.post(API + 'users/${GlobalVariable.userId}/', headers: headers, body: json.encode(post.toJson())).then((data) {
+      print(GlobalVariable.userId);
       if (data.statusCode == 201) {
         return APIResponse<bool>(data: true);
       }

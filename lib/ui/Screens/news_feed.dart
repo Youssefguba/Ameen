@@ -14,6 +14,8 @@ import 'package:get_it/get_it.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ameen/blocs/global/global.dart';
+
 
 
 /// * This page to display the General Timeline of posts
@@ -30,10 +32,12 @@ class _NewsFeedState extends State<NewsFeed> {
 
   checkLoginStatus() async {
     sharedPreferences = await SharedPreferences.getInstance();
-    if(sharedPreferences.getString('token') == null ) {
+    if(sharedPreferences.getString('token') == null || sharedPreferences.getString('userId') == null) {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (BuildContext buildContext) => Login()), (route) => false);
+    } else {
+      GlobalVariable.userId = sharedPreferences.getString('userId');
     }
   }
 
@@ -48,6 +52,12 @@ class _NewsFeedState extends State<NewsFeed> {
     super.initState();
     _fetchPosts();
 
+  }
+
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   _fetchPosts() async {

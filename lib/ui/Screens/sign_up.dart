@@ -30,6 +30,12 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController emailController = new TextEditingController();
   final TextEditingController passwordController = new TextEditingController();
 
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   Widget _loginAccountLabel() {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 20),
@@ -100,6 +106,7 @@ class _SignUpState extends State<SignUp> {
       ],
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -189,6 +196,7 @@ class _SignUpState extends State<SignUp> {
           } else {
             print('data : ${jsonResponse["token"]}');
             _save(jsonResponse["token"]);
+//            _save(jsonResponse["token"]);
           }
 
           // After Save the User redirect to Home Page.
@@ -253,10 +261,14 @@ class _SignUpState extends State<SignUp> {
       setState(() {
         _isLoading = true;
       });
+      var emailText = emailController.text;
+      var usernameText = userNameController.text;
+      var passwordText = passwordController.text;
+
       var user = UserModel(
-        userEmail: emailController.text,
-        username: userNameController.text,
-        password: passwordController.text,
+        userEmail: emailText.trim().trimRight().trimLeft(),
+        username: usernameText.trim().trimRight().trimLeft(),
+        password: passwordText.trim().trimRight().trimLeft(),
       );
       signUp(user);
     }
@@ -275,4 +287,5 @@ _save(String token) async {
   final key = 'token';
   final value = token;
   prefs.setString(key, value);
+
 }

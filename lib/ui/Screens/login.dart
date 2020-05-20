@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:ameen/blocs/global/global.dart';
 import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/Screens/home.dart';
+import 'package:ameen/ui/Screens/sign_up.dart';
 import 'package:ameen/ui/widgets/entry_field.dart';
 import 'package:ameen/ui/widgets/or_line.dart';
 import 'package:ameen/ui/widgets/submit_button.dart';
@@ -12,7 +13,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 import 'package:toast/toast.dart';
-
 
 class Login extends StatefulWidget {
   @override
@@ -24,7 +24,6 @@ class _LoginState extends State<Login> {
 
   final TextEditingController emailController = new TextEditingController();
   final TextEditingController passwordController = new TextEditingController();
-
 
   Widget _createAccountLabel() {
     return Container(
@@ -41,6 +40,10 @@ class _LoginState extends State<Login> {
                   fontFamily: 'Dubai',
                   fontWeight: FontWeight.w600),
             ),
+            onTap: (){
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (BuildContext buildContext) => SignUp()));
+            }
           ),
           SizedBox(
             width: 8.0,
@@ -108,13 +111,16 @@ class _LoginState extends State<Login> {
   Widget _emailPasswordWidget() {
     return Column(
       children: <Widget>[
-        EntryField("البريد الإلكتروني", Icon(Icons.email), textInputType: TextInputType.emailAddress, editingController: emailController),
-        EntryField(" كلمة سر", Icon(Icons.lock), isPassword: true, visibleIcon: Icon(Icons.visibility_off), editingController: passwordController),
+        EntryField("البريد الإلكتروني", Icon(Icons.email),
+            textInputType: TextInputType.emailAddress,
+            editingController: emailController),
+        EntryField(" كلمة سر", Icon(Icons.lock),
+            isPassword: true,
+            visibleIcon: Icon(Icons.visibility_off),
+            editingController: passwordController),
       ],
     );
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -122,43 +128,46 @@ class _LoginState extends State<Login> {
       body: SingleChildScrollView(
         child: Container(
           height: MediaQuery.of(context).size.height,
-          child: _isLoading ? Center(child: RefreshProgressIndicator(
-            backgroundColor: Colors.white,
-            valueColor: new AlwaysStoppedAnimation<Color>(myColors.cGreen),
-          )) : Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  height: 40,
+          child: _isLoading
+              ? Center(
+                  child: RefreshProgressIndicator(
+                  backgroundColor: Colors.white,
+                  valueColor:
+                      new AlwaysStoppedAnimation<Color>(myColors.cGreen),
+                ))
+              : Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 40,
+                      ),
+                      _title(),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      _emailPasswordWidget(),
+                      _forgetPassword(),
+                      SubmitButton(Color.fromRGBO(0, 153, 51, 1),
+                          "تسجيل الدخول", LoginButton),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      _createAccountLabel(),
+                      OrLine(),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      SubmitButton(Color.fromRGBO(59, 89, 152, 1),
+                          "التسجيل بواسطة الفيسبوك", faceBookLoginButton),
+                      SizedBox(
+                        height: 13,
+                      ),
+                    ],
+                  ),
                 ),
-                _title(),
-                SizedBox(
-                  height: 10,
-                ),
-                _emailPasswordWidget(),
-                _forgetPassword(),
-
-                SubmitButton(Color.fromRGBO(0, 153, 51, 1), "تسجيل الدخول", LoginButton),
-                SizedBox(
-                  height: 10,
-                ),
-                _createAccountLabel(),
-
-                OrLine(),
-                SizedBox(
-                  height: 20,
-                ),
-                SubmitButton(Color.fromRGBO(59, 89, 152, 1),
-                    "التسجيل بواسطة الفيسبوك", faceBookLoginButton),
-                SizedBox(
-                  height: 13,
-                ),
-              ],
-            ),
-          ),
         ),
       ),
     );
@@ -167,14 +176,16 @@ class _LoginState extends State<Login> {
   /* Handle Normal Login Function */
   /// handle Response of Sign In and Compare tokens..
   signIn(String email, password) async {
-   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     Map data = {'email': email, 'password': password};
 
     var jsonResponse;
-    await http.post(PostsService.API + 'auth/signin', body: data).then((response) {
-      if(response.statusCode == 200 ) {
+    await http
+        .post(PostsService.API + 'auth/signin', body: data)
+        .then((response) {
+      if (response.statusCode == 200) {
         jsonResponse = json.decode(response.body);
-         GlobalVariable.userId = jsonResponse['userId'];
+        GlobalVariable.userId = jsonResponse['userId'];
 
         print('Res body token: ${jsonResponse['token']}');
         if (jsonResponse != null) {
@@ -182,12 +193,12 @@ class _LoginState extends State<Login> {
             _isLoading = false;
           });
           sharedPreferences.setString("token", jsonResponse['token']);
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-                builder: (BuildContext buildContext) => Home()), (route) => false);
+          sharedPreferences.setString("userId", jsonResponse['userId']);
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (BuildContext buildContext) => Home()),
+              (route) => false);
         }
-      }
-      else if (response.statusCode == 404){
+      } else if (response.statusCode == 404) {
         setState(() {
           _isLoading = false;
         });
@@ -199,8 +210,7 @@ class _LoginState extends State<Login> {
           gravity: Toast.BOTTOM,
           duration: Toast.LENGTH_LONG,
         );
-      }
-      else {
+      } else {
         setState(() {
           _isLoading = false;
         });
@@ -214,15 +224,13 @@ class _LoginState extends State<Login> {
         );
       }
     });
-
-
   }
 
   /// Normal Login Button Function
-  void  LoginButton() {
-    if(emailController.text == "" || passwordController.text == ''){
+  void LoginButton() {
+    if (emailController.text == "" || passwordController.text == '') {
       Toast.show(
-         'ارجوا عدم ترك الايميل الالكتروني او ال الرقم السري فارغا',
+        'ارجوا عدم ترك الايميل الالكتروني او ال الرقم السري فارغا',
         context,
         backgroundColor: Colors.red.shade700,
         textColor: Colors.white,
@@ -239,6 +247,4 @@ class _LoginState extends State<Login> {
 
   /// Facebook Login Button
   void faceBookLoginButton() {}
-
 }
-
