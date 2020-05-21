@@ -1,9 +1,11 @@
 import 'package:ameen/blocs/models/post_data.dart';
+import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/widgets/comment/add_new_comment.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_model.dart';
 import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/date_symbol_data_local.dart';  //for date locale
+import 'package:get_it/get_it.dart';
+import 'package:intl/date_symbol_data_local.dart'; //for date locale
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 import 'package:ameen/helpers/ui/images.dart' as myImages;
 import 'package:ameen/helpers/ui/text_styles.dart' as mytextStyle;
@@ -78,7 +80,7 @@ class _postBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final PostData postData = InheritedPostModel.of(context).postData;
 
-    return Container(
+    return Container (
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
       padding: EdgeInsets.symmetric(horizontal: 15),
       alignment: AlignmentDirectional.topEnd,
@@ -98,17 +100,43 @@ class _postBody extends StatelessWidget {
   * The top Section of Post (Photo, Time, Settings, Name)
   * */
 class _HeadOfPost extends StatelessWidget {
+  PostsService get services => GetIt.I<PostsService>();
+  static const String removePost = 'حذف المنشور';
+  static const List<String> listOfOptions = <String>[
+    removePost,
+  ];
+
+
   @override
   Widget build(BuildContext context) {
     final PostData postData = InheritedPostModel.of(context).postData;
+
+    void choiceAction(String option) async {
+      if(option == removePost){
+        await services.removePost(postData.postId);
+      }
+    }
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Flexible(
-          child: IconButton(
+          // More button of post to show options of post.
+          child: PopupMenuButton<String>(
             icon: Icon(Icons.more_horiz),
+            shape: StadiumBorder(),
+            onSelected: choiceAction,
+            itemBuilder: (BuildContext context){
+              return listOfOptions.map((String option){
+                return PopupMenuItem<String>(
+                  height: 20,
+                  textStyle: TextStyle(fontSize: 12, fontFamily: 'Dubai', color: Colors.black),
+                  value: option,
+                  child: Text(option),
+                );
+              }).toList();
+            },
           ),
         ),
         Row(
@@ -174,7 +202,7 @@ class _PostTimeStamp extends StatelessWidget {
 * */
 class _reactAndCommentCounter extends StatefulWidget {
   String reactionCounter;
-  _reactAndCommentCounter({Key key , this.reactionCounter}) :super(key: key);
+  _reactAndCommentCounter({Key key, this.reactionCounter}) : super(key: key);
 
   @override
   _reactAndCommentCounterState createState() => _reactAndCommentCounterState();
@@ -185,7 +213,6 @@ class _reactAndCommentCounterState extends State<_reactAndCommentCounter> {
 
   @override
   Widget build(BuildContext context) {
-
     final PostData postData = InheritedPostModel.of(context).postData;
     var _ameenCounter;
     var _recommendCounter = postData.recommendReaction.length;
@@ -193,8 +220,8 @@ class _reactAndCommentCounterState extends State<_reactAndCommentCounter> {
     var _totalReactions = 0;
 
     setState(() {
-      _ameenCounter    = postData.ameenReaction.length;
-      _totalReactions  = _ameenCounter + _recommendCounter + _forbiddenCounter;
+      _ameenCounter = postData.ameenReaction.length;
+      _totalReactions = _ameenCounter + _recommendCounter + _forbiddenCounter;
     });
 
     return InheritedPostModel(
@@ -221,8 +248,7 @@ class _reactAndCommentCounterState extends State<_reactAndCommentCounter> {
                       margin: EdgeInsets.only(right: 2, left: 2),
                       child: Text(
                         //Check if the Total Reactions = 0 or not
-                        _totalReactions >= 1 ?
-                        "$_ameenCounter" : '',
+                        _totalReactions >= 1 ? "$_ameenCounter" : '',
                         style: mytextStyle.reactCounterTextStyle,
                       ),
                     ),
@@ -266,18 +292,17 @@ class _reactAndCommentCounterState extends State<_reactAndCommentCounter> {
             Visibility(
                 visible: postData.comments.length >= 1 ? true : false,
                 child: Container(
-                    child: Row(
-                      textDirection: TextDirection.rtl,
-                      children: <Widget>[
-                        // Number of comments
-                        Text(postData.comments.length.toString(), style: mytextStyle.reactCounterTextStyle),
-                        // "Comment Word"
-                        Text('تعليق', style: mytextStyle.reactCounterTextStyle),
-                      ],
-                    ),
-
-                )
-            ),
+                  child: Row(
+                    textDirection: TextDirection.rtl,
+                    children: <Widget>[
+                      // Number of comments
+                      Text(postData.comments.length.toString(),
+                          style: mytextStyle.reactCounterTextStyle),
+                      // "Comment Word"
+                      Text('تعليق', style: mytextStyle.reactCounterTextStyle),
+                    ],
+                  ),
+                )),
           ],
         ),
       ),

@@ -46,11 +46,21 @@ class PostsService {
   }
 
   // Called When User create a Post to put it on the user profile and Newsfeed..
-  //TODO => You should put the userId variable insted of Hardcode..
   Future<APIResponse<bool>> createPost(PostInsert post) async {
     return await http.post(API + 'users/${GlobalVariable.userId}/', headers: headers, body: json.encode(post.toJson())).then((data) {
       print(GlobalVariable.userId);
       if (data.statusCode == 201) {
+        return APIResponse<bool>(data: true);
+      }
+      return APIResponse<bool>(error: true, errorMessage: errorMessage);
+    }).catchError(
+            (_) => APIResponse<bool>(error: true, errorMessage: errorMessage));
+  }
+
+//
+  Future<APIResponse<bool>> removePost(String postId) async {
+    return await http.delete(API + 'users/' + GlobalVariable.userId + '/' + postId , headers: headers).then((data) {
+      if (data.statusCode == 204) {
         return APIResponse<bool>(data: true);
       }
       return APIResponse<bool>(error: true, errorMessage: errorMessage);
@@ -83,7 +93,6 @@ class PostsService {
   }
 
   // Called When User create a Post to put it on the user profile and Newsfeed..
-  //TODO => You should put the userId variable insted of Hardcode..
   Future<APIResponse<bool>> addComment(CommentModel commentModel, String postId) async {
     return await http.post(API + 'users/'+ GlobalVariable.userId + '/' + postId + '/comments', headers: headers, body: json.encode(commentModel.toJson()))
         .then((data) {
