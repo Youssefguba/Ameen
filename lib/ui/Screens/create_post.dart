@@ -4,6 +4,7 @@ import 'package:ameen/ui/Screens/news_feed.dart';
 import 'package:flutter/material.dart';
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 import 'package:get_it/get_it.dart';
+import 'package:toast/toast.dart';
 
 class CreatePost extends StatefulWidget {
   @override
@@ -12,7 +13,6 @@ class CreatePost extends StatefulWidget {
 
 class _CreatePostState extends State<CreatePost> {
   PostsService get services => GetIt.I<PostsService>();
-
   TextEditingController _postBodyController = TextEditingController();
 
   @override
@@ -20,42 +20,7 @@ class _CreatePostState extends State<CreatePost> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
-      bottomNavigationBar: FlatButton(
-        autofocus: true,
-        focusColor: myColors.cBackground,
-        hoverColor: myColors.cBackground,
-        onPressed: () async {
-          final post = PostInsert(
-              // Get the Post body from the TextField of the text..
-                postBody: _postBodyController.text);
-
-          final result = await services.createPost(post);
-
-          Navigator.of(context).pop();
-          final text = result.error
-              ? (result.errorMessage ?? 'حدث خلل ما ')
-              : 'تم نشر الدعاء بنجاح ❤';
-          //To pop from the page after published of post.
-          if (result.data) {
-            Navigator.of(context).pop(NewsFeed);
-          }
-        },
-
-        padding: EdgeInsets.symmetric(vertical: 10),
-        color: myColors.cGreen,
-        disabledColor: myColors.cGreen,
-        child: Text(
-          "نشر الدعاء",
-          textDirection: TextDirection.rtl,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: 'Dubai',
-            color: Colors.white,
-            fontSize: 19,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
+//      bottomNavigationBar:
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 1.0,
@@ -84,32 +49,105 @@ class _CreatePostState extends State<CreatePost> {
         ],
       ),
       body: Container(
+        height: double.maxFinite,
         margin: EdgeInsets.all(15),
-        child: TextField(
-          controller: _postBodyController,
-          textAlign: TextAlign.right,
-          textDirection: TextDirection.rtl,
-          maxLength: 220,
-          maxLines: 9,
-          style: TextStyle(fontSize: 18, fontFamily: 'Dubai'),
-          textInputAction: TextInputAction.newline,
-          autofocus: true,
-          showCursor: true,
-          maxLengthEnforced: true,
-          expands: false,
-          minLines: 1,
-          scrollPhysics: BouncingScrollPhysics(),
-          cursorColor: myColors.green[900],
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.all(15.0),
-            border: InputBorder.none,
-            hintText: " ... أكتب الدعاء الذي يجول بخاطرك ",
-            hintStyle: TextStyle(
-              fontFamily: 'Dubai',
+        child: Stack(
+          children: <Widget>[
+            // TextField of Post
+            TextField(
+              controller: _postBodyController,
+              textAlign: TextAlign.right,
+              maxLength: 220,
+              maxLines: 9,
+              style: TextStyle(fontSize: 18, fontFamily: 'Dubai'),
+              textInputAction: TextInputAction.newline,
+              autofocus: true,
+              showCursor: true,
+              maxLengthEnforced: false,
+              expands: false,
+              minLines: 1,
+              scrollController: ScrollController(),
+              scrollPhysics: BouncingScrollPhysics(),
+              cursorColor: myColors.green[900],
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.all(15.0),
+                border: InputBorder.none,
+                hintText: " ... أكتب الدعاء الذي يجول بخاطرك ",
+                hintStyle: TextStyle(
+                  fontFamily: 'Dubai',
+                ),
+              ),
             ),
-          ),
+
+            // Post Button
+            Expanded(
+              child: Align(
+                alignment: FractionalOffset.bottomCenter,
+                widthFactor: double.maxFinite,
+                child: FlatButton(
+
+                  focusColor: myColors.cBackground,
+                  hoverColor: myColors.cBackground,
+                  onPressed: createAPost,
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  color: myColors.cGreen,
+                  disabledColor: myColors.cGreen,
+                  child: Text(
+                    "نشر الدعاء",
+                    textDirection: TextDirection.rtl,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Dubai',
+                      color: Colors.white,
+                      fontSize: 19,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
-}
+
+  void createAPost() async {
+    // Get the Post body from the TextField of the text..
+    final post = PostInsert(
+          postBody: _postBodyController.text);
+
+      // Check if the text field is empty or not.
+      if(_postBodyController.text.isEmpty) {
+        Toast.show(
+            'لا يجب ترك المنشور فارغا',
+            context,
+            duration: Toast.LENGTH_LONG,
+            gravity: Toast.BOTTOM,
+            backgroundColor: Colors.red.shade800
+        );
+      } else {
+        // Check if the post is created or not..
+        await services.createPost(post).then((result) {
+          if (result.data == true) {
+            Navigator.of(context).pop(NewsFeed);
+            Toast.show(
+              'تم نشر الدعاء بنجاح',
+              context,
+              duration: Toast.LENGTH_LONG,
+              gravity: Toast.BOTTOM,
+            );
+          } else {
+            Navigator.of(context).pop(NewsFeed);
+            Toast.show(
+              'حدث خلل في نشر الدعاء حاول مرة أخرى',
+              context,
+              duration: Toast.LENGTH_LONG,
+              gravity: Toast.BOTTOM,
+            );
+          }
+        });
+      }
+    }
+  }
+

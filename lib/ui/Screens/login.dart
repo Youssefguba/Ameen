@@ -180,8 +180,7 @@ class _LoginState extends State<Login> {
     Map data = {'email': email, 'password': password};
 
     var jsonResponse;
-    await http
-        .post(PostsService.API + 'auth/signin', body: data)
+    await http.post(PostsService.API + 'auth/signin', body: data)
         .then((response) {
       if (response.statusCode == 200) {
         jsonResponse = json.decode(response.body);

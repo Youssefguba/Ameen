@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Color.fromRGBO(62, 146, 42, 1),
       ),
       debugShowCheckedModeBanner: false,
-      home: Login(),
+      home: Home(),
     );
   }
 }

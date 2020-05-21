@@ -48,8 +48,7 @@ class PostsService {
   /// Called When User create a Post to put it on the user profile and Newsfeed..
   Future<APIResponse<bool>> createPost(PostInsert post) async {
     return await http.post(API + 'users/' + GlobalVariable.currentUserId + '/' , headers: headers, body: json.encode(post.toJson())).then((data) {
-      print(GlobalVariable.currentUserId);
-      if (data.statusCode == 201) {
+      if (data.statusCode == 200 || data.statusCode == 201) {
         return APIResponse<bool>(data: true);
       }
       return APIResponse<bool>(error: true, errorMessage: errorMessage);
