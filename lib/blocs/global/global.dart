@@ -1,3 +1,3 @@
  class  GlobalVariable {
-  static var userId;
+  static var currentUserId;
 }

@@ -1,3 +1,4 @@
+import 'package:ameen/blocs/global/global.dart';
 import 'package:ameen/blocs/models/post_data.dart';
 import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/widgets/comment/add_new_comment.dart';
@@ -102,18 +103,19 @@ class _postBody extends StatelessWidget {
 class _HeadOfPost extends StatelessWidget {
   PostsService get services => GetIt.I<PostsService>();
   static const String removePost = 'حذف المنشور';
-  static const List<String> listOfOptions = <String>[
-    removePost,
-  ];
-
+  static const String savePost = "حفظ المنشور في القائمة";
 
   @override
   Widget build(BuildContext context) {
     final PostData postData = InheritedPostModel.of(context).postData;
 
+    // To handle function of selected Item in PopupMenuButton
     void choiceAction(String option) async {
       if(option == removePost){
         await services.removePost(postData.postId);
+      } else if (option == savePost) {
+        //TODO => Handle it Later to Save Post.
+        print('Button Clicked');
       }
     }
 
@@ -121,24 +123,38 @@ class _HeadOfPost extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
+        /// Show Popup More Button
         Flexible(
-          // More button of post to show options of post.
+          // More button to show options of post.
           child: PopupMenuButton<String>(
             icon: Icon(Icons.more_horiz),
-            shape: StadiumBorder(),
             onSelected: choiceAction,
-            itemBuilder: (BuildContext context){
-              return listOfOptions.map((String option){
-                return PopupMenuItem<String>(
-                  height: 20,
-                  textStyle: TextStyle(fontSize: 12, fontFamily: 'Dubai', color: Colors.black),
-                  value: option,
-                  child: Text(option),
-                );
-              }).toList();
-            },
+            itemBuilder: (context) => [
+
+              /// Remove Post Item
+              PopupMenuItem(
+                // Check if the post is belong to the current User or not .. to show or remove (Remove Post)
+                child: Visibility(
+                    visible: postData.authorId == GlobalVariable.currentUserId ? true : false,
+                    child: Text(removePost)),
+                textStyle: TextStyle(fontSize: 12, fontFamily: 'Dubai', color: Colors.black),
+                height: postData.authorId == GlobalVariable.currentUserId ? 30 : 0,
+                value: removePost,
+              ),
+
+              /// Save Post Item
+              PopupMenuItem(
+                child: Text(savePost),
+                textStyle: TextStyle(fontSize: 12, fontFamily: 'Dubai', color: Colors.black),
+                height: 30,
+                value: savePost,
+
+              ),
+            ],
           ),
         ),
+
+        /// Show Name of the author, Time of post and Image of User
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[

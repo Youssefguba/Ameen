@@ -45,10 +45,10 @@ class PostsService {
         APIResponse<PostDetails>(error: true, errorMessage: errorMessage));
   }
 
-  // Called When User create a Post to put it on the user profile and Newsfeed..
+  /// Called When User create a Post to put it on the user profile and Newsfeed..
   Future<APIResponse<bool>> createPost(PostInsert post) async {
-    return await http.post(API + 'users/${GlobalVariable.userId}/', headers: headers, body: json.encode(post.toJson())).then((data) {
-      print(GlobalVariable.userId);
+    return await http.post(API + 'users/' + GlobalVariable.currentUserId + '/' , headers: headers, body: json.encode(post.toJson())).then((data) {
+      print(GlobalVariable.currentUserId);
       if (data.statusCode == 201) {
         return APIResponse<bool>(data: true);
       }
@@ -57,9 +57,9 @@ class PostsService {
             (_) => APIResponse<bool>(error: true, errorMessage: errorMessage));
   }
 
-//
+  /// Remove Post
   Future<APIResponse<bool>> removePost(String postId) async {
-    return await http.delete(API + 'users/' + GlobalVariable.userId + '/' + postId , headers: headers).then((data) {
+    return await http.delete(API + 'users/' + GlobalVariable.currentUserId + '/' + postId , headers: headers).then((data) {
       if (data.statusCode == 204) {
         return APIResponse<bool>(data: true);
       }
@@ -70,9 +70,9 @@ class PostsService {
 
 /// Ameen React..
   Future<APIResponse<bool>> ameenReact(String postId, AmeenReaction ameenReact) async {
-    return await http.post(API + 'users/' + GlobalVariable.userId + '/' + postId + '/reactions', headers: headers,
+    return await http.post(API + 'users/' + GlobalVariable.currentUserId + '/' + postId + '/reactions', headers: headers,
         body: json.encode(ameenReact.toJson())).then((data) {
-          print(GlobalVariable.userId);
+          print(GlobalVariable.currentUserId);
       if (data.statusCode == 201) {
         return APIResponse<bool>(data: true);
       }
@@ -83,7 +83,7 @@ class PostsService {
 
   /// Remove Ameen React..
   Future<APIResponse<bool>> removeAmeenReact(String postId, String reactionId) async {
-    return await http.delete(API + 'users/' + GlobalVariable.userId + '/' + postId + '/reactions/' + reactionId , headers: headers).then((data) {
+    return await http.delete(API + 'users/' + GlobalVariable.currentUserId + '/' + postId + '/reactions/' + reactionId , headers: headers).then((data) {
       if (data.statusCode == 204) {
         return APIResponse<bool>(data: true);
       }
@@ -92,9 +92,9 @@ class PostsService {
             (_) => APIResponse<bool>(error: true, errorMessage: errorMessage));
   }
 
-  // Called When User create a Post to put it on the user profile and Newsfeed..
+  /// Add a New Comment
   Future<APIResponse<bool>> addComment(CommentModel commentModel, String postId) async {
-    return await http.post(API + 'users/'+ GlobalVariable.userId + '/' + postId + '/comments', headers: headers, body: json.encode(commentModel.toJson()))
+    return await http.post(API + 'users/'+ GlobalVariable.currentUserId + '/' + postId + '/comments', headers: headers, body: json.encode(commentModel.toJson()))
         .then((data) {
       if (data.statusCode == 201) {
         return APIResponse<bool>(data: true);

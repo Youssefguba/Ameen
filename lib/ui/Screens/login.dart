@@ -185,7 +185,7 @@ class _LoginState extends State<Login> {
         .then((response) {
       if (response.statusCode == 200) {
         jsonResponse = json.decode(response.body);
-        GlobalVariable.userId = jsonResponse['userId'];
+        GlobalVariable.currentUserId = jsonResponse['userId'];
 
         print('Res body token: ${jsonResponse['token']}');
         if (jsonResponse != null) {

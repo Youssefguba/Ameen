@@ -37,7 +37,7 @@ class _NewsFeedState extends State<NewsFeed> {
           MaterialPageRoute(
               builder: (BuildContext buildContext) => Login()), (route) => false);
     } else {
-      GlobalVariable.userId = sharedPreferences.getString('userId');
+      GlobalVariable.currentUserId = sharedPreferences.getString('userId');
     }
   }
 
