@@ -155,7 +155,6 @@ class ReactionsButtonsState extends State<ReactionsButtons> with TickerProviderS
                   isPressed = false;
                   animControlBtnShortPress.reverse();
                   services.removeAmeenReact(postData.postId, GlobalVariable.currentUserId);
-                  logger.v('ameen id', GlobalVariable.currentUserId);
                 });
               }
             },

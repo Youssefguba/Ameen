@@ -671,7 +671,7 @@ class _reactionsButtonsState extends State<_reactionsButtons>
                 setState(() async {
                   isPressed = false;
                   animControlBtnShortPress.reverse();
-                  services.removeAmeenReact(postDetails.postId, ameenReact.ameenId);
+                  services.removeAmeenReact(postDetails.postId, GlobalVariable.currentUserId);
                   logger.v('ameen id', ameenReact.ameenId);
                 });
               }
