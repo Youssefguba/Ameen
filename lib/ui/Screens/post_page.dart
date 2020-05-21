@@ -1,3 +1,4 @@
+import 'package:ameen/blocs/global/global.dart';
 import 'package:ameen/blocs/models/api_response.dart';
 import 'package:ameen/blocs/models/comment.dart';
 import 'package:ameen/blocs/models/post_details.dart';
@@ -208,18 +209,59 @@ class _postBody extends StatelessWidget {
   * The top Section of Post (Photo, Time, Settings, Name)
   * */
 class _HeadOfPost extends StatelessWidget {
+  PostsService get services => GetIt.I<PostsService>();
+  static const String removePost = 'حذف المنشور';
+  static const String savePost = "حفظ المنشور في القائمة";
+
   @override
   Widget build(BuildContext context) {
     final PostDetails postDetails = InheritedPostModel.of(context).postDetails;
+    // To handle function of selected Item in PopupMenuButton
+    void choiceAction(String option) async {
+      if(option == removePost){
+        await services.removePost(postDetails.postId);
+      } else if (option == savePost) {
+        //TODO => Handle it Later to Save Post.
+        print('Button Clicked');
+      }
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
+        /// Show Popup More Button
         Flexible(
-          child: IconButton(
+          // More button to show options of post.
+          child: PopupMenuButton<String>(
             icon: Icon(Icons.more_horiz),
+            onSelected: choiceAction,
+            itemBuilder: (context) => [
+
+              /// Remove Post Item
+              PopupMenuItem(
+                // Check if the post is belong to the current User or not .. to show or remove (Remove Post)
+                child: Visibility(
+                    visible: postDetails.authorId == GlobalVariable.currentUserId ? true : false,
+                    child: Text(removePost)),
+                textStyle: TextStyle(fontSize: 12, fontFamily: 'Dubai', color: Colors.black),
+                height: postDetails.authorId == GlobalVariable.currentUserId ? 30 : 0,
+                value: removePost,
+              ),
+
+              /// Save Post Item
+              PopupMenuItem(
+                child: Text(savePost),
+                textStyle: TextStyle(fontSize: 12, fontFamily: 'Dubai', color: Colors.black),
+                height: 30,
+                value: savePost,
+
+              ),
+            ],
           ),
         ),
+
+        /// Show Name of the author, Time of post and Image of User
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
@@ -240,13 +282,12 @@ class _HeadOfPost extends StatelessWidget {
               ],
             ),
             Container(
-              width: 50,
-              height: 50,
+              width: 45,
+              height: 45,
               margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: CircleAvatar(
                 backgroundColor: Colors.transparent,
-                maxRadius: 20.0,
-                minRadius: 10.0,
+                radius: 30.0,
                 backgroundImage: AssetImage('assets/images/icon_person.png'),
               ),
             ),
@@ -624,15 +665,14 @@ class _reactionsButtonsState extends State<_reactionsButtons>
                 setState(() {
                   isPressed = true;
                   services.ameenReact(postDetails.postId, ameenReact);
-                  postDetails.ameenReaction.add(ameenReact);
                   animControlBtnShortPress.forward();
                 });
               } else {
-                setState(() {
+                setState(() async {
                   isPressed = false;
                   animControlBtnShortPress.reverse();
-                  services.removeAmeenReact(
-                      postDetails.postId, "5eb0c28fe1be6b44a094cbf7");
+                  services.removeAmeenReact(postDetails.postId, ameenReact.ameenId);
+                  logger.v('ameen id', ameenReact.ameenId);
                 });
               }
             },

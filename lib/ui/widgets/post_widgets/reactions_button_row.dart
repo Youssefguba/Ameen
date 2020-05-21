@@ -1,10 +1,9 @@
+import 'package:ameen/blocs/global/global.dart';
 import 'package:ameen/blocs/models/post_data.dart';
 import 'package:ameen/blocs/models/reaction_model.dart';
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_model.dart';
-import 'package:ameen/ui/widgets/inherited_widgets/inherited_reaction_model.dart';
-import 'package:ameen/ui/widgets/post_widgets/reactions_box.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
@@ -100,10 +99,6 @@ class ReactionsButtonsState extends State<ReactionsButtons> with TickerProviderS
     totalReactions =  ameenCounter + recommendCounter + forbiddenCounter;
 
       setState(() {
-        ameenCounter     = postData.ameenReaction.length;
-        recommendCounter = postData.recommendReaction.length;
-        forbiddenCounter = postData.forbiddenReaction.length;
-        totalReactions =  ameenCounter + recommendCounter + forbiddenCounter;
       });
 
     return Container(
@@ -147,21 +142,20 @@ class ReactionsButtonsState extends State<ReactionsButtons> with TickerProviderS
                     )),
               ),
             ),
-            onTap: () {
+            onTap: ()  {
               if (!isPressed) {
                 setState(() {
                   isPressed = true;
-                  logger.v("When Pressed", ameenReact.ameenId);
                   services.ameenReact(postData.postId, ameenReact);
                   animControlBtnShortPress.forward();
 
                 });
               } else {
-                setState(() {
+                setState(()  {
                   isPressed = false;
                   animControlBtnShortPress.reverse();
-                  logger.v("When un Pressed", ameenReact.ameenId.toString());
-                  services.removeAmeenReact(postData.postId, ameenReact.ameenId); //TODO => Remove Ameen Reaction from List
+                  services.removeAmeenReact(postData.postId, GlobalVariable.currentUserId);
+                  logger.v('ameen id', GlobalVariable.currentUserId);
                 });
               }
             },

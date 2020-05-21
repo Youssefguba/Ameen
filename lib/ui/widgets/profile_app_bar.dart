@@ -1,7 +1,5 @@
-import 'package:ameen/blocs/models/choice.dart';
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 import 'package:ameen/ui/Screens/create_post.dart';
-import 'package:ameen/ui/widgets/choice_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

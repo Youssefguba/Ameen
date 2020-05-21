@@ -1,6 +1,4 @@
-import 'package:ameen/blocs/models/user_data.dart';
 import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';  //for date locale
 import 'dart:convert';
 
 CommentModel commentFromJson(String str) => CommentModel.fromJson(json.decode(str));

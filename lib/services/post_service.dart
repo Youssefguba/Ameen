@@ -72,7 +72,6 @@ class PostsService {
   Future<APIResponse<bool>> ameenReact(String postId, AmeenReaction ameenReact) async {
     return await http.post(API + 'users/' + GlobalVariable.currentUserId + '/' + postId + '/reactions', headers: headers,
         body: json.encode(ameenReact.toJson())).then((data) {
-          print(GlobalVariable.currentUserId);
       if (data.statusCode == 201) {
         return APIResponse<bool>(data: true);
       }

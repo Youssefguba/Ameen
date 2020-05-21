@@ -80,14 +80,12 @@ class _NewsFeedState extends State<NewsFeed> {
 
       /// Refresh Indicator to Fetch Latest Data..
       body: ConnectivityCheck(
-        child: LiquidPullToRefresh(
+        child: RefreshIndicator(
           color:  myColors.cGreen,
           backgroundColor: Colors.white,
-          showChildOpacityTransition: false,
           onRefresh: () async {
              await _fetchPosts();
           },
-          animSpeedFactor: 2.0,
           child: Builder(builder: (context) {
 
             /// If the data don't retrieved yet it will show Progress Indicator until data retrieved

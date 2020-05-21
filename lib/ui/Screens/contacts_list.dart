@@ -1,6 +1,4 @@
 import 'package:ameen/helpers/ui/app_color.dart';
-import 'package:ameen/ui/Screens/news_feed.dart';
-import 'package:ameen/ui/widgets/bottom_navigation.dart';
 import 'package:ameen/ui/widgets/chat_widgets/chat_list_view_item.dart';
 import 'package:flutter/material.dart';
 

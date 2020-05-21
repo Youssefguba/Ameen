@@ -1,7 +1,5 @@
 import 'package:ameen/blocs/models/comment.dart';
 import 'package:ameen/blocs/models/reaction_model.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/date_symbol_data_local.dart';  //for date locale
 import 'package:intl/intl.dart';
 
 // Model of Post

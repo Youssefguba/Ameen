@@ -1,8 +1,6 @@
 import 'package:ameen/blocs/models/insert_post.dart';
-import 'package:ameen/blocs/models/post_details.dart';
 import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/Screens/news_feed.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 import 'package:get_it/get_it.dart';

@@ -161,19 +161,26 @@ class _HeadOfPost extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+
+                // Name of the user
                 Container(
                   margin: EdgeInsets.fromLTRB(5, 10, 5, 1),
                   child: Text(
                     postData.authorName,
+                    textAlign: TextAlign.start,
+                    textDirection: TextDirection.rtl,
                     style: TextStyle(
                       fontFamily: 'Dubai',
                       fontSize: 15,
                     ),
                   ),
                 ),
+
+                // Time of the post
                 _PostTimeStamp(),
               ],
             ),
+
             Container(
               width: 45,
               height: 45,
