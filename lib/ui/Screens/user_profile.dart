@@ -1,6 +1,9 @@
+import 'package:ameen/blocs/models/api_response.dart';
+import 'package:ameen/blocs/models/post_data.dart';
 import 'package:ameen/blocs/models/user_data.dart';
 import 'package:ameen/services/user_service.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_user_profile.dart';
+import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
 import 'package:ameen/ui/widgets/profile_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:ameencommon/utils/constants.dart';
@@ -13,13 +16,26 @@ class UserProfile extends StatefulWidget {
 }
 
 class _UserProfileState extends State<UserProfile> {
-  UserModel userModel;
   UserService get services => GetIt.I<UserService>();
+  APIResponse<List<PostData>> _apiResponse;
+
+  final List<Tab> myTabs = <Tab>[
+    // Posts of User
+    Tab(
+      text: "المنشورات",
+    ),
+    // Saved Posts
+    Tab(
+      text: "الأدعية المحفوظة",
+    ),
+
+  ];
+  UserModel userModel;
+  String errorMessage;
+  Logger logger = Logger();
 
   bool _isLoading = false;
-  String errorMessage;
 
-  var logger = Logger();
 
   @override
   void initState() {
@@ -42,12 +58,14 @@ class _UserProfileState extends State<UserProfile> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: MyColors.cBackground,
       body: DefaultTabController(
-        length: 2,
+        length: myTabs.length,
         child: InheritedUserProfile(
           userModel: userModel,
           child:(_isLoading) ? Center (
@@ -55,20 +73,57 @@ class _UserProfileState extends State<UserProfile> {
                 backgroundColor: Colors.white,
                 valueColor: new AlwaysStoppedAnimation<Color>(MyColors.cGreen),
               )
-          ) : NestedScrollView(
+          )
+              : NestedScrollView(
             headerSliverBuilder: (context, value) {
               return [
                 _sliverAppBar(),
               ];
             },
-            body: ListView(
-              children: <Widget>[],
+            body: TabBarView(
+              children: (_isLoading) ? Center (
+                  child: RefreshProgressIndicator(
+                    backgroundColor: Colors.white,
+                    valueColor: new AlwaysStoppedAnimation<Color>(MyColors.cGreen),
+                  )
+              )
+                  : _getListOfPostsOfUser(),
             ),
           ),
         ),
       ),
     );
   }
+
+  /// Get List Of Posts of User [Posts, Saved Posts]
+  List<Widget> _getListOfPostsOfUser(){
+   return [
+     // Posts of User
+      AnimatedList(
+          initialItemCount: userModel.userPosts.length,
+          itemBuilder:
+              (BuildContext context, int index, Animation anim) {
+            return SizeTransition(
+              axis: Axis.vertical,
+              sizeFactor: anim,
+              child: PostWidget(postModel: userModel.userPosts[index]),
+            );
+          }),
+
+     // Saved Posts Of User
+      AnimatedList(
+          initialItemCount: userModel.savedPosts.length,
+          itemBuilder:
+              (BuildContext context, int index, Animation anim) {
+            return SizeTransition(
+              axis: Axis.vertical,
+              sizeFactor: anim,
+              child: (userModel.savedPosts.length >= 1) ? PostWidget(postModel: userModel.savedPosts[index])
+                  : Center(child: Text('لا يوجد أدعية في قائمة المحفوظات', style: TextStyle(fontSize: 25, fontFamily: 'Dubai', color: MyColors.cBlack))) ,
+            );
+          }),
+    ];
+}
 
   Widget _sliverAppBar() {
     return InheritedUserProfile(
@@ -89,14 +144,7 @@ class _UserProfileState extends State<UserProfile> {
             fontFamily: 'Dubai',
             fontWeight: FontWeight.bold,
           ),
-          tabs: [
-            Tab(
-              text: "المنشورات",
-            ),
-            Tab(
-              text: "الأدعية المحفوظة",
-            ),
-          ],
+          tabs: myTabs,
         ),
         flexibleSpace: FlexibleSpaceBar(
           background: ProfileAppBar(),

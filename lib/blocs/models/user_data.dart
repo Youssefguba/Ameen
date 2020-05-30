@@ -1,4 +1,5 @@
 import 'package:ameen/blocs/models/post_data.dart';
+import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -9,6 +10,7 @@ class UserModel {
   bool isAdministrator = false;
   DateTime joinedDate;
   List<PostData> userPosts;
+  List<PostData> savedPosts;
   List<Followers> followers;
   List<Following> following;
 
@@ -18,6 +20,7 @@ class UserModel {
     this.userEmail,
     this.userImage,
     this.userPosts,
+    this.savedPosts,
     this.followers,
     this.following,
     this.isActive,
@@ -35,6 +38,8 @@ class UserModel {
       userEmail: item['email'],
       followers:(item['followers'] as List).map((i) => Followers.fromJson(i)).toList(),
       following:(item['following'] as List).map((i) => Following.fromJson(i)).toList(),
+      userPosts:(item['posts'] as List).map((i) => PostData.fromJson(i)).toList(),
+      savedPosts:(item['saved_posts'] as List).map((i) => PostData.fromJson(i)).toList(),
     );
   }
 

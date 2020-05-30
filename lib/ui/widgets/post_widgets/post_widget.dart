@@ -1,5 +1,6 @@
 import 'package:ameen/blocs/global/global.dart';
 import 'package:ameen/blocs/models/post_data.dart';
+import 'package:ameen/blocs/models/user_data.dart';
 import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/widgets/comment/add_new_comment.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_model.dart';
@@ -18,7 +19,8 @@ import 'package:logger/logger.dart';
 * */
 class PostWidget extends StatelessWidget {
   final PostData postModel;
-  const PostWidget({Key key, this.postModel}) : super(key: key);
+  final UserModel userModel;
+  const PostWidget({Key key, this.postModel, this.userModel}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
