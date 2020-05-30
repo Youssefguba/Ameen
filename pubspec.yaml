@@ -38,6 +38,8 @@ dependencies:
   provider: ^4.1.2
   shared_preferences: ^0.5.7+2
   toast: ^0.1.5
+  ameencommon:
+    path: ../ameencommon
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,4 @@
-import 'package:ameen/helpers/ui/app_color.dart';
+import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/ui/Screens/chat_page.dart';
 import 'package:flutter/material.dart';
 
@@ -60,7 +60,7 @@ class ChatListViewItem extends StatelessWidget {
                               height: 20,
                               width: 20,
                               decoration: BoxDecoration(
-                                  color: cGreen,
+                                  color: MyColors.cGreen,
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(25.0),
                                   )),

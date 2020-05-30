@@ -1,4 +1,4 @@
-import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/ui/Screens/create_post.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -49,7 +49,7 @@ class AddNewPostWidget extends StatelessWidget {
                   padding: EdgeInsets.all(18),
                   height: 50,
                   decoration: BoxDecoration(
-                    color: myColors.cBackground,
+                    color: MyColors.cBackground,
                     borderRadius: BorderRadius.circular(20.0),
                     border: Border.all(color: Colors.black12)
                     ),

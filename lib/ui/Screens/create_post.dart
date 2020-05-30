@@ -2,7 +2,7 @@ import 'package:ameen/blocs/models/insert_post.dart';
 import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/Screens/news_feed.dart';
 import 'package:flutter/material.dart';
-import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+import 'package:ameencommon/utils/constants.dart';
 import 'package:get_it/get_it.dart';
 import 'package:toast/toast.dart';
 
@@ -20,7 +20,6 @@ class _CreatePostState extends State<CreatePost> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
-//      bottomNavigationBar:
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 1.0,
@@ -48,6 +47,7 @@ class _CreatePostState extends State<CreatePost> {
           ),
         ],
       ),
+
       body: Container(
         height: double.maxFinite,
         margin: EdgeInsets.all(15),
@@ -68,7 +68,7 @@ class _CreatePostState extends State<CreatePost> {
               minLines: 1,
               scrollController: ScrollController(),
               scrollPhysics: BouncingScrollPhysics(),
-              cursorColor: myColors.green[900],
+              cursorColor: MyColors.green[900],
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.all(15.0),
                 border: InputBorder.none,
@@ -86,12 +86,12 @@ class _CreatePostState extends State<CreatePost> {
                 widthFactor: double.maxFinite,
                 child: FlatButton(
 
-                  focusColor: myColors.cBackground,
-                  hoverColor: myColors.cBackground,
+                  focusColor: MyColors.cBackground,
+                  hoverColor: MyColors.cBackground,
                   onPressed: createAPost,
                   padding: EdgeInsets.symmetric(vertical: 10),
-                  color: myColors.cGreen,
-                  disabledColor: myColors.cGreen,
+                  color: MyColors.cGreen,
+                  disabledColor: MyColors.cGreen,
                   child: Text(
                     "نشر الدعاء",
                     textDirection: TextDirection.rtl,
@@ -106,6 +106,7 @@ class _CreatePostState extends State<CreatePost> {
                 ),
               ),
             ),
+
           ],
         ),
       ),

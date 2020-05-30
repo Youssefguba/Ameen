@@ -1,11 +1,11 @@
-import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 import 'package:flutter/material.dart';
+import 'package:ameencommon/utils/constants.dart';
 
 /*
 * This is the Customized Appbar in Home Screen (NewsFeed)
 * */
 
-Widget CustomAppBar() {
+Widget customAppBar() {
   return AppBar(
     backgroundColor: Colors.white,
     elevation: 0.0,
@@ -18,7 +18,7 @@ Widget CustomAppBar() {
           fontSize: 16.0,
           fontFamily: 'Dubai',
           fontWeight: FontWeight.w700,
-          color:  myColors.green[700],
+          color:  MyColors.green[700],
         ),
       ),
     ),

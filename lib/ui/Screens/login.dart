@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:ameen/blocs/global/global.dart';
-import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/Screens/home.dart';
 import 'package:ameen/ui/Screens/sign_up.dart';
 import 'package:ameen/ui/widgets/entry_field.dart';
@@ -9,10 +8,10 @@ import 'package:ameen/ui/widgets/or_line.dart';
 import 'package:ameen/ui/widgets/submit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:toast/toast.dart';
+import 'package:ameencommon/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:ameen/helpers/ui/app_color.dart' as myColors;
-import 'package:toast/toast.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -133,7 +132,7 @@ class _LoginState extends State<Login> {
                   child: RefreshProgressIndicator(
                   backgroundColor: Colors.white,
                   valueColor:
-                      new AlwaysStoppedAnimation<Color>(myColors.cGreen),
+                      new AlwaysStoppedAnimation<Color>(MyColors.cGreen),
                 ))
               : Container(
                   padding: EdgeInsets.symmetric(horizontal: 20),
@@ -151,7 +150,7 @@ class _LoginState extends State<Login> {
                       _emailPasswordWidget(),
                       _forgetPassword(),
                       SubmitButton(Color.fromRGBO(0, 153, 51, 1),
-                          "تسجيل الدخول", LoginButton),
+                          "تسجيل الدخول", loginButton),
                       SizedBox(
                         height: 10,
                       ),
@@ -180,7 +179,7 @@ class _LoginState extends State<Login> {
     Map data = {'email': email, 'password': password};
 
     var jsonResponse;
-    await http.post(PostsService.API + 'auth/signin', body: data)
+    await http.post(Api.API + 'auth/signin', body: data)
         .then((response) {
       if (response.statusCode == 200) {
         jsonResponse = json.decode(response.body);
@@ -226,7 +225,7 @@ class _LoginState extends State<Login> {
   }
 
   /// Normal Login Button Function
-  void LoginButton() {
+  void loginButton() {
     if (emailController.text == "" || passwordController.text == '') {
       Toast.show(
         'ارجوا عدم ترك الايميل الالكتروني او ال الرقم السري فارغا',

@@ -1,6 +1,6 @@
 import 'package:ameen/blocs/models/api_response.dart';
 import 'package:ameen/blocs/models/post_data.dart';
-import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/services/connection_check.dart';
 import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/Screens/login.dart';
@@ -11,7 +11,6 @@ import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
-import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ameen/blocs/global/global.dart';
@@ -75,13 +74,13 @@ class _NewsFeedState extends State<NewsFeed> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: myColors.cBackground,
-      appBar: CustomAppBar(),
+      backgroundColor: MyColors.cBackground,
+      appBar: customAppBar(),
 
       /// Refresh Indicator to Fetch Latest Data..
       body: ConnectivityCheck(
         child: RefreshIndicator(
-          color:  myColors.cGreen,
+          color:  MyColors.cGreen,
           backgroundColor: Colors.white,
           onRefresh: () async {
              await _fetchPosts();
@@ -93,7 +92,7 @@ class _NewsFeedState extends State<NewsFeed> {
               return Center(
                   child: RefreshProgressIndicator(
                 backgroundColor: Colors.white,
-                valueColor: new AlwaysStoppedAnimation<Color>(myColors.cGreen),
+                valueColor: new AlwaysStoppedAnimation<Color>(MyColors.cGreen),
               ));
             }
             if (_apiResponse.error) {

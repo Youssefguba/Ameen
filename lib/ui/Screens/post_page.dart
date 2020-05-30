@@ -12,7 +12,7 @@ import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/helpers/ui/text_styles.dart' as mytextStyle;
 import 'package:ameen/helpers/ui/images.dart' as myImages;
 
@@ -59,7 +59,7 @@ class _PostPageState extends State<PostPage> {
     });
     await services.getPostsDetails(widget.postId).then((response) {
       if (response.error) {
-        errorMessage = response.errorMessage ?? 'An error occurred';
+        errorMessage = response.errorMessage ?? 'حدث خلل ما';
       }
       postDetails = response.data;
       setState(() {
@@ -71,7 +71,7 @@ class _PostPageState extends State<PostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: myColors.cBackground,
+      backgroundColor: MyColors.cBackground,
       appBar: AppBar(
         title: _isLoading
             ? Text('')
@@ -83,25 +83,25 @@ class _PostPageState extends State<PostPage> {
                     fontSize: 16.0,
                     fontFamily: 'Dubai',
                     fontWeight: FontWeight.w700,
-                    color: myColors.cBackground)),
+                    color: MyColors.cBackground)),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.of(context).pop(NewsFeed);
           },
-          disabledColor: myColors.cBackground,
+          disabledColor: MyColors.cBackground,
         ),
       ),
       body: Builder(builder: (context) {
         if (_isLoading) {
           return Center(
               child: CircularProgressIndicator(
-            backgroundColor: myColors.cBackground,
-            valueColor: new AlwaysStoppedAnimation<Color>(myColors.cGreen),
+            backgroundColor: MyColors.cBackground,
+            valueColor: new AlwaysStoppedAnimation<Color>(MyColors.cGreen),
           ));
         }
         return RefreshIndicator(
-          color: myColors.cGreen,
+          color: MyColors.cGreen,
           backgroundColor: Colors.white,
           onRefresh: () async {
             await _fetchPost();
@@ -135,15 +135,15 @@ class _PostPageState extends State<PostPage> {
                         _HeadOfPost(),
 
                         // The post of the Post
-                        _postBody(),
+                        _PostBody(),
 
                         // React and Comment Counter
-                        _reactAndCommentCounter(),
+                        _ReactAndCommentCounter(),
 
                         // The Beginning of Reaction Buttons Row
                         SizedBox(height: 12),
 
-                        _reactionsButtons(),
+                        _ReactionsButtons(),
                       ],
                     ),
                   ),
@@ -168,7 +168,7 @@ class _PostPageState extends State<PostPage> {
 
                 // Write a Comment Widget
                 InheritedPostModel(
-                    postDetails: postDetails, child: _writeAComment()),
+                    postDetails: postDetails, child: _WriteAComment()),
               ],
             ),
           ),
@@ -184,7 +184,7 @@ class _PostPageState extends State<PostPage> {
 /*
 *  The  Body of the Post
  * */
-class _postBody extends StatelessWidget {
+class _PostBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final PostDetails postDetails = InheritedPostModel.of(context).postDetails;
@@ -324,17 +324,17 @@ class _PostTimeStamp extends StatelessWidget {
 /*
 * react counter
 * */
-class _reactAndCommentCounter extends StatefulWidget {
+class _ReactAndCommentCounter extends StatefulWidget {
   // Reaction Counter
   @override
-  __reactAndCommentCounterState createState() =>
-      __reactAndCommentCounterState();
+  __ReactAndCommentCounterState createState() =>
+      __ReactAndCommentCounterState();
 }
 
 /*
 * react counter
 * */
-class __reactAndCommentCounterState extends State<_reactAndCommentCounter> {
+class __ReactAndCommentCounterState extends State<_ReactAndCommentCounter> {
   var _ameenCounter;
 
   var _recommendCounter;
@@ -442,12 +442,12 @@ class __reactAndCommentCounterState extends State<_reactAndCommentCounter> {
 /*
 * Add a Comment Widget
 * */
-class _writeAComment extends StatefulWidget {
+class _WriteAComment extends StatefulWidget {
   @override
-  __writeACommentState createState() => __writeACommentState();
+  _WriteACommentState createState() => _WriteACommentState();
 }
 
-class __writeACommentState extends State<_writeAComment> {
+class _WriteACommentState extends State<_WriteAComment> {
   PostsService get services => GetIt.I<PostsService>();
   TextEditingController _text = new TextEditingController();
 
@@ -470,7 +470,7 @@ class __writeACommentState extends State<_writeAComment> {
         margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 2),
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         decoration: BoxDecoration(
-            color: myColors.cBackground,
+            color: MyColors.cBackground,
             borderRadius: BorderRadius.circular(30)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -480,11 +480,11 @@ class __writeACommentState extends State<_writeAComment> {
             /// Submit Icon Button to Add Comment to List..
             IconButton(
                 iconSize: 24,
-                focusColor: myColors.cGreen,
-                splashColor: myColors.cGreen,
-                disabledColor: myColors.cGreen,
+                focusColor: MyColors.cGreen,
+                splashColor: MyColors.cGreen,
+                disabledColor: MyColors.cGreen,
                 icon: Icon(Icons.send,
-                    color: myColors.cGreenDark,
+                    color: MyColors.cGreenDark,
                     size: 24,
                     textDirection: TextDirection.rtl),
                 onPressed: () async {
@@ -517,7 +517,7 @@ class __writeACommentState extends State<_writeAComment> {
                 textAlign: TextAlign.right,
                 textDirection: TextDirection.rtl,
                 showCursor: true,
-                cursorColor: myColors.cGreenDark,
+                cursorColor: MyColors.cGreenDark,
                 controller: _text,
                 scrollPhysics: ScrollPhysics(),
                 enabled: true,
@@ -542,16 +542,16 @@ class __writeACommentState extends State<_writeAComment> {
  *  Action Buttons Widgets like..
  *       (Like, Comment, Share)
  **/
-class _reactionsButtons extends StatefulWidget {
+class _ReactionsButtons extends StatefulWidget {
   @override
-  _reactionsButtonsState createState() => _reactionsButtonsState();
+  _ReactionsButtonsState createState() => _ReactionsButtonsState();
 }
 
 /*
  *  Action Buttons Widgets like..
  *       (Like, Comment, Share)
  **/
-class _reactionsButtonsState extends State<_reactionsButtons>
+class _ReactionsButtonsState extends State<_ReactionsButtons>
     with TickerProviderStateMixin {
   PostsService get services => GetIt.I<PostsService>();
   // Reactions Icon
@@ -640,7 +640,7 @@ class _reactionsButtonsState extends State<_reactionsButtons>
                       : tiltIconAmeenInBtn2.value,
                   child: Image.asset(ameenImage,
                       color:
-                          (isPressed) ? myColors.cGreen : myColors.cTextColor,
+                          (isPressed) ? MyColors.cGreen : MyColors.cTextColor,
                       fit: BoxFit.contain,
                       width: 20,
                       height: 20),
@@ -654,7 +654,7 @@ class _reactionsButtonsState extends State<_reactionsButtons>
                       fontFamily: 'Dubai',
                       fontSize: 13,
                       color:
-                          (isPressed) ? myColors.cGreen : myColors.cTextColor,
+                          (isPressed) ? MyColors.cGreen : MyColors.cTextColor,
                       fontWeight:
                           (isPressed) ? FontWeight.w600 : FontWeight.normal,
                     )),
@@ -685,7 +685,7 @@ class _reactionsButtonsState extends State<_reactionsButtons>
                 style: TextStyle(
                   fontFamily: 'Dubai',
                   fontSize: 13,
-                  color: myColors.cTextColor,
+                  color: MyColors.cTextColor,
                 )),
           ),
 
@@ -696,7 +696,7 @@ class _reactionsButtonsState extends State<_reactionsButtons>
                 style: TextStyle(
                   fontFamily: 'Dubai',
                   fontSize: 13,
-                  color: myColors.cTextColor,
+                  color: MyColors.cTextColor,
                 )),
           ),
         ],

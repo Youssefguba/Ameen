@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:ameencommon/utils/constants.dart';
 
 /*
 * Icons React Counter - Begin
 * */
 final ameenIconReactCounter = Image.asset(
-    'assets/images/pray_color.png',
+    MyImages.coloredPrayIcon,
     width: 12,
     height: 12,
     semanticLabel: 'Ameen',
 );
 
 final recommendIconReactCounter = Image.asset(
-  'assets/images/recommend_color.png',
+  MyImages.coloredRecommendIcon,
   width: 12,
   height: 12,
   semanticLabel: 'Ameen',
 );
 
 final forbiddenIconReactCounter = Image.asset(
-  'assets/images/forbidden_color.png',
+  MyImages.coloredForbiddenIcon,
   width: 12,
   height: 12,
   semanticLabel: 'Ameen',

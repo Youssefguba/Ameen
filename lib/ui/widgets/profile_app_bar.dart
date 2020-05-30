@@ -1,14 +1,25 @@
-import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+import 'package:ameen/blocs/models/user_data.dart';
+import 'package:ameen/services/user_service.dart';
+import 'package:ameen/ui/widgets/inherited_widgets/inherited_user_profile.dart';
+import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/ui/Screens/create_post.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
-class ProfileAppBar extends StatelessWidget {
+class ProfileAppBar extends StatefulWidget {
+  @override
+  _ProfileAppBarState createState() => _ProfileAppBarState();
+}
+
+class _ProfileAppBarState extends State<ProfileAppBar> {
   final double appBarHeight = 80.0;
+  String errorMessage;
 
   @override
   Widget build(BuildContext context) {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
+    UserModel userModel = InheritedUserProfile.of(context).userModel;
 
     return Container(
       padding: new EdgeInsets.only(top: statusBarHeight),
@@ -24,7 +35,7 @@ class ProfileAppBar extends StatelessWidget {
             ),
             Container(
               child: Text(
-                "محمد أحمد ",
+                 userModel.username,
                 textDirection: TextDirection.rtl,
                 style: TextStyle(
                   fontSize: 16.0,
@@ -55,12 +66,12 @@ class ProfileAppBar extends StatelessWidget {
           ),
         );
       },
-      color: myColors.green[900],
+      color: MyColors.green[900],
       padding: EdgeInsets.all(5),
       elevation: 1.0,
       hoverColor: Colors.white,
       textColor: Colors.white,
-      disabledColor: myColors.green,
+      disabledColor: MyColors.green,
       splashColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: new BorderRadius.circular(18.0),
@@ -75,38 +86,44 @@ class ProfileAppBar extends StatelessWidget {
   }
 
   Widget _followersAndFollowingRow() {
+    UserModel userModel = InheritedUserProfile.of(context).userModel;
+    int totalOfFollowers = userModel.followers.length;
+
     return Container(
       padding: EdgeInsets.all(13.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Flexible(
-            child: Text(
-              "50 متابعين      ",
-              textDirection: TextDirection.rtl,
-              style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black,
-                  fontFamily: 'Dubai',
-                  fontWeight: FontWeight.bold),
-            ),
-          ),
-          Text(
-            "50 متابعاً      ",
-            textDirection: TextDirection.rtl,
-            style: TextStyle(
-                fontSize: 14,
-                color: Colors.black,
-                fontFamily: 'Dubai',
-                fontWeight: FontWeight.bold),
-          )
+//          Flexible(
+//
+//            // Followers Text
+//            child: Text(
+//              "${totalOfFollwers} متابعين ",
+//              textDirection: TextDirection.rtl,
+//              style: TextStyle(
+//                  fontSize: 14,
+//                  color: Colors.black,
+//                  fontFamily: 'Dubai',
+//                  fontWeight: FontWeight.bold),
+//            ),
+//          ),
+
+          // Following Text
+//          Text(
+//            "50 متابعاً      ",
+//            textDirection: TextDirection.rtl,
+//            style: TextStyle(
+//                fontSize: 14,
+//                color: Colors.black,
+//                fontFamily: 'Dubai',
+//                fontWeight: FontWeight.bold),
+//          )
         ],
       ),
     );
   }
 
-  // The Line that divide between Add Doaa and Posts and Saved Doaa..
   Widget _horizontalLine() => Container(
         height: 1.0,
         margin: EdgeInsets.symmetric(vertical: 10),

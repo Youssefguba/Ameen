@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+import 'package:ameencommon/utils/constants.dart';
 
 class SubmitButton extends StatelessWidget {
   final color;
@@ -26,7 +26,7 @@ class SubmitButton extends StatelessWidget {
           splashColor: Colors.white70,
           hoverColor: Colors.white70,
           focusColor: Colors.white70,
-          highlightColor: myColors.green[50],
+          highlightColor: MyColors.green[50],
 
           onPressed: gestureTapCallback,
           child: Text(

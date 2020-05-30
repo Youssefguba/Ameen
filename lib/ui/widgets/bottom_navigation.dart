@@ -2,7 +2,7 @@ import 'package:ameen/ui/Screens/contacts_list.dart';
 import 'package:ameen/ui/Screens/news_feed.dart';
 import 'package:ameen/ui/Screens/user_profile.dart';
 import 'package:flutter/material.dart';
-import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+import 'package:ameencommon/utils/constants.dart';
 
 
 class CustomBottomNavigation extends StatefulWidget {
@@ -26,7 +26,7 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
   @override
   Widget build(BuildContext context) {
     return  BottomNavigationBar(
-      selectedItemColor: myColors.green[800],
+      selectedItemColor: MyColors.green[800],
       currentIndex: _currentIndex, //
       onTap: _onTabTapped,
       items: [

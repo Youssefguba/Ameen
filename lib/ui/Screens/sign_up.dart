@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:ameen/blocs/models/user_data.dart';
-import 'package:ameen/helpers/ui/app_color.dart';
-import 'package:ameen/services/post_service.dart';
+import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/ui/Screens/home.dart';
 import 'package:ameen/ui/widgets/entry_field.dart';
 import 'package:ameen/ui/widgets/or_line.dart';
@@ -12,7 +11,6 @@ import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:ameen/helpers/ui/app_color.dart' as myColors;
 import 'package:toast/toast.dart';
 
 class SignUp extends StatefulWidget {
@@ -46,7 +44,7 @@ class _SignUpState extends State<SignUp> {
             child: Text(
               'تسجيل دخول',
               style: TextStyle(
-                color: cGreen,
+                color: MyColors.cGreen,
                 fontSize: 13,
                 fontFamily: 'Dubai',
                 fontWeight: FontWeight.w600,
@@ -119,9 +117,9 @@ class _SignUpState extends State<SignUp> {
               (_isLoading)
                   ? Center(
                       child: CircularProgressIndicator(
-                      backgroundColor: myColors.cBackground,
+                      backgroundColor: MyColors.cBackground,
                       valueColor:
-                          new AlwaysStoppedAnimation<Color>(myColors.cGreen),
+                          new AlwaysStoppedAnimation<Color>(MyColors.cGreen),
                     ))
                   : Container(
                       padding: EdgeInsets.symmetric(horizontal: 21),
@@ -143,7 +141,7 @@ class _SignUpState extends State<SignUp> {
 
                           //TODO => There is Button Here
                           SubmitButton(
-                              cGreen, "إنشاء حساب", createAccountButton),
+                              MyColors.cGreen, "إنشاء حساب", createAccountButton),
                           SizedBox(
                             height: 10,
                           ),
@@ -157,7 +155,7 @@ class _SignUpState extends State<SignUp> {
                           ),
 
                           //TODO => There is Button Here
-                          SubmitButton(cFacebookColor,
+                          SubmitButton(MyColors.cFacebookColor,
                               "التسجيل بواسطة الفيسبوك", faceBookLoginButton),
                           SizedBox(
                             height: 13,
@@ -180,8 +178,8 @@ class _SignUpState extends State<SignUp> {
   /// handle Response of Sign In and Compare tokens..
   signUp(UserModel userModel) async {
     await http
-        .post(PostsService.API + 'auth/signup',
-            headers: PostsService.headers,
+        .post(Api.API + 'auth/signup',
+            headers: Api.headers,
             body: json.encode(userModel.toJson()))
         .then((data) {
       if (data.statusCode == 200) {

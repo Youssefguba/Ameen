@@ -16,7 +16,7 @@ class AmeenReaction {
   String username;
   String userId;
   String postId;
-  String profile_pic;
+  String profilePic;
 
   AmeenReaction({
     this.ameenId,
@@ -43,17 +43,17 @@ class AmeenReaction {
 
 class RecommendReaction {
   String userName;
-  String profile_pic;
+  String profilePic;
 
   RecommendReaction({
     this.userName,
-    this.profile_pic,
+    this.profilePic,
   });
 
   factory RecommendReaction.fromJson(Map<String, dynamic> item) {
     return RecommendReaction(
       userName: item['username'],
-      profile_pic: item['profilePic'],
+      profilePic: item['profilePic'],
     );
   }
   Map<String, dynamic> toJson() {
@@ -65,17 +65,17 @@ class RecommendReaction {
 
 class ForbiddenReaction {
   String userName;
-  String profile_pic;
+  String profilePic;
 
   ForbiddenReaction({
     this.userName,
-    this.profile_pic,
+    this.profilePic,
   });
 
   factory ForbiddenReaction.fromJson(Map<String, dynamic> item) {
     return ForbiddenReaction(
       userName: item['username'],
-      profile_pic: item['profilePic'],
+      profilePic: item['profilePic'],
     );
   }
 

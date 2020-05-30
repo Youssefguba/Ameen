@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+import 'package:ameencommon/utils/constants.dart';
 
 /// This Class to represent the Widget of Adding Post Rectangle beside the Profile Picture
 /// of the user and *Redirect* him to Creating Post Screen..
@@ -30,7 +30,7 @@ class AddNewCommentWidget extends StatelessWidget {
               padding: EdgeInsets.all(18),
               height: 50,
               decoration: BoxDecoration(
-                  color: myColors.cBackground,
+                  color: MyColors.cBackground,
                   borderRadius: BorderRadius.circular(20.0),
                   border: Border.all(color: Colors.black12)
               ),

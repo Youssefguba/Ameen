@@ -1,4 +1,4 @@
-import 'package:ameen/helpers/ui/app_color.dart';
+import 'package:ameencommon/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 class SendedMessageWidget extends StatelessWidget {
@@ -25,7 +25,7 @@ class SendedMessageWidget extends StatelessWidget {
               topLeft: Radius.circular(18),
               topRight: Radius.circular(18)),
           child: Container(
-            color: cGreen,
+            color: MyColors.cGreen,
             // margin: const EdgeInsets.only(left: 10.0),
             child: Stack(children: <Widget>[
               Padding(

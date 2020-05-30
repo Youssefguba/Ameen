@@ -1,4 +1,4 @@
-import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/ui/widgets/chat_widgets/received_message_widget.dart';
 import 'package:ameen/ui/widgets/chat_widgets/sended_message_widget.dart';
 import 'package:flutter/material.dart';
@@ -175,7 +175,7 @@ class ChatPage extends StatelessWidget {
                   SizedBox(
                     height: 65,
                     child: Container(
-                      color: myColors.green[800],
+                      color: MyColors.green[800],
                       child: Row(
                         textDirection: TextDirection.rtl,
                         children: <Widget>[
@@ -265,12 +265,12 @@ class ChatPage extends StatelessWidget {
                         textDirection: TextDirection.rtl,
                         maxLines: 20,
                         showCursor: true,
-                        cursorColor: myColors.green[900],
+                        cursorColor: MyColors.green[900],
                         controller: _text,
                         decoration: InputDecoration(
 //                           contentPadding: const EdgeInsets.symmetric(horizontal: 2.0),
                           prefixIcon: IconButton(
-                            icon: Icon(Icons.send, color: myColors.green[800],),
+                            icon: Icon(Icons.send, color: MyColors.green[800],),
                             onPressed: () {},
                           ),
                           border: InputBorder.none,

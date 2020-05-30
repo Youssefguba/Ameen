@@ -7,7 +7,7 @@ import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/date_symbol_data_local.dart'; //for date locale
-import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/helpers/ui/images.dart' as myImages;
 import 'package:ameen/helpers/ui/text_styles.dart' as mytextStyle;
 import 'package:logger/logger.dart';
@@ -49,12 +49,12 @@ class PostWidget extends StatelessWidget {
             /*
             * The Beginning of Text of the Post
             * */
-            _postBody(),
+            _PostBody(),
             /*
             * The End of Text of the Post
             * */
 
-            _reactAndCommentCounter(),
+            _ReactAndCommentCounter(),
             /*
             * The Beginning of Reaction Buttons Row
             * */
@@ -76,7 +76,7 @@ class PostWidget extends StatelessWidget {
 /*
 *  The Body of the Post ..
 **/
-class _postBody extends StatelessWidget {
+class _PostBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final PostData postData = InheritedPostModel.of(context).postData;
@@ -223,15 +223,15 @@ class _PostTimeStamp extends StatelessWidget {
 /*
 * react counter
 * */
-class _reactAndCommentCounter extends StatefulWidget {
+class _ReactAndCommentCounter extends StatefulWidget {
   String reactionCounter;
-  _reactAndCommentCounter({Key key, this.reactionCounter}) : super(key: key);
+  _ReactAndCommentCounter({Key key, this.reactionCounter}) : super(key: key);
 
   @override
-  _reactAndCommentCounterState createState() => _reactAndCommentCounterState();
+  _ReactAndCommentCounterState createState() => _ReactAndCommentCounterState();
 }
 
-class _reactAndCommentCounterState extends State<_reactAndCommentCounter> {
+class _ReactAndCommentCounterState extends State<_ReactAndCommentCounter> {
   var logger = Logger();
 
   @override

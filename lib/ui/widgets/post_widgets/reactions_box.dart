@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/helpers/ui/text_styles.dart' as mytextStyle;
 
 class Reaction extends StatelessWidget {
@@ -555,7 +555,7 @@ class _ReactionsBoxState extends State<ReactionsBox> with TickerProviderStateMix
 
   Color getTintColorIconBtn() {
     if (!isLongPress && isAmeen) {
-      return myColors.green;
+      return MyColors.green;
     } else if (!isDragging && whichIconUserChoose != 0) {
       return null;
     } else {

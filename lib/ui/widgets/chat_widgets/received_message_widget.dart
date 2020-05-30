@@ -1,4 +1,4 @@
-import 'package:ameen/helpers/ui/app_color.dart';
+import 'package:ameencommon/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 class ReceivedMessageWidget extends StatelessWidget {
@@ -23,7 +23,7 @@ class ReceivedMessageWidget extends StatelessWidget {
             topLeft: Radius.circular(15),
             topRight: Radius.circular(15)),
         child: Container(
-          color: cBackground,
+          color: MyColors.cBackground,
           child: Stack(children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(right: 8.0, left: 8.0, top: 8.0, bottom: 15.0),

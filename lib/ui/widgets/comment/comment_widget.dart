@@ -2,7 +2,7 @@ import 'package:ameen/blocs/models/comment.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_comment_widget.dart';
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
-import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+import 'package:ameencommon/utils/constants.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 class CommentWidget extends StatelessWidget {
@@ -17,7 +17,7 @@ class CommentWidget extends StatelessWidget {
       commentModel: commentModel,
       child: Container(
         margin: EdgeInsets.only(left: 3, right: 3, top: 8, bottom: 8),
-        color: myColors.cBackground,
+        color: MyColors.cBackground,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           textDirection: TextDirection.rtl,
