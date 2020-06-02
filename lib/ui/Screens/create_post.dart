@@ -40,7 +40,7 @@ class _CreatePostState extends State<CreatePost> {
               Navigator.pop(context);
             },
             icon: ImageIcon(
-              AssetImage("assets/images/arrow_back.png"),
+              AssetImage("assets/images/back.png"),
               size: 20,
               color: Colors.black,
             ),
@@ -51,7 +51,7 @@ class _CreatePostState extends State<CreatePost> {
       body: Container(
         height: double.maxFinite,
         margin: EdgeInsets.all(15),
-        child: Stack(
+        child: Column(
           children: <Widget>[
             // TextField of Post
             TextField(
@@ -124,7 +124,7 @@ class _CreatePostState extends State<CreatePost> {
             'لا يجب ترك المنشور فارغا',
             context,
             duration: Toast.LENGTH_LONG,
-            gravity: Toast.BOTTOM,
+            gravity: Toast.CENTER,
             backgroundColor: Colors.red.shade800
         );
       } else {

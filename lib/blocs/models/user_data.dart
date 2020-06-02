@@ -1,5 +1,4 @@
 import 'package:ameen/blocs/models/post_data.dart';
-import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

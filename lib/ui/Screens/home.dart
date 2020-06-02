@@ -10,21 +10,42 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _currentIndex = 1;
+  int pageIndex = 1;
+  PageController pageController;
 
-  final List<Widget> _pages = [
-    ContactList(),
-    NewsFeed(),
-    UserProfile(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    pageController = PageController(
+      initialPage: 1,
+    );
+  }
+
+  void onPageChanged(int pageIndex){
+    setState(() {
+      this.pageIndex = pageIndex;
+    });
+  }
+
+  onTapPage(int pageIndex){
+    pageController.jumpToPage(pageIndex);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_currentIndex],
+      body: PageView(
+        children: <Widget>[
+          ContactList(),
+          NewsFeed(),
+          UserProfile(),
+        ],
+        controller: pageController,
+        onPageChanged: onPageChanged,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: MyColors.green[800],
-        currentIndex: _currentIndex, //
-        onTap: _onTabTapped,
+        currentIndex: pageIndex, //
+        onTap: onTapPage,
         items: [
           BottomNavigationBarItem(
             icon: ImageIcon (
@@ -71,11 +92,5 @@ class _HomeState extends State<Home> {
         ],
       ),
     );
-  }
-
-  void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
   }
 }

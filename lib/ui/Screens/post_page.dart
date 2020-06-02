@@ -1,5 +1,4 @@
 import 'package:ameen/blocs/global/global.dart';
-import 'package:ameen/blocs/models/api_response.dart';
 import 'package:ameen/blocs/models/comment.dart';
 import 'package:ameen/blocs/models/post_details.dart';
 import 'package:ameen/blocs/models/reaction_model.dart';
@@ -19,6 +18,7 @@ import 'package:ameen/helpers/ui/images.dart' as myImages;
 import 'package:get_it/get_it.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
 class PostPage extends StatefulWidget {
@@ -31,20 +31,28 @@ class PostPage extends StatefulWidget {
 
 class _PostPageState extends State<PostPage> {
   final GlobalKey<AnimatedListState> listOfComment = GlobalKey();
+  SharedPreferences sharedPreferences;
 
   PostsService get services => GetIt.I<PostsService>();
   String errorMessage;
   CommentModel commentModel;
   PostDetails postDetails;
-  APIResponse<List<CommentModel>> _apiResponse;
 
   bool _isLoading = false;
   var logger = Logger();
+
+
+  _getUsernameOfUser() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    GlobalVariable.currentUserName = sharedPreferences.getString('username');
+  }
 
   @override
   void initState() {
     super.initState();
     _fetchPost();
+    _getUsernameOfUser();
+
   }
 
   @override
@@ -85,7 +93,7 @@ class _PostPageState extends State<PostPage> {
                     fontWeight: FontWeight.w700,
                     color: MyColors.cBackground)),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: ImageIcon(AssetImage(MyIcons.arrowBack)),
           onPressed: () {
             Navigator.of(context).pop(NewsFeed);
           },
@@ -152,19 +160,25 @@ class _PostPageState extends State<PostPage> {
                 SizedBox(height: 8),
 
                 // List of a comments
-                Expanded(
-                  child: AnimatedList(
-                      initialItemCount: postDetails.comments.length,
-                      itemBuilder:
-                          (BuildContext context, int index, Animation anim) {
-                        return SizeTransition(
-                          axis: Axis.vertical,
-                          sizeFactor: anim,
-                          child: CommentWidget(
-                              commentModel: postDetails.comments[index]),
-                        );
-                      }),
-                ),
+                (postDetails.comments.length >= 1 )? Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                    ),
+                    child: AnimatedList(
+                        initialItemCount: postDetails.comments.length,
+                        itemBuilder:
+                            (BuildContext context, int index, Animation anim) {
+                          return SizeTransition(
+                            axis: Axis.vertical,
+                            sizeFactor: anim,
+                            child: CommentWidget(
+                                commentModel: postDetails.comments[index]),
+                          );
+                        }),
+                  ),
+                ) : Expanded(
+                    child: Center(child: Text(Texts.NotFoundComments, style: TextStyle(fontSize: 18, fontFamily: 'Dubai', color: MyColors.cBlack)))),
 
                 // Write a Comment Widget
                 InheritedPostModel(
@@ -500,7 +514,7 @@ class _WriteACommentState extends State<_WriteAComment> {
                       duration: Toast.LENGTH_SHORT,
                     );
                   } else {
-                    final comment = CommentModel(commentBody: _text.text);
+                    final comment = CommentModel(commentBody: _text.text, authorName: GlobalVariable.currentUserName, authorId: GlobalVariable.currentUserId);
                     // Check Internet Connection..
                     ConnectivityCheck();
                     await services.addComment(comment, postDetails.postId);

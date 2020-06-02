@@ -184,7 +184,8 @@ class _LoginState extends State<Login> {
       if (response.statusCode == 200) {
         jsonResponse = json.decode(response.body);
         GlobalVariable.currentUserId = jsonResponse['userId'];
-
+        GlobalVariable.currentUserName = jsonResponse['username'];
+        print('My Username is ${GlobalVariable.currentUserName}');
         print('Res body token: ${jsonResponse['token']}');
         if (jsonResponse != null) {
           setState(() {
@@ -192,6 +193,7 @@ class _LoginState extends State<Login> {
           });
           sharedPreferences.setString("token", jsonResponse['token']);
           sharedPreferences.setString("userId", jsonResponse['userId']);
+          sharedPreferences.setString("username", jsonResponse['username']);
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (BuildContext buildContext) => Home()),
               (route) => false);

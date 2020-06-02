@@ -1,7 +1,7 @@
-import 'package:ameen/blocs/models/api_response.dart';
-import 'package:ameen/blocs/models/post_data.dart';
 import 'package:ameen/blocs/models/user_data.dart';
 import 'package:ameen/services/user_service.dart';
+import 'package:ameen/ui/Screens/home.dart';
+import 'package:ameen/ui/Screens/setting.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_user_profile.dart';
 import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
 import 'package:ameen/ui/widgets/profile_app_bar.dart';
@@ -17,7 +17,6 @@ class UserProfile extends StatefulWidget {
 
 class _UserProfileState extends State<UserProfile> {
   UserService get services => GetIt.I<UserService>();
-  APIResponse<List<PostData>> _apiResponse;
 
   final List<Tab> myTabs = <Tab>[
     // Posts of User
@@ -25,9 +24,9 @@ class _UserProfileState extends State<UserProfile> {
       text: "المنشورات",
     ),
     // Saved Posts
-    Tab(
-      text: "الأدعية المحفوظة",
-    ),
+//    Tab(
+//      text: "الأدعية المحفوظة",
+//    ),
 
   ];
   UserModel userModel;
@@ -97,10 +96,13 @@ class _UserProfileState extends State<UserProfile> {
 
   /// Get List Of Posts of User [Posts, Saved Posts]
   List<Widget> _getListOfPostsOfUser(){
+    int totalOfPosts = userModel.userPosts.length;
+    int totalOfSavedPosts = userModel.savedPosts.length;
+
    return [
      // Posts of User
-      AnimatedList(
-          initialItemCount: userModel.userPosts.length,
+     (totalOfPosts >= 1) ?  AnimatedList(
+          initialItemCount: totalOfPosts,
           itemBuilder:
               (BuildContext context, int index, Animation anim) {
             return SizeTransition(
@@ -108,21 +110,20 @@ class _UserProfileState extends State<UserProfile> {
               sizeFactor: anim,
               child: PostWidget(postModel: userModel.userPosts[index]),
             );
-          }),
+          }) : Center(child: Text(Texts.NotFoundPosts, style: TextStyle(fontSize: 20, fontFamily: 'Dubai', color: MyColors.cBlack))), ];
 
-     // Saved Posts Of User
-      AnimatedList(
-          initialItemCount: userModel.savedPosts.length,
-          itemBuilder:
-              (BuildContext context, int index, Animation anim) {
-            return SizeTransition(
-              axis: Axis.vertical,
-              sizeFactor: anim,
-              child: (userModel.savedPosts.length >= 1) ? PostWidget(postModel: userModel.savedPosts[index])
-                  : Center(child: Text('لا يوجد أدعية في قائمة المحفوظات', style: TextStyle(fontSize: 25, fontFamily: 'Dubai', color: MyColors.cBlack))) ,
-            );
-          }),
-    ];
+//     // Saved Posts Of User
+//     (totalOfSavedPosts >= 1) ? AnimatedList(
+//          initialItemCount: totalOfSavedPosts,
+//          itemBuilder:
+//              (BuildContext context, int index, Animation anim) {
+//            return SizeTransition(
+//              axis: Axis.vertical,
+//              sizeFactor: anim,
+//              child: PostWidget(postModel: userModel.savedPosts[index])
+//            );
+//          }) : Center(child: Text(Texts.NotFoundSavedPosts, style: TextStyle(fontSize: 20, fontFamily: 'Dubai', color: MyColors.cBlack))),
+//    ];
 }
 
   Widget _sliverAppBar() {
@@ -164,10 +165,15 @@ class _UserProfileState extends State<UserProfile> {
         actions: <Widget>[
           IconButton(
             icon: ImageIcon(
-              AssetImage("assets/images/settings.png"),
+              AssetImage(MyIcons.settings),
               size: 20,
               color: Colors.grey[800],
-            ),
+            ), onPressed: () {
+            Navigator.push(
+                context,
+                new MaterialPageRoute(
+                    builder: (BuildContext context) => SettingsPage()));
+          }
           ),
         ],
       ),

@@ -39,7 +39,6 @@ class AddNewCommentWidget extends StatelessWidget {
                 style: TextStyle(fontFamily: 'Dubai', fontSize: 12, height: 1.0, color: Colors.black38),
                 textAlign: TextAlign.right,
                 textDirection: TextDirection.rtl,
-
               ),
             ),
           ),

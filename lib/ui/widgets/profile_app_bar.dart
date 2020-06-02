@@ -1,11 +1,9 @@
 import 'package:ameen/blocs/models/user_data.dart';
-import 'package:ameen/services/user_service.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_user_profile.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/ui/Screens/create_post.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 
 class ProfileAppBar extends StatefulWidget {
   @override
@@ -29,7 +27,7 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset(
-              'assets/images/person_test.png',
+              'assets/images/icon_person.png',
               width: 100.0,
               height: 100.0,
             ),
@@ -86,8 +84,8 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
   }
 
   Widget _followersAndFollowingRow() {
-    UserModel userModel = InheritedUserProfile.of(context).userModel;
-    int totalOfFollowers = userModel.followers.length;
+//    UserModel userModel = InheritedUserProfile.of(context).userModel;
+//    int totalOfFollowers = userModel.followers.length;
 
     return Container(
       padding: EdgeInsets.all(13.0),

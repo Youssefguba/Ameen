@@ -1,23 +1,42 @@
+import 'package:ameen/blocs/global/global.dart';
 import 'package:ameen/blocs/models/comment.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_comment_widget.dart';
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class CommentWidget extends StatelessWidget {
+class CommentWidget extends StatefulWidget {
    CommentModel commentModel;
    CommentWidget({Key key, this.commentModel});
 
+  @override
+  _CommentWidgetState createState() => _CommentWidgetState();
+}
+
+class _CommentWidgetState extends State<CommentWidget> {
+  SharedPreferences sharedPreferences;
+
+  _getUsernameOfUser() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    GlobalVariable.currentUserName = sharedPreferences.getString('username');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getUsernameOfUser();
+  }
   @override
   Widget build(BuildContext context) {
     initializeDateFormatting('ar');
 
     return InheritedCommentModel(
-      commentModel: commentModel,
+      commentModel: widget.commentModel,
       child: Container(
         margin: EdgeInsets.only(left: 3, right: 3, top: 8, bottom: 8),
-        color: MyColors.cBackground,
+        color: Colors.white,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           textDirection: TextDirection.rtl,
@@ -40,7 +59,7 @@ class CommentWidget extends StatelessWidget {
               child: Container(
                 child: Bubble(
                   margin: BubbleEdges.only(top: 10),
-                  color: Colors.white,
+                  color: MyColors.cBackground,
                   stick:  false,
                   radius: Radius.circular(20.0),
                   elevation: 1.0,
@@ -77,7 +96,7 @@ class CommentWidget extends StatelessWidget {
           Container(
             alignment: Alignment.topRight,
             child: Text(
-              commentModel.authorName,
+              widget.commentModel.authorName ?? '',
               style: TextStyle(
                   fontFamily: 'Dubai', fontSize: 14.0, color: Colors.black87),
             ),
@@ -87,7 +106,7 @@ class CommentWidget extends StatelessWidget {
           Container(
             alignment: Alignment.topRight,
             child: Text(
-              commentModel.postTimeFormatted,
+              widget.commentModel.postTimeFormatted,
               style: TextStyle(
                   fontFamily: 'Dubai',
                   fontSize: 11.0,
@@ -106,7 +125,7 @@ class CommentWidget extends StatelessWidget {
       padding: EdgeInsets.all(8),
       child: Container(
         child: Text(
-          commentModel.commentBody,
+          widget.commentModel.commentBody,
           style: TextStyle(
               fontFamily: 'Dubai', fontSize: 14.0, color: Colors.black),
         ),

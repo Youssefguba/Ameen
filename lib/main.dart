@@ -1,4 +1,5 @@
 import 'package:ameen/services/user_service.dart';
+import 'package:ameen/ui/Screens/splash_screen.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/Screens/home.dart';
@@ -36,7 +37,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Color.fromRGBO(62, 146, 42, 1),
       ),
       debugShowCheckedModeBanner: false,
-      home: Home(),
+      home: SplashScreen(),
     );
   }
 }

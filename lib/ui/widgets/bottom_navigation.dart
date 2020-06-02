@@ -1,6 +1,3 @@
-import 'package:ameen/ui/Screens/contacts_list.dart';
-import 'package:ameen/ui/Screens/news_feed.dart';
-import 'package:ameen/ui/Screens/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:ameencommon/utils/constants.dart';
 
@@ -16,12 +13,6 @@ class CustomBottomNavigation extends StatefulWidget {
 
 class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
   int _currentIndex = 1;
-
-  final List<Widget> _pages = [
-    ContactList(),
-    NewsFeed(),
-    UserProfile(),
-  ];
 
   @override
   Widget build(BuildContext context) {

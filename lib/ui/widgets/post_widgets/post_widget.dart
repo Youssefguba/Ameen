@@ -98,7 +98,6 @@ class _PostBody extends StatelessWidget {
     );
   }
 }
-
 /*
   * The top Section of Post (Photo, Time, Settings, Name)
   * */
