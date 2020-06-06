@@ -28,7 +28,12 @@ class _HomeState extends State<Home> {
   }
 
   onTapPage(int pageIndex){
-    pageController.jumpToPage(pageIndex);
+    pageController.animateToPage(
+        pageIndex,
+        duration: Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+
+    );
   }
   @override
   Widget build(BuildContext context) {

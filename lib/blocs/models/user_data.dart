@@ -1,20 +1,25 @@
 import 'package:ameen/blocs/models/post_data.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class UserModel {
-  String userId, username, userEmail, password;
-  ImageProvider userImage;
+  String uid;
+  String username;
+  String userEmail;
+  String password;
+  String lastTimeUserLogin;
   bool isActive;
   bool isAdministrator = false;
   DateTime joinedDate;
+  ImageProvider userImage;
   List<PostData> userPosts;
   List<PostData> savedPosts;
   List<Followers> followers;
   List<Following> following;
 
   UserModel({
-    this.userId,
+    this.uid,
     this.username,
     this.userEmail,
     this.userImage,
@@ -32,7 +37,7 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> item) {
     return UserModel(
-      userId: item['_id'],
+      uid: item['_id'],
       username: item['username'],
       userEmail: item['email'],
       followers:(item['followers'] as List).map((i) => Followers.fromJson(i)).toList(),
@@ -51,6 +56,9 @@ class UserModel {
       "isAdministrator": isAdministrator,
     };
   }
+
+
+
 }
 
 class Followers {

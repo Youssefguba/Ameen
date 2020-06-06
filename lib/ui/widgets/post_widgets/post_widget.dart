@@ -8,7 +8,6 @@ import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/date_symbol_data_local.dart'; //for date locale
-import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/helpers/ui/images.dart' as myImages;
 import 'package:ameen/helpers/ui/text_styles.dart' as mytextStyle;
 import 'package:logger/logger.dart';

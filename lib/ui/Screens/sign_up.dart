@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:ameen/blocs/models/user_data.dart';
+import 'package:ameen/services/authentication.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/ui/Screens/home.dart';
 import 'package:ameen/ui/widgets/entry_field.dart';
@@ -19,15 +20,17 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  bool _isLoading = false;
-  var status;
-  UserModel userModel;
-
-  final logger = Logger();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController userNameController = new TextEditingController();
   final TextEditingController emailController = new TextEditingController();
   final TextEditingController passwordController = new TextEditingController();
+  final logger = Logger();
 
+  AuthService auth = AuthService();
+  UserModel userModel;
+
+  bool _isLoading = false;
+  var status;
 
   @override
   void dispose() {
@@ -105,10 +108,10 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: SingleChildScrollView(
         child: Container(
           height: MediaQuery.of(context).size.height,
@@ -140,8 +143,8 @@ class _SignUpState extends State<SignUp> {
                           ),
 
                           //TODO => There is Button Here
-                          SubmitButton(
-                              MyColors.cGreen, "إنشاء حساب", createAccountButton),
+                          SubmitButton(MyColors.cGreen, "إنشاء حساب",
+                              createAccountButton),
                           SizedBox(
                             height: 10,
                           ),
@@ -154,14 +157,13 @@ class _SignUpState extends State<SignUp> {
                             height: 10,
                           ),
 
-                          //TODO => There is Button Here
                           SubmitButton(MyColors.cFacebookColor,
                               "التسجيل بواسطة الفيسبوك", faceBookLoginButton),
                           SizedBox(
                             height: 13,
                           ),
 
-                          //TODO => There is Button Here
+                          // SignIn Anonymously Button
                           SubmitButton(Colors.grey.shade700,
                               "الدخول كمستخدم خفي", anonymousLoginButton)
                         ],
@@ -179,8 +181,7 @@ class _SignUpState extends State<SignUp> {
   signUp(UserModel userModel) async {
     await http
         .post(Api.API + 'auth/signup',
-            headers: Api.headers,
-            body: json.encode(userModel.toJson()))
+            headers: Api.headers, body: json.encode(userModel.toJson()))
         .then((data) {
       if (data.statusCode == 200) {
         var jsonResponse = json.decode(data.body);
@@ -276,7 +277,17 @@ class _SignUpState extends State<SignUp> {
   void faceBookLoginButton() {}
 
   /// Anonymous Login Button Function
-  void anonymousLoginButton() {}
+  void anonymousLoginButton() async {
+    dynamic result = await auth.signInAnonymously();
+    if (result == null) {
+      SnackBar snackbar = SnackBar(content: Text("حدث خطأ في عملية التسجيل يرجى المحاولة مرة أخرى"));
+      _scaffoldKey.currentState.showSnackBar(snackbar);
+    } else {
+      SnackBar snackbar = SnackBar(content: Text("❤ 🤲🏻  مرحبا بك في تطبيق آمين"));
+      _scaffoldKey.currentState.showSnackBar(snackbar);
+      print(result);
+    }
+  }
 }
 
 //function save
@@ -285,5 +296,4 @@ _save(String token) async {
   final key = 'token';
   final value = token;
   prefs.setString(key, value);
-
 }

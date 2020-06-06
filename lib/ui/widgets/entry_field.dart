@@ -2,6 +2,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class EntryField extends StatelessWidget {
+  final _formKey = GlobalKey<FormState>();
+  String username;
+
   final String title;
   final Icon inputIcon;
   TextInputType textInputType;
@@ -26,19 +29,22 @@ class EntryField extends StatelessWidget {
         textDirection: TextDirection.rtl,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          TextField(
-              controller: editingController,
-              textAlign: TextAlign.right,
-              obscureText: isPassword,
-              keyboardType: textInputType,
-              cursorColor:Color.fromRGBO(0, 153, 51, 1),
-              style: TextStyle(fontFamily: 'Dubai', fontSize: 15),
-              decoration: InputDecoration(
-                suffixIcon: inputIcon,
-                prefixIcon: visibleIcon,
-                hintText: title,
-                border: UnderlineInputBorder(),
-              )),
+          Form(
+          key: _formKey,
+            child: TextFormField(
+                controller: editingController,
+                textAlign: TextAlign.right,
+                obscureText: isPassword,
+                keyboardType: textInputType,
+                cursorColor:Color.fromRGBO(0, 153, 51, 1),
+                style: TextStyle(fontFamily: 'Dubai', fontSize: 15),
+                decoration: InputDecoration(
+                  suffixIcon: inputIcon,
+                  prefixIcon: visibleIcon,
+                  hintText: title,
+                  border: UnderlineInputBorder(),
+                )),
+          ),
         ],
       ),
     );

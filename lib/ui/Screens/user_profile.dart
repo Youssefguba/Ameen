@@ -1,6 +1,5 @@
 import 'package:ameen/blocs/models/user_data.dart';
 import 'package:ameen/services/user_service.dart';
-import 'package:ameen/ui/Screens/home.dart';
 import 'package:ameen/ui/Screens/setting.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_user_profile.dart';
 import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
@@ -56,6 +55,13 @@ class _UserProfileState extends State<UserProfile> {
       _isLoading = false;
     });
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _isLoading = false;
+  }
+
 
 
   @override

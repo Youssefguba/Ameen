@@ -12,6 +12,7 @@ class ChatPage extends StatelessWidget {
 
   ChatPage({Key key, this.username}) : super(key: key);
 
+
   @override
   void initState() {
     childList.add(Align(

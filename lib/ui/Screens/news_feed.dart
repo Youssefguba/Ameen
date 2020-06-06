@@ -14,6 +14,7 @@ import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ameen/blocs/global/global.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 
@@ -28,6 +29,13 @@ class NewsFeed extends StatefulWidget {
 
 class _NewsFeedState extends State<NewsFeed> {
   SharedPreferences sharedPreferences;
+  APIResponse<List<PostData>> _apiResponse;
+  PostsService get services => GetIt.I<PostsService>();
+
+  final CollectionReference usersRef = Firestore.instance.collection(DatabaseTable.users);
+  final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
+  final logger = Logger();
+  bool _isLoading = false;
 
   checkLoginStatus() async {
     sharedPreferences = await SharedPreferences.getInstance();
@@ -40,23 +48,17 @@ class _NewsFeedState extends State<NewsFeed> {
     }
   }
 
-  final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
-  PostsService get services => GetIt.I<PostsService>();
-  APIResponse<List<PostData>> _apiResponse;
-  bool _isLoading = false;
-  var logger = Logger();
   @override
   void initState() {
-    checkLoginStatus();
     super.initState();
+    checkLoginStatus();
     _fetchPosts();
-
   }
-
 
   @override
   void dispose() {
     super.dispose();
+      _isLoading = false;
   }
 
   _fetchPosts() async {
@@ -67,9 +69,8 @@ class _NewsFeedState extends State<NewsFeed> {
     setState(() {
       _isLoading = false;
     });
-
-    setState(() {});
   }
+
 
   @override
   Widget build(BuildContext context) {
