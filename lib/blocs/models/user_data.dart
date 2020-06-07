@@ -1,4 +1,5 @@
 import 'package:ameen/blocs/models/post_data.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -57,8 +58,13 @@ class UserModel {
     };
   }
 
-
-
+  factory UserModel.fromDocument(DocumentSnapshot doc) {
+    return UserModel(
+      uid: doc['id'],
+      userEmail: doc['email'],
+      username: doc['username'],
+    );
+  }
 }
 
 class Followers {

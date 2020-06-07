@@ -13,10 +13,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ameen/blocs/global/global.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-
 
 /// * This page to display the General Timeline of posts
 /// *
@@ -37,21 +34,9 @@ class _NewsFeedState extends State<NewsFeed> {
   final logger = Logger();
   bool _isLoading = false;
 
-  checkLoginStatus() async {
-    sharedPreferences = await SharedPreferences.getInstance();
-    if(sharedPreferences.getString('token') == null || sharedPreferences.getString('userId') == null) {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-              builder: (BuildContext buildContext) => Login()), (route) => false);
-    } else {
-      GlobalVariable.currentUserId = sharedPreferences.getString('userId');
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    checkLoginStatus();
     _fetchPosts();
   }
 
@@ -66,9 +51,6 @@ class _NewsFeedState extends State<NewsFeed> {
       _isLoading = true;
     });
     _apiResponse = await services.getPostsList();
-    setState(() {
-      _isLoading = false;
-    });
   }
 
 

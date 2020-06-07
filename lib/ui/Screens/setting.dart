@@ -2,8 +2,7 @@ import 'dart:ui';
 import 'package:ameen/ui/Screens/login.dart';
 import 'package:flutter/material.dart';
 import 'package:ameencommon/utils/constants.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
+import 'package:ameen/services/authentication.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -11,6 +10,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  AuthService auth = AuthService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,28 +31,17 @@ class _SettingsPageState extends State<SettingsPage> {
       body: Container(
         padding: EdgeInsets.all(15),
         alignment: Alignment.topCenter,
+
+        // Sign out button
         child: FlatButton(
           child: Text('تسجيل خروج', style: TextStyle(color: Colors.white, fontFamily: 'Dubai', fontSize: 18)),
           color: Colors.redAccent,
           disabledColor: Colors.redAccent,
           shape: StadiumBorder(),
           splashColor: Colors.red.shade800,
-          onPressed: () async {
-            SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-            await http.get(Api.API + 'auth/logout')
-                .then((response) {
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (BuildContext buildContext) => Login()),
-                      (route) => false);
-            });
-            await sharedPreferences.clear();
-          },
+          onPressed: () async { await auth.signOut(); },
         ),
       ),
     );
-  }
-
-  void signOut() async {
-
   }
 }

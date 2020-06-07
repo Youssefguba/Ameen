@@ -1,34 +1,45 @@
 import 'dart:convert';
 import 'dart:ui';
+import 'package:ameen/blocs/global/global.dart';
 import 'package:ameen/blocs/models/user_data.dart';
 import 'package:ameen/services/authentication.dart';
+import 'package:ameen/ui/Screens/second_registeration.dart';
 import 'package:ameencommon/utils/constants.dart';
-import 'package:ameen/ui/Screens/home.dart';
 import 'package:ameen/ui/widgets/entry_field.dart';
 import 'package:ameen/ui/widgets/or_line.dart';
 import 'package:ameen/ui/widgets/submit_button.dart';
+import 'package:ameencommon/utils/functions.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:toast/toast.dart';
 
 class SignUp extends StatefulWidget {
   @override
   _SignUpState createState() => _SignUpState();
 }
 
-class _SignUpState extends State<SignUp> {
+class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
+  final CollectionReference usersRef = Firestore.instance.collection(DatabaseTable.users);
+
+  final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final logger = Logger();
   final TextEditingController userNameController = new TextEditingController();
   final TextEditingController emailController = new TextEditingController();
   final TextEditingController passwordController = new TextEditingController();
-  final logger = Logger();
+  final AuthService auth = AuthService();
 
-  AuthService auth = AuthService();
-  UserModel userModel;
-
+  FacebookLogin facebookLogin = FacebookLogin();
+  
+  UserModel currentUser;
+  String username = '';
+  String email = '';
+  String password = '';
   bool _isLoading = false;
   var status;
 
@@ -43,7 +54,9 @@ class _SignUpState extends State<SignUp> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
+          // Login Button Navigator
           InkWell(
+            onTap: () {popPage(context);},
             child: Text(
               'تسجيل دخول',
               style: TextStyle(
@@ -87,24 +100,40 @@ class _SignUpState extends State<SignUp> {
   }
 
   Widget _emailPasswordWidget() {
-    return Column(
-      children: <Widget>[
-        EntryField("إسم المستخدم", Icon(Icons.person),
-            editingController: userNameController),
-        EntryField(
-          "البريد الإلكتروني",
-          Icon(Icons.email),
-          textInputType: TextInputType.emailAddress,
-          editingController: emailController,
-        ),
-        EntryField(
-          "إنشاء كلمة سر",
-          Icon(Icons.lock),
-          isPassword: true,
-          visibleIcon: Icon(Icons.visibility_off),
-          editingController: passwordController,
-        ),
-      ],
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: <Widget>[
+          // Username
+          EntryField("إسم المستخدم", Icon(Icons.person),
+              editingController: userNameController,
+              onValueChanged: (value) => { username = value},
+              validator: (val) => val.trim().length < 3 || val.isEmpty ? 'لا تترك خانة الإسم فارغة' : null,
+          ),
+          // Email Address
+          EntryField(
+            "البريد الإلكتروني",
+            Icon(Icons.email),
+              textInputType: TextInputType.emailAddress,
+              editingController: emailController,
+              onValueChanged: (value) => { email = value},
+              validator: (val) => val.isEmpty ? 'لا تنسى كتابة الإيميل' : null,
+          ),
+
+          // Create a Password
+          EntryField(
+            "إنشاء كلمة سر",
+            Icon(Icons.lock),
+            isPassword: true,
+            visibleIcon: IconButton(
+              icon: Icon(Icons.visibility_off),
+            ),
+            editingController: passwordController, onValueChanged: (value) => { password = value},
+            validator: (val) => val.length < 6  ? 'لا يمكن إدخال أقل من 6 ارقام أو حروف' : null,
+
+          ),
+        ],
+      ),
     );
   }
 
@@ -119,11 +148,10 @@ class _SignUpState extends State<SignUp> {
             children: <Widget>[
               (_isLoading)
                   ? Center(
-                      child: CircularProgressIndicator(
-                      backgroundColor: MyColors.cBackground,
-                      valueColor:
-                          new AlwaysStoppedAnimation<Color>(MyColors.cGreen),
-                    ))
+                      child: SpinKitFadingCube(
+                      color: MyColors.cGreen,
+                        controller: AnimationController(duration: const Duration(milliseconds: 1200), vsync: this),
+                      ))
                   : Container(
                       padding: EdgeInsets.symmetric(horizontal: 21),
                       child: Column(
@@ -144,7 +172,7 @@ class _SignUpState extends State<SignUp> {
 
                           //TODO => There is Button Here
                           SubmitButton(MyColors.cGreen, "إنشاء حساب",
-                              createAccountButton),
+                              createAccount),
                           SizedBox(
                             height: 10,
                           ),
@@ -175,106 +203,71 @@ class _SignUpState extends State<SignUp> {
       ),
     );
   }
-
-  /* Handle Normal Login Function */
-  /// handle Response of Sign In and Compare tokens..
-  signUp(UserModel userModel) async {
-    await http
-        .post(Api.API + 'auth/signup',
-            headers: Api.headers, body: json.encode(userModel.toJson()))
-        .then((data) {
-      if (data.statusCode == 200) {
-        var jsonResponse = json.decode(data.body);
-        if (jsonResponse != null) {
-          setState(() {
-            _isLoading = false;
-          });
-          status = data.body.contains('error');
-          if (status) {
-            print('data : ${jsonResponse["error"]}');
-          } else {
-            print('data : ${jsonResponse["token"]}');
-            _save(jsonResponse["token"]);
-//            _save(jsonResponse["token"]);
-          }
-
-          // After Save the User redirect to Home Page.
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (BuildContext buildContext) => Home()),
-              (route) => false);
-        }
-      }
-
-      /// If the Email is already exists
-      else if (data.statusCode == 409) {
-        setState(() {
-          _isLoading = true;
-        });
-        Toast.show(
-          'هذا الحساب موجود بالفعل',
-          context,
-          backgroundColor: Colors.red.shade700,
-          textColor: Colors.white,
-          gravity: Toast.BOTTOM,
-          duration: Toast.LENGTH_SHORT,
-        );
-        setState(() {
-          _isLoading = false;
-        });
-      }
-
-      /// If there is an Error in Internal Server.
-      else if (data.statusCode == 500) {
-        setState(() {
-          _isLoading = true;
-        });
-        Toast.show(
-          'حدث خطأ في التسجيل حاول مرة أخرى ',
-          context,
-          backgroundColor: Colors.red.shade700,
-          textColor: Colors.white,
-          gravity: Toast.BOTTOM,
-          duration: Toast.LENGTH_LONG,
-        );
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    });
-  }
-
   /// Normal Login Button Function
-  void createAccountButton() {
-    if (userNameController.text == '' ||
-        emailController.text == "" ||
-        passwordController.text == '') {
-      Toast.show(
-        'ارجوا عدم ترك الايميل الالكتروني او الرقم السري فارغا',
-        context,
-        backgroundColor: Colors.red.shade700,
-        textColor: Colors.white,
-        gravity: Toast.BOTTOM,
-        duration: Toast.LENGTH_SHORT,
-      );
-    } else {
-      setState(() {
-        _isLoading = true;
-      });
-      var emailText = emailController.text;
-      var usernameText = userNameController.text;
-      var passwordText = passwordController.text;
+  void createAccount () async {
+    if(_formKey.currentState.validate()) {
+      setState(() => _isLoading = true );
+      dynamic user = await auth.signUp(email, password);
 
-      var user = UserModel(
-        userEmail: emailText.trim().trimRight().trimLeft(),
-        username: usernameText.trim().trimRight().trimLeft(),
-        password: passwordText.trim().trimRight().trimLeft(),
-      );
-      signUp(user);
+      setState(() => _isLoading = false );
+      if(user == null) {
+        SnackBar snackBar = SnackBar(
+          content: Text('هذا البريد الإلكتروني موجود بالفعل يرجى التأكد من البريد الإلكتروني مرة أخرى', style: TextStyle(fontFamily: 'Dubai')),
+          backgroundColor: Colors.red.shade700,
+          duration: Duration(seconds: 3),
+        );
+        _scaffoldKey.currentState.showSnackBar(snackBar);
+      } else {
+        usersRef.document(user.uid).setData({
+          "id": user.uid,
+          "username": username,
+          "email": user.email,
+          "joined_date": DateTime.now(),
+        });
+        GlobalVariable.currentUserId = user.uid;
+
+        DocumentSnapshot doc = await usersRef.document(user.uid).get();
+        doc = await usersRef.document(user.uid).get();
+        currentUser = UserModel.fromDocument(doc);
+        pushPage(context, SecondRegisteration());
+      }
     }
   }
 
+
+
   /// Facebook Login Button Function
-  void faceBookLoginButton() {}
+  void faceBookLoginButton() async {
+    final FacebookLoginResult result =
+        await facebookLogin.logIn(['email']);
+      switch(result.status) {
+        case FacebookLoginStatus.loggedIn:
+          var graphResponse = await http.get(
+              'https://graph.facebook.com/v2.12/me?fields=name,email,birthday,first_name,last_name,picture.width(800).height(800)&access_token=${result
+                  .accessToken.token}');
+          var profile = json.decode(graphResponse.body);
+          usersRef.document(result.accessToken.userId).setData({
+            'id':  result.accessToken.userId,
+            'fbName': profile['name'],
+            'fbEmail': profile['email'],
+            'fbAccountId': profile['id'],
+            'birthday': profile['birthday'],
+            'profilePicture': profile['picture']['data']['url'],
+
+          });
+          DocumentSnapshot doc = await usersRef.document(result.accessToken.userId).get();
+          doc = await usersRef.document(result.accessToken.userId).get();
+          currentUser = UserModel.fromDocument(doc);
+          break;
+        case FacebookLoginStatus.cancelledByUser:
+          print('Login cancelled by the user.');
+          break;
+        case FacebookLoginStatus.error:
+          print('Something went wrong with the login process.\n'
+              'Here\'s the error Facebook gave us: ${result.errorMessage}');
+          break;
+      }
+  }
 
   /// Anonymous Login Button Function
   void anonymousLoginButton() async {
@@ -285,7 +278,6 @@ class _SignUpState extends State<SignUp> {
     } else {
       SnackBar snackbar = SnackBar(content: Text("❤ 🤲🏻  مرحبا بك في تطبيق آمين"));
       _scaffoldKey.currentState.showSnackBar(snackbar);
-      print(result);
     }
   }
 }
