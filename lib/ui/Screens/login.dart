@@ -1,19 +1,12 @@
-import 'dart:convert';
 import 'dart:ui';
-import 'package:ameen/blocs/global/global.dart';
 import 'package:ameen/services/authentication.dart';
-import 'package:ameen/ui/Screens/home.dart';
 import 'package:ameen/ui/Screens/sign_up.dart';
 import 'package:ameen/ui/widgets/entry_field.dart';
-import 'package:ameen/ui/widgets/or_line.dart';
 import 'package:ameen/ui/widgets/submit_button.dart';
 import 'package:ameencommon/utils/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:toast/toast.dart';
 import 'package:ameencommon/utils/constants.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 class Login extends StatefulWidget {
   @override
@@ -172,8 +165,8 @@ class _LoginState extends State<Login> {
                       ),
                       _emailPasswordWidget(),
                       _forgetPassword(),
-                      SubmitButton(Color.fromRGBO(0, 153, 51, 1),
-                          "تسجيل الدخول", signIn),
+                      SubmitButton(color: Color.fromRGBO(0, 153, 51, 1),
+                          title: "تسجيل الدخول", gestureTapCallback: signIn),
                       SizedBox(
                         height: 10,
                       ),

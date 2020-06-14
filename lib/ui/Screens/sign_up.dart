@@ -171,8 +171,8 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                           ),
 
                           //TODO => There is Button Here
-                          SubmitButton(MyColors.cGreen, "إنشاء حساب",
-                              createAccount),
+                          SubmitButton(color: MyColors.cGreen, title: "إنشاء حساب",
+                              gestureTapCallback: createAccount),
                           SizedBox(
                             height: 10,
                           ),
@@ -184,16 +184,12 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                           SizedBox(
                             height: 10,
                           ),
-
-                          SubmitButton(MyColors.cFacebookColor,
-                              "التسجيل بواسطة الفيسبوك", faceBookLoginButton),
                           SizedBox(
                             height: 13,
                           ),
-
                           // SignIn Anonymously Button
-                          SubmitButton(Colors.grey.shade700,
-                              "الدخول كمستخدم خفي", anonymousLoginButton)
+                          SubmitButton(color: Colors.grey.shade700,
+                              title: "الدخول كمستخدم خفي", gestureTapCallback: anonymousLoginButton)
                         ],
                       ),
                     ),
@@ -223,7 +219,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
           "username": username,
           "email": user.email,
           "joined_date": DateTime.now(),
-        });
+        }); 
         GlobalVariable.currentUserId = user.uid;
 
         DocumentSnapshot doc = await usersRef.document(user.uid).get();

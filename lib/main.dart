@@ -1,7 +1,6 @@
 import 'package:ameen/blocs/models/user_data.dart';
 import 'package:ameen/services/authentication.dart';
 import 'package:ameen/services/user_service.dart';
-import 'package:ameen/ui/Screens/login.dart';
 import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/services/post_service.dart';
