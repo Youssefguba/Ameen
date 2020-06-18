@@ -1,7 +1,7 @@
 import 'package:ameen/blocs/global/global.dart';
-import 'package:ameen/blocs/models/comment.dart';
-import 'package:ameen/blocs/models/post_details.dart';
-import 'package:ameen/blocs/models/reaction_model.dart';
+import 'package:ameencommon/models/comment.dart';
+import 'package:ameencommon/models/post_details.dart';
+import 'package:ameencommon/models/reaction_model.dart';
 import 'package:ameen/services/connection_check.dart';
 import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/Screens/news_feed.dart';
@@ -79,7 +79,7 @@ class _PostPageState extends State<PostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.cBackground,
+      backgroundColor: AppColors.cBackground,
       appBar: AppBar(
         title: _isLoading
             ? Text('')
@@ -91,25 +91,25 @@ class _PostPageState extends State<PostPage> {
                     fontSize: 16.0,
                     fontFamily: 'Dubai',
                     fontWeight: FontWeight.w700,
-                    color: MyColors.cBackground)),
+                    color: AppColors.cBackground)),
         leading: IconButton(
-          icon: ImageIcon(AssetImage(MyIcons.arrowBack)),
+          icon: ImageIcon(AssetImage(AppIcons.arrowBack)),
           onPressed: () {
             Navigator.of(context).pop(NewsFeed);
           },
-          disabledColor: MyColors.cBackground,
+          disabledColor: AppColors.cBackground,
         ),
       ),
       body: Builder(builder: (context) {
         if (_isLoading) {
           return Center(
               child: CircularProgressIndicator(
-            backgroundColor: MyColors.cBackground,
-            valueColor: new AlwaysStoppedAnimation<Color>(MyColors.cGreen),
+            backgroundColor: AppColors.cBackground,
+            valueColor: new AlwaysStoppedAnimation<Color>(AppColors.cGreen),
           ));
         }
         return RefreshIndicator(
-          color: MyColors.cGreen,
+          color: AppColors.cGreen,
           backgroundColor: Colors.white,
           onRefresh: () async {
             await _fetchPost();
@@ -178,7 +178,7 @@ class _PostPageState extends State<PostPage> {
                         }),
                   ),
                 ) : Expanded(
-                    child: Center(child: Text(Texts.NotFoundComments, style: TextStyle(fontSize: 18, fontFamily: 'Dubai', color: MyColors.cBlack)))),
+                    child: Center(child: Text(Texts.NotFoundComments, style: TextStyle(fontSize: 18, fontFamily: 'Dubai', color: AppColors.cBlack)))),
 
                 // Write a Comment Widget
                 InheritedPostModel(
@@ -484,7 +484,7 @@ class _WriteACommentState extends State<_WriteAComment> {
         margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 2),
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         decoration: BoxDecoration(
-            color: MyColors.cBackground,
+            color: AppColors.cBackground,
             borderRadius: BorderRadius.circular(30)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -494,11 +494,11 @@ class _WriteACommentState extends State<_WriteAComment> {
             /// Submit Icon Button to Add Comment to List..
             IconButton(
                 iconSize: 24,
-                focusColor: MyColors.cGreen,
-                splashColor: MyColors.cGreen,
-                disabledColor: MyColors.cGreen,
+                focusColor: AppColors.cGreen,
+                splashColor: AppColors.cGreen,
+                disabledColor: AppColors.cGreen,
                 icon: Icon(Icons.send,
-                    color: MyColors.cGreenDark,
+                    color: AppColors.cGreenDark,
                     size: 24,
                     textDirection: TextDirection.rtl),
                 onPressed: () async {
@@ -531,7 +531,7 @@ class _WriteACommentState extends State<_WriteAComment> {
                 textAlign: TextAlign.right,
                 textDirection: TextDirection.rtl,
                 showCursor: true,
-                cursorColor: MyColors.cGreenDark,
+                cursorColor: AppColors.cGreenDark,
                 controller: _text,
                 scrollPhysics: ScrollPhysics(),
                 enabled: true,
@@ -654,7 +654,7 @@ class _ReactionsButtonsState extends State<_ReactionsButtons>
                       : tiltIconAmeenInBtn2.value,
                   child: Image.asset(ameenImage,
                       color:
-                          (isPressed) ? MyColors.cGreen : MyColors.cTextColor,
+                          (isPressed) ? AppColors.cGreen : AppColors.cTextColor,
                       fit: BoxFit.contain,
                       width: 20,
                       height: 20),
@@ -668,7 +668,7 @@ class _ReactionsButtonsState extends State<_ReactionsButtons>
                       fontFamily: 'Dubai',
                       fontSize: 13,
                       color:
-                          (isPressed) ? MyColors.cGreen : MyColors.cTextColor,
+                          (isPressed) ? AppColors.cGreen : AppColors.cTextColor,
                       fontWeight:
                           (isPressed) ? FontWeight.w600 : FontWeight.normal,
                     )),
@@ -699,7 +699,7 @@ class _ReactionsButtonsState extends State<_ReactionsButtons>
                 style: TextStyle(
                   fontFamily: 'Dubai',
                   fontSize: 13,
-                  color: MyColors.cTextColor,
+                  color: AppColors.cTextColor,
                 )),
           ),
 
@@ -710,7 +710,7 @@ class _ReactionsButtonsState extends State<_ReactionsButtons>
                 style: TextStyle(
                   fontFamily: 'Dubai',
                   fontSize: 13,
-                  color: MyColors.cTextColor,
+                  color: AppColors.cTextColor,
                 )),
           ),
         ],

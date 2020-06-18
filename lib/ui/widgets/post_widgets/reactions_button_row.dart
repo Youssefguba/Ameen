@@ -1,6 +1,6 @@
 import 'package:ameen/blocs/global/global.dart';
-import 'package:ameen/blocs/models/post_data.dart';
-import 'package:ameen/blocs/models/reaction_model.dart';
+import 'package:ameencommon/models/post_data.dart';
+import 'package:ameencommon/models/reaction_model.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_model.dart';
@@ -124,7 +124,7 @@ class ReactionsButtonsState extends State<ReactionsButtons> with TickerProviderS
                 child: Transform.rotate(
                   angle: (isPressed ) ?  handleOutputRangeTiltIconAmeen(tiltIconAmeenInBtn2.value) : tiltIconAmeenInBtn2.value,
                   child: Image.asset(ameenImage,
-                      color: (isPressed) ? MyColors.cGreen : MyColors.cTextColor,
+                      color: (isPressed) ? AppColors.cGreen : AppColors.cTextColor,
                       fit: BoxFit.contain,
                       width: 20,
                       height: 20
@@ -137,7 +137,7 @@ class ReactionsButtonsState extends State<ReactionsButtons> with TickerProviderS
                     style: TextStyle(
                       fontFamily: 'Dubai',
                       fontSize: 13,
-                      color: (isPressed) ? MyColors.cGreen : MyColors.cTextColor,
+                      color: (isPressed) ? AppColors.cGreen : AppColors.cTextColor,
                       fontWeight: (isPressed) ? FontWeight.w600 : FontWeight.normal,
                     )),
               ),
@@ -168,7 +168,7 @@ class ReactionsButtonsState extends State<ReactionsButtons> with TickerProviderS
                 style: TextStyle(
                   fontFamily: 'Dubai',
                   fontSize: 13,
-                  color: MyColors.cTextColor,
+                  color: AppColors.cTextColor,
                 )),
           ),
 
@@ -180,7 +180,7 @@ class ReactionsButtonsState extends State<ReactionsButtons> with TickerProviderS
                 style: TextStyle(
                   fontFamily: 'Dubai',
                   fontSize: 13,
-                  color: MyColors.cTextColor,
+                  color: AppColors.cTextColor,
                 )),
           ),
         ],

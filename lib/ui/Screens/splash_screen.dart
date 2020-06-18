@@ -23,12 +23,12 @@ class SplashScreen extends StatelessWidget {
                 speed: Duration(milliseconds: 900),
                 text: ["آمين", "Amen"],
                 textStyle: TextStyle(
-                  color: MyColors.cGreen,
+                  color: AppColors.cGreen,
                   fontSize: 80.0,
                   fontFamily: "Tajawal",
                   fontWeight: FontWeight.bold,
                 ),
-                colors: [Colors.white, MyColors.cGreen],
+                colors: [Colors.white, AppColors.cGreen],
                 textAlign: TextAlign.start,
                 alignment:
                 AlignmentDirectional.topEnd // or Alignment.topLeft

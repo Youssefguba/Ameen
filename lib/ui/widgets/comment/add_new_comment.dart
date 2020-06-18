@@ -30,7 +30,7 @@ class AddNewCommentWidget extends StatelessWidget {
               padding: EdgeInsets.all(18),
               height: 50,
               decoration: BoxDecoration(
-                  color: MyColors.cBackground,
+                  color: AppColors.cBackground,
                   borderRadius: BorderRadius.circular(20.0),
                   border: Border.all(color: Colors.black12)
               ),

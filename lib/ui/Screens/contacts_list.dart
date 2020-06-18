@@ -11,10 +11,10 @@ class ContactList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.cGreen,
+      backgroundColor: AppColors.cGreen,
       appBar: AppBar(
         elevation: 0.0,
-        backgroundColor: MyColors.cGreen,
+        backgroundColor: AppColors.cGreen,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[

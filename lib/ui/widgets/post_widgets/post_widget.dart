@@ -1,6 +1,6 @@
 import 'package:ameen/blocs/global/global.dart';
-import 'package:ameen/blocs/models/post_data.dart';
-import 'package:ameen/blocs/models/user_data.dart';
+import 'package:ameencommon/models/post_data.dart';
+import 'package:ameencommon/models/user_data.dart';
 import 'package:ameen/services/post_service.dart';
 import 'package:ameen/ui/widgets/comment/add_new_comment.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_model.dart';

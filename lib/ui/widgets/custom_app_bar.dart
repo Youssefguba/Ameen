@@ -1,3 +1,4 @@
+import 'package:ameen/services/authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:ameencommon/utils/constants.dart';
 
@@ -6,6 +7,8 @@ import 'package:ameencommon/utils/constants.dart';
 * */
 
 Widget customAppBar() {
+  AuthService auth = AuthService();
+
   return AppBar(
     backgroundColor: Colors.white,
     elevation: 0.0,
@@ -18,7 +21,7 @@ Widget customAppBar() {
           fontSize: 16.0,
           fontFamily: 'Dubai',
           fontWeight: FontWeight.w700,
-          color:  MyColors.green[700],
+          color:  AppColors.green[700],
         ),
       ),
     ),
@@ -26,6 +29,7 @@ Widget customAppBar() {
       IconButton(
         icon: Icon(Icons.notifications_none),
         tooltip: "الآشعارات",
+        onPressed: () async { await auth.signOut(); },
 
       )
     ],

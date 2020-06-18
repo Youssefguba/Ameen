@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ameencommon/utils/constants.dart';
 
 class SubmitButton extends StatelessWidget {
   final color;
@@ -27,7 +26,7 @@ class SubmitButton extends StatelessWidget {
           splashColor: Colors.white,
           hoverColor: Colors.white,
           focusColor: Colors.white,
-          highlightColor: Colors.black12,
+          highlightColor: Colors.grey.shade900.withOpacity(0.1),
           onPressed: gestureTapCallback,
           child: Text(
             title,

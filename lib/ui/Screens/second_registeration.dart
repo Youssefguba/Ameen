@@ -3,7 +3,8 @@ import 'dart:io';
 import 'dart:async';
 
 import 'package:ameen/blocs/global/global.dart';
-import 'package:ameen/blocs/models/user_data.dart';
+import 'package:ameencommon/models/user_data.dart';
+import 'package:ameen/ui/Screens/home.dart';
 import 'package:ameen/ui/widgets/submit_button.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameencommon/utils/functions.dart';
@@ -22,7 +23,6 @@ class SecondRegisteration extends StatefulWidget {
 class _SecondRegisterationState extends State<SecondRegisteration> {
   final CollectionReference usersRef = Firestore.instance.collection(DatabaseTable.users);
   StorageReference storageReference = FirebaseStorage.instance.ref();
-
   GlobalKey _circleAvatar = GlobalKey();
   FacebookLogin facebookLogin = FacebookLogin();
   ImagePicker picker = ImagePicker();
@@ -35,6 +35,20 @@ class _SecondRegisterationState extends State<SecondRegisteration> {
     return Scaffold(
       appBar: AppBar(
         title: Text('أكمل عملية التسجيل', style: TextStyle( color: Colors.white, fontFamily: 'Dubai')),
+        actions: [
+          Center(
+            child: GestureDetector(
+              onTap: () => pushPage(context, Home()),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'التالي',
+                  style: TextStyle(fontFamily: 'Dubai', color: Colors.white, fontSize: 19),
+                ),
+              ),
+            ),
+          )
+        ],
       ),
       body: Column(
         children: [
@@ -56,7 +70,7 @@ class _SecondRegisterationState extends State<SecondRegisteration> {
                 CircleAvatar(
                   key: _circleAvatar,
                   radius: 93,
-                  backgroundColor: MyColors.cGreen,
+                  backgroundColor: AppColors.cGreen,
                   child: ClipOval(
                     child: SizedBox(
                       width: 180,
@@ -66,10 +80,10 @@ class _SecondRegisterationState extends State<SecondRegisteration> {
                   ),
                 ),
                 SizedBox(height: 15),
-                SubmitButton(color: MyColors.cFacebookColor,
+                SubmitButton(color: AppColors.cFacebookColor,
                     title: "اختار نفس صورة حسابك على الفيسبوك", gestureTapCallback: faceBookLoginButton),
                 SizedBox(height: 15),
-                SubmitButton(color: MyColors.cBlack,
+                SubmitButton(color: AppColors.cBlack,
                     title: "اختار صورة من جهازك", gestureTapCallback: getImageFromPhone, icon: Icon(Icons.add_a_photo)),
               ],
             ),

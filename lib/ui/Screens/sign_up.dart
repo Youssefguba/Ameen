@@ -1,7 +1,6 @@
-import 'dart:convert';
 import 'dart:ui';
 import 'package:ameen/blocs/global/global.dart';
-import 'package:ameen/blocs/models/user_data.dart';
+import 'package:ameencommon/models/user_data.dart';
 import 'package:ameen/services/authentication.dart';
 import 'package:ameen/ui/Screens/second_registeration.dart';
 import 'package:ameencommon/utils/constants.dart';
@@ -15,8 +14,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:logger/logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 class SignUp extends StatefulWidget {
   @override
@@ -41,6 +38,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
   String email = '';
   String password = '';
   bool _isLoading = false;
+  bool _obscureText = true;
   var status;
 
   @override
@@ -60,7 +58,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
             child: Text(
               'تسجيل دخول',
               style: TextStyle(
-                color: MyColors.cGreen,
+                color: AppColors.cGreen,
                 fontSize: 13,
                 fontFamily: 'Dubai',
                 fontWeight: FontWeight.w600,
@@ -124,10 +122,14 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
           EntryField(
             "إنشاء كلمة سر",
             Icon(Icons.lock),
-            isPassword: true,
+            isPassword: _obscureText,
             visibleIcon: IconButton(
-              icon: Icon(Icons.visibility_off),
-            ),
+                icon: (_obscureText)?Icon(Icons.visibility_off, color: Colors.grey):Icon(Icons.visibility, color: Colors.grey),
+                onPressed: () {
+                  setState(() {
+                    _obscureText = !_obscureText;
+                  });
+                }),
             editingController: passwordController, onValueChanged: (value) => { password = value},
             validator: (val) => val.length < 6  ? 'لا يمكن إدخال أقل من 6 ارقام أو حروف' : null,
 
@@ -149,7 +151,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
               (_isLoading)
                   ? Center(
                       child: SpinKitFadingCube(
-                      color: MyColors.cGreen,
+                      color: AppColors.cGreen,
                         controller: AnimationController(duration: const Duration(milliseconds: 1200), vsync: this),
                       ))
                   : Container(
@@ -159,34 +161,18 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           _title(),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
+                          SizedBox(height: 20),
+                          SizedBox(height: 10),
                           _emailPasswordWidget(),
-                          SizedBox(
-                            height: 10,
-                          ),
-
-                          //TODO => There is Button Here
-                          SubmitButton(color: MyColors.cGreen, title: "إنشاء حساب",
-                              gestureTapCallback: createAccount),
-                          SizedBox(
-                            height: 10,
-                          ),
+                          SizedBox(height: 10),
+                          SubmitButton(color: AppColors.cGreen, title: "إنشاء حساب", gestureTapCallback: createAccount),
+                          SizedBox(height: 10),
                           _loginAccountLabel(),
-                          SizedBox(
-                            height: 10,
-                          ),
+                          SizedBox(height: 10),
                           OrLine(),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          SizedBox(
-                            height: 13,
-                          ),
+                          SizedBox(height: 10),
+                          SizedBox(height: 13),
+
                           // SignIn Anonymously Button
                           SubmitButton(color: Colors.grey.shade700,
                               title: "الدخول كمستخدم خفي", gestureTapCallback: anonymousLoginButton)
@@ -199,7 +185,8 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
       ),
     );
   }
-  /// Normal Login Button Function
+
+  // Normal Login Button Function
   void createAccount () async {
     if(_formKey.currentState.validate()) {
       setState(() => _isLoading = true );
@@ -231,41 +218,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
   }
 
 
-
-  /// Facebook Login Button Function
-  void faceBookLoginButton() async {
-    final FacebookLoginResult result =
-        await facebookLogin.logIn(['email']);
-      switch(result.status) {
-        case FacebookLoginStatus.loggedIn:
-          var graphResponse = await http.get(
-              'https://graph.facebook.com/v2.12/me?fields=name,email,birthday,first_name,last_name,picture.width(800).height(800)&access_token=${result
-                  .accessToken.token}');
-          var profile = json.decode(graphResponse.body);
-          usersRef.document(result.accessToken.userId).setData({
-            'id':  result.accessToken.userId,
-            'fbName': profile['name'],
-            'fbEmail': profile['email'],
-            'fbAccountId': profile['id'],
-            'birthday': profile['birthday'],
-            'profilePicture': profile['picture']['data']['url'],
-
-          });
-          DocumentSnapshot doc = await usersRef.document(result.accessToken.userId).get();
-          doc = await usersRef.document(result.accessToken.userId).get();
-          currentUser = UserModel.fromDocument(doc);
-          break;
-        case FacebookLoginStatus.cancelledByUser:
-          print('Login cancelled by the user.');
-          break;
-        case FacebookLoginStatus.error:
-          print('Something went wrong with the login process.\n'
-              'Here\'s the error Facebook gave us: ${result.errorMessage}');
-          break;
-      }
-  }
-
-  /// Anonymous Login Button Function
+  // Anonymous Login Button Function
   void anonymousLoginButton() async {
     dynamic result = await auth.signInAnonymously();
     if (result == null) {
@@ -276,12 +229,4 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
       _scaffoldKey.currentState.showSnackBar(snackbar);
     }
   }
-}
-
-//function save
-_save(String token) async {
-  final prefs = await SharedPreferences.getInstance();
-  final key = 'token';
-  final value = token;
-  prefs.setString(key, value);
 }

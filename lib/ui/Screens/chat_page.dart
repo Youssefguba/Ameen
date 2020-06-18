@@ -176,7 +176,7 @@ class ChatPage extends StatelessWidget {
                   SizedBox(
                     height: 65,
                     child: Container(
-                      color: MyColors.green[800],
+                      color: AppColors.green[800],
                       child: Row(
                         textDirection: TextDirection.rtl,
                         children: <Widget>[
@@ -266,12 +266,12 @@ class ChatPage extends StatelessWidget {
                         textDirection: TextDirection.rtl,
                         maxLines: 20,
                         showCursor: true,
-                        cursorColor: MyColors.green[900],
+                        cursorColor: AppColors.green[900],
                         controller: _text,
                         decoration: InputDecoration(
 //                           contentPadding: const EdgeInsets.symmetric(horizontal: 2.0),
                           prefixIcon: IconButton(
-                            icon: Icon(Icons.send, color: MyColors.green[800],),
+                            icon: Icon(Icons.send, color: AppColors.green[800],),
                             onPressed: () {},
                           ),
                           border: InputBorder.none,

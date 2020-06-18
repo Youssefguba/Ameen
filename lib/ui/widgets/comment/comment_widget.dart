@@ -1,5 +1,5 @@
 import 'package:ameen/blocs/global/global.dart';
-import 'package:ameen/blocs/models/comment.dart';
+import 'package:ameencommon/models/comment.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_comment_widget.dart';
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +59,7 @@ class _CommentWidgetState extends State<CommentWidget> {
               child: Container(
                 child: Bubble(
                   margin: BubbleEdges.only(top: 10),
-                  color: MyColors.cBackground,
+                  color: AppColors.cBackground,
                   stick:  false,
                   radius: Radius.circular(20.0),
                   elevation: 1.0,

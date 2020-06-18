@@ -1,4 +1,4 @@
-import 'package:ameen/blocs/models/user_data.dart';
+import 'package:ameencommon/models/user_data.dart';
 import 'package:ameen/services/user_service.dart';
 import 'package:ameen/ui/Screens/setting.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_user_profile.dart';
@@ -68,7 +68,7 @@ class _UserProfileState extends State<UserProfile> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      backgroundColor: MyColors.cBackground,
+      backgroundColor: AppColors.cBackground,
       body: DefaultTabController(
         length: myTabs.length,
         child: InheritedUserProfile(
@@ -76,7 +76,7 @@ class _UserProfileState extends State<UserProfile> {
           child:(_isLoading) ? Center (
               child: RefreshProgressIndicator(
                 backgroundColor: Colors.white,
-                valueColor: new AlwaysStoppedAnimation<Color>(MyColors.cGreen),
+                valueColor: new AlwaysStoppedAnimation<Color>(AppColors.cGreen),
               )
           )
               : NestedScrollView(
@@ -89,7 +89,7 @@ class _UserProfileState extends State<UserProfile> {
               children: (_isLoading) ? Center (
                   child: RefreshProgressIndicator(
                     backgroundColor: Colors.white,
-                    valueColor: new AlwaysStoppedAnimation<Color>(MyColors.cGreen),
+                    valueColor: new AlwaysStoppedAnimation<Color>(AppColors.cGreen),
                   )
               )
                   : _getListOfPostsOfUser(),
@@ -103,7 +103,6 @@ class _UserProfileState extends State<UserProfile> {
   /// Get List Of Posts of User [Posts, Saved Posts]
   List<Widget> _getListOfPostsOfUser(){
     int totalOfPosts = userModel.userPosts.length;
-    int totalOfSavedPosts = userModel.savedPosts.length;
 
    return [
      // Posts of User
@@ -116,7 +115,7 @@ class _UserProfileState extends State<UserProfile> {
               sizeFactor: anim,
               child: PostWidget(postModel: userModel.userPosts[index]),
             );
-          }) : Center(child: Text(Texts.NotFoundPosts, style: TextStyle(fontSize: 20, fontFamily: 'Dubai', color: MyColors.cBlack))), ];
+          }) : Center(child: Text(Texts.NotFoundPosts, style: TextStyle(fontSize: 20, fontFamily: 'Dubai', color: AppColors.cBlack))), ];
 
 //     // Saved Posts Of User
 //     (totalOfSavedPosts >= 1) ? AnimatedList(
@@ -143,8 +142,8 @@ class _UserProfileState extends State<UserProfile> {
         centerTitle: true,
         expandedHeight: 290.0,
         bottom: TabBar(
-          labelColor: MyColors.green[800],
-          indicatorColor: MyColors.green[800],
+          labelColor: AppColors.green[800],
+          indicatorColor: AppColors.green[800],
           unselectedLabelColor: Colors.grey[400],
           labelStyle: TextStyle(
             fontSize: 13.0,
@@ -171,7 +170,7 @@ class _UserProfileState extends State<UserProfile> {
         actions: <Widget>[
           IconButton(
             icon: ImageIcon(
-              AssetImage(MyIcons.settings),
+              AssetImage(AppIcons.settings),
               size: 20,
               color: Colors.grey[800],
             ), onPressed: () {

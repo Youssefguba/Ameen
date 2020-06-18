@@ -1,4 +1,4 @@
-import 'package:ameen/blocs/models/comment.dart';
+import 'package:ameencommon/models/comment.dart';
 import 'package:flutter/material.dart';
 
 class InheritedCommentModel extends InheritedWidget{

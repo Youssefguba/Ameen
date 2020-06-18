@@ -28,7 +28,6 @@ class EntryField extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10),
       child: Column(
-        textDirection: TextDirection.rtl,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           TextFormField(

@@ -1,5 +1,5 @@
-import 'package:ameen/blocs/models/post_data.dart';
-import 'package:ameen/blocs/models/user_data.dart';
+import 'package:ameencommon/models/post_data.dart';
+import 'package:ameencommon/models/user_data.dart';
 import 'package:flutter/material.dart';
 
 

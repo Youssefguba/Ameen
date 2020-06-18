@@ -1,4 +1,4 @@
-import 'package:ameen/blocs/models/user_data.dart';
+import 'package:ameencommon/models/user_data.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_user_profile.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/ui/Screens/create_post.dart';
@@ -64,12 +64,12 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
           ),
         );
       },
-      color: MyColors.green[900],
+      color: AppColors.green[900],
       padding: EdgeInsets.all(5),
       elevation: 1.0,
       hoverColor: Colors.white,
       textColor: Colors.white,
-      disabledColor: MyColors.green,
+      disabledColor: AppColors.green,
       splashColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: new BorderRadius.circular(18.0),
@@ -121,10 +121,4 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
       ),
     );
   }
-
-  Widget _horizontalLine() => Container(
-        height: 1.0,
-        margin: EdgeInsets.symmetric(vertical: 10),
-        color: Colors.grey.shade300,
-      );
 }

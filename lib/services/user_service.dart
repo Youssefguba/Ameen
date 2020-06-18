@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:ameen/blocs/global/global.dart';
-import 'package:ameen/blocs/models/api_response.dart';
-import 'package:ameen/blocs/models/user_data.dart';
+import 'package:ameencommon/models/api_response.dart';
+import 'package:ameencommon/models/user_data.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:http/http.dart' as http;
 

@@ -1,5 +1,6 @@
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/ui/Screens/create_post.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -10,9 +11,11 @@ import 'package:flutter/widgets.dart';
 ///                           Y.G
 
 class AddNewPostWidget extends StatelessWidget {
+  FirebaseUser currentUser;
+  AddNewPostWidget({Key key, this.currentUser}): super(key: key);
+
   final String hintText = "انشر الدعاء الذي تتمنى أن يتحقق ";
   final Color color =  Colors.black;
-  AddNewPostWidget();
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +44,7 @@ class AddNewPostWidget extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CreatePost(),
+                      builder: (context) => CreatePost(currentUser: currentUser),
                     ),
                   );
                 },
@@ -49,7 +52,7 @@ class AddNewPostWidget extends StatelessWidget {
                   padding: EdgeInsets.all(18),
                   height: 50,
                   decoration: BoxDecoration(
-                    color: MyColors.cBackground,
+                    color: AppColors.cBackground,
                     borderRadius: BorderRadius.circular(20.0),
                     border: Border.all(color: Colors.black12)
                     ),

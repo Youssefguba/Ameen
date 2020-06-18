@@ -555,7 +555,7 @@ class _ReactionsBoxState extends State<ReactionsBox> with TickerProviderStateMix
 
   Color getTintColorIconBtn() {
     if (!isLongPress && isAmeen) {
-      return MyColors.green;
+      return AppColors.green;
     } else if (!isDragging && whichIconUserChoose != 0) {
       return null;
     } else {

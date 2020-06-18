@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 import 'package:ameen/blocs/global/global.dart';
-import 'package:ameen/blocs/models/api_response.dart';
-import 'package:ameen/blocs/models/comment.dart';
-import 'package:ameen/blocs/models/insert_post.dart';
-import 'package:ameen/blocs/models/post_data.dart';
-import 'package:ameen/blocs/models/post_details.dart';
-import 'package:ameen/blocs/models/reaction_model.dart';
+import 'package:ameencommon/models/api_response.dart';
+import 'package:ameencommon/models/comment.dart';
+import 'package:ameencommon/models/insert_post.dart';
+import 'package:ameencommon/models/post_data.dart';
+import 'package:ameencommon/models/post_details.dart';
+import 'package:ameencommon/models/reaction_model.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:http/http.dart' as http;
 

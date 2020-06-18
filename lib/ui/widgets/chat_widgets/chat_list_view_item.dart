@@ -60,7 +60,7 @@ class ChatListViewItem extends StatelessWidget {
                               height: 20,
                               width: 20,
                               decoration: BoxDecoration(
-                                  color: MyColors.cGreen,
+                                  color: AppColors.cGreen,
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(25.0),
                                   )),

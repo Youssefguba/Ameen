@@ -1,12 +1,19 @@
-import 'package:ameen/blocs/models/user_data.dart';
+import 'package:ameencommon/models/user_data.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 
 class AuthService {
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   // Create User Object based on Firebase User.
   UserModel userFromFirebaseUser(FirebaseUser user) {
-    return user != null ? UserModel(uid: user.uid) : null;
+    return user != null ? UserModel(uid: user.uid, username: user.displayName, userEmail: user.email) : null;
+  }
+
+  // auth change user stream
+  Stream<UserModel> get currentUser {
+    return _firebaseAuth.onAuthStateChanged
+        .map((FirebaseUser user) =>  userFromFirebaseUser(user));
   }
 
   Future signUp(String email, String password) async {
@@ -46,8 +53,5 @@ class AuthService {
     }
   }
 
-  Stream<UserModel> get currentUser {
-    return _firebaseAuth.onAuthStateChanged
-        .map((FirebaseUser user) => userFromFirebaseUser(user));
-  }
+
 }

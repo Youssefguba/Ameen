@@ -1,20 +1,43 @@
-import 'package:ameen/blocs/models/insert_post.dart';
 import 'package:ameen/services/post_service.dart';
-import 'package:ameen/ui/Screens/news_feed.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:get_it/get_it.dart';
-import 'package:toast/toast.dart';
+import 'package:ameencommon/utils/functions.dart';
+import 'package:uuid/uuid.dart';
 
 class CreatePost extends StatefulWidget {
+  FirebaseUser currentUser;
+  CreatePost({Key key, this.currentUser}): super(key: key);
+
   @override
   _CreatePostState createState() => _CreatePostState();
 }
 
 class _CreatePostState extends State<CreatePost> {
-  PostsService get services => GetIt.I<PostsService>();
+  CollectionReference _postsRef = Firestore.instance.collection(DatabaseTable.posts);
+  CollectionReference _usersRef = Firestore.instance.collection(DatabaseTable.users);
   TextEditingController _postBodyController = TextEditingController();
 
+  PostsService get services => GetIt.I<PostsService>();
+  String userId;
+  String username;
+  String postId = Uuid().v4();
+  bool isUploading = false;
+
+
+  @override
+  void initState() {
+    super.initState();
+    userId = widget.currentUser.uid;
+    _usersRef.document(userId).get().then((user) {
+      username = user.data['username'];
+    });
+
+    _postBodyController.addListener(() => setState(() {}) );
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +71,10 @@ class _CreatePostState extends State<CreatePost> {
         ],
       ),
 
-      body: Container(
+      body: isUploading ? LinearProgressIndicator(
+        backgroundColor: AppColors.cBackground,
+        valueColor: AlwaysStoppedAnimation<Color>(AppColors.cGreen),
+      ) :  Container(
         height: double.maxFinite,
         margin: EdgeInsets.all(15),
         child: Column(
@@ -68,7 +94,7 @@ class _CreatePostState extends State<CreatePost> {
               minLines: 1,
               scrollController: ScrollController(),
               scrollPhysics: BouncingScrollPhysics(),
-              cursorColor: MyColors.green[900],
+              cursorColor: AppColors.green[900],
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.all(15.0),
                 border: InputBorder.none,
@@ -84,71 +110,38 @@ class _CreatePostState extends State<CreatePost> {
               child: Align(
                 alignment: FractionalOffset.bottomCenter,
                 widthFactor: double.maxFinite,
-                child: FlatButton(
-
-                  focusColor: MyColors.cBackground,
-                  hoverColor: MyColors.cBackground,
-                  onPressed: createAPost,
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  color: MyColors.cGreen,
-                  disabledColor: MyColors.cGreen,
-                  child: Text(
-                    "نشر الدعاء",
-                    textDirection: TextDirection.rtl,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'Dubai',
-                      color: Colors.white,
-                      fontSize: 19,
-                      fontWeight: FontWeight.w500,
+                child: Visibility(
+                  visible: _postBodyController.text.isEmpty ? false : true,
+                  child: FlatButton(
+                    focusColor: AppColors.cBackground,
+                    hoverColor: AppColors.cBackground,
+                    onPressed: () {
+                      createPost(_postsRef, userId, DatabaseTable.userPosts, postId, username, _postBodyController.text);
+                      showToast(context, 'لقد تم نشر الدعاء الخاص بك 🤲🏻', AppColors.cBlack);
+                      popPage(context);
+                    } ,
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    color: _postBodyController.text.isEmpty ? AppColors.cBackground : AppColors.cGreen,
+                    disabledColor:  _postBodyController.text.isEmpty ? AppColors.cBackground : AppColors.cGreen,
+                    child: Text(
+                      "نشر الدعاء",
+                      textDirection: TextDirection.rtl,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Dubai',
+                        color: Colors.white,
+                        fontSize: 19,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-
           ],
         ),
       ),
     );
   }
-
-  void createAPost() async {
-    // Get the Post body from the TextField of the text..
-    final post = PostInsert(
-          postBody: _postBodyController.text);
-
-      // Check if the text field is empty or not.
-      if(_postBodyController.text.isEmpty) {
-        Toast.show(
-            'لا يجب ترك المنشور فارغا',
-            context,
-            duration: Toast.LENGTH_LONG,
-            gravity: Toast.CENTER,
-            backgroundColor: Colors.red.shade800
-        );
-      } else {
-        // Check if the post is created or not..
-        await services.createPost(post).then((result) {
-          if (result.data == true) {
-            Navigator.of(context).pop(NewsFeed);
-            Toast.show(
-              'تم نشر الدعاء بنجاح',
-              context,
-              duration: Toast.LENGTH_LONG,
-              gravity: Toast.BOTTOM,
-            );
-          } else {
-            Navigator.of(context).pop(NewsFeed);
-            Toast.show(
-              'حدث خلل في نشر الدعاء حاول مرة أخرى',
-              context,
-              duration: Toast.LENGTH_LONG,
-              gravity: Toast.BOTTOM,
-            );
-          }
-        });
-      }
-    }
-  }
+}
 

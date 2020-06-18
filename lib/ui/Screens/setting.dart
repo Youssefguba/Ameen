@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'package:ameen/ui/Screens/login.dart';
 import 'package:flutter/material.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/services/authentication.dart';
@@ -21,11 +20,11 @@ class _SettingsPageState extends State<SettingsPage> {
             textDirection: TextDirection.rtl,
             style: TextStyle(fontFamily: 'Dubai')),
         leading: IconButton(
-          icon: ImageIcon(AssetImage(MyIcons.arrowBack)),
+          icon: ImageIcon(AssetImage(AppIcons.arrowBack)),
           onPressed: () {
             Navigator.of(context).pop();
           },
-          disabledColor: MyColors.cBackground,
+          disabledColor: AppColors.cBackground,
         ),
       ),
       body: Container(

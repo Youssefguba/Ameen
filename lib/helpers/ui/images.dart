@@ -5,21 +5,21 @@ import 'package:ameencommon/utils/constants.dart';
 * Icons React Counter - Begin
 * */
 final ameenIconReactCounter = Image.asset(
-    MyIcons.coloredPrayIcon,
+    AppIcons.coloredPrayIcon,
     width: 12,
     height: 12,
     semanticLabel: 'Ameen',
 );
 
 final recommendIconReactCounter = Image.asset(
-  MyIcons.coloredRecommendIcon,
+  AppIcons.coloredRecommendIcon,
   width: 12,
   height: 12,
   semanticLabel: 'Ameen',
 );
 
 final forbiddenIconReactCounter = Image.asset(
-  MyIcons.coloredForbiddenIcon,
+  AppIcons.coloredForbiddenIcon,
   width: 12,
   height: 12,
   semanticLabel: 'Ameen',
