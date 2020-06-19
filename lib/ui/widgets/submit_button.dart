@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 class SubmitButton extends StatelessWidget {
   final color;
   final title;
-  final GestureTapCallback gestureTapCallback;
+  final GestureTapCallback onTap;
   final Icon icon;
-  SubmitButton({this.color, this.title, this.gestureTapCallback, this.icon});
+  SubmitButton({this.color, this.title, this.onTap, this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class SubmitButton extends StatelessWidget {
           hoverColor: Colors.white,
           focusColor: Colors.white,
           highlightColor: Colors.grey.shade900.withOpacity(0.1),
-          onPressed: gestureTapCallback,
+          onPressed: onTap,
           child: Text(
             title,
             style:

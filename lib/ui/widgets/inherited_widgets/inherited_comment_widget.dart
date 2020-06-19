@@ -8,6 +8,7 @@ class InheritedCommentModel extends InheritedWidget{
   InheritedCommentModel({Key key, this.commentModel, this.child}) : super(key: key, child: child);
 
   static InheritedCommentModel of(BuildContext context ){
+    // ignore: deprecated_member_use
     return(context.inheritFromWidgetOfExactType(InheritedCommentModel) as InheritedCommentModel);
   }
 

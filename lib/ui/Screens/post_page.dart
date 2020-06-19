@@ -178,7 +178,7 @@ class _PostPageState extends State<PostPage> {
                         }),
                   ),
                 ) : Expanded(
-                    child: Center(child: Text(Texts.NotFoundComments, style: TextStyle(fontSize: 18, fontFamily: 'Dubai', color: AppColors.cBlack)))),
+                    child: Center(child: Text(AppTexts.NotFoundComments, style: TextStyle(fontSize: 18, fontFamily: 'Dubai', color: AppColors.cBlack)))),
 
                 // Write a Comment Widget
                 InheritedPostModel(

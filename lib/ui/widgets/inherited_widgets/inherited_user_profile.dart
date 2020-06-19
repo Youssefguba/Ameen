@@ -11,6 +11,7 @@ class InheritedUserProfile extends InheritedWidget{
   InheritedUserProfile({Key key, this.userModel, this.child, this.postData}) : super(key: key, child: child);
 
   static InheritedUserProfile of(BuildContext context ){
+    // ignore: deprecated_member_use
     return(context.inheritFromWidgetOfExactType(InheritedUserProfile) as InheritedUserProfile);
   }
 

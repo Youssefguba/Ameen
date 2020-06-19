@@ -1,9 +1,7 @@
-import 'package:ameen/services/post_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ameencommon/utils/constants.dart';
-import 'package:get_it/get_it.dart';
 import 'package:ameencommon/utils/functions.dart';
 import 'package:uuid/uuid.dart';
 
@@ -16,31 +14,34 @@ class CreatePost extends StatefulWidget {
 }
 
 class _CreatePostState extends State<CreatePost> {
-  CollectionReference _postsRef = Firestore.instance.collection(DatabaseTable.posts);
-  CollectionReference _usersRef = Firestore.instance.collection(DatabaseTable.users);
+  CollectionReference _postsRef  = Firestore.instance.collection(DatabaseTable.posts);
+  CollectionReference _usersRef  = Firestore.instance.collection(DatabaseTable.users);
   TextEditingController _postBodyController = TextEditingController();
 
-  PostsService get services => GetIt.I<PostsService>();
+  String postId = Uuid().v4();
   String userId;
   String username;
-  String postId = Uuid().v4();
-  bool isUploading = false;
 
+  bool isUploading = false;
 
   @override
   void initState() {
     super.initState();
     userId = widget.currentUser.uid;
-    _usersRef.document(userId).get().then((user) {
-      username = user.data['username'];
-    });
+    _usersRef.document(userId).get().then((user) => username = user.data['username']);
 
-    _postBodyController.addListener(() => setState(() {}) );
-
+    _postBodyController.addListener(() => setState(() {}));
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    setState(() => isUploading = false);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold (
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -70,22 +71,22 @@ class _CreatePostState extends State<CreatePost> {
           ),
         ],
       ),
-
-      body: isUploading ? LinearProgressIndicator(
+      body: isUploading ? LinearProgressIndicator (
         backgroundColor: AppColors.cBackground,
         valueColor: AlwaysStoppedAnimation<Color>(AppColors.cGreen),
-      ) :  Container(
+      )
+          :  Container (
         height: double.maxFinite,
         margin: EdgeInsets.all(15),
-        child: Column(
-          children: <Widget>[
+        child: Column (
+          children: <Widget> [
+
             // TextField of Post
             TextField(
               controller: _postBodyController,
               textAlign: TextAlign.right,
               maxLength: 220,
               maxLines: 9,
-              style: TextStyle(fontSize: 18, fontFamily: 'Dubai'),
               textInputAction: TextInputAction.newline,
               autofocus: true,
               showCursor: true,
@@ -95,6 +96,7 @@ class _CreatePostState extends State<CreatePost> {
               scrollController: ScrollController(),
               scrollPhysics: BouncingScrollPhysics(),
               cursorColor: AppColors.green[900],
+              style: TextStyle(fontSize: 18, fontFamily: 'Dubai'),
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.all(15.0),
                 border: InputBorder.none,
@@ -104,7 +106,6 @@ class _CreatePostState extends State<CreatePost> {
                 ),
               ),
             ),
-
             // Post Button
             Expanded(
               child: Align(
@@ -144,4 +145,3 @@ class _CreatePostState extends State<CreatePost> {
     );
   }
 }
-

@@ -15,6 +15,7 @@ class InheritedPostModel extends InheritedWidget{
 }) : super(key: key, child: child);
 
   static InheritedPostModel of(BuildContext context ){
+    // ignore: deprecated_member_use
     return(context.inheritFromWidgetOfExactType(InheritedPostModel) as InheritedPostModel);
   }
 

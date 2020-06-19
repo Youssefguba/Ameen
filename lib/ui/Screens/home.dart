@@ -1,7 +1,6 @@
 import 'package:ameen/ui/Screens/contacts_list.dart';
 import 'package:ameen/ui/Screens/news_feed.dart';
 import 'package:ameen/ui/Screens/user_profile.dart';
-import 'package:ameencommon/utils/functions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +33,7 @@ class _HomeState extends State<Home> {
         children: <Widget>[
           ContactList(),
           NewsFeed(currentUser: widget.currentUser,),
-          UserProfile(),
+          UserProfile(currentUser: widget.currentUser,),
         ],
         controller: pageController,
         onPageChanged: onPageChanged,

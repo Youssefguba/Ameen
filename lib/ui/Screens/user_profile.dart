@@ -1,47 +1,107 @@
+import 'package:ameen/ui/Screens/general_setting.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:ameen/services/user_service.dart';
-import 'package:ameen/ui/Screens/setting.dart';
+import 'package:ameen/ui/Screens/profile_setting.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_user_profile.dart';
-import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
 import 'package:ameen/ui/widgets/profile_app_bar.dart';
+import 'package:ameencommon/utils/functions.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
+import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
 
 class UserProfile extends StatefulWidget {
+  FirebaseUser currentUser;
+  UserProfile({Key key, @required this.currentUser}): super(key: key);
+
   @override
   _UserProfileState createState() => _UserProfileState();
 }
 
 class _UserProfileState extends State<UserProfile> {
+  CollectionReference usersRef = Firestore.instance.collection(DatabaseTable.users);
+  String userId;
   UserService get services => GetIt.I<UserService>();
-
-  final List<Tab> myTabs = <Tab>[
-    // Posts of User
-    Tab(
-      text: "المنشورات",
-    ),
-    // Saved Posts
-//    Tab(
-//      text: "الأدعية المحفوظة",
-//    ),
-
-  ];
   UserModel userModel;
   String errorMessage;
   Logger logger = Logger();
-
   bool _isLoading = false;
 
+  final List<Tab> myTabs = <Tab>[
+    Tab(
+      text: "المنشورات",
+    )
+  ];
 
   @override
   void initState() {
     super.initState();
-    _fetchUserProfileData();
+    userId = widget.currentUser.uid;
+//    _fetchUserProfileData();
   }
 
-  _fetchUserProfileData() async {
+  @override
+  void dispose() {
+    super.dispose();
+    _isLoading = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.cBackground,
+      body: DefaultTabController(
+        length: myTabs.length,
+        child: InheritedUserProfile(
+          userModel: userModel,
+          child: (_isLoading)
+              ? RefreshProgress()
+              : NestedScrollView(
+                  headerSliverBuilder: (context, value) {
+                    return [
+                      _sliverAppBar(),
+                    ];
+                  }, body: Container(),
+//                  body:
+//                  TabBarView(
+//                    children: (_isLoading)
+//                        ? RefreshProgress()
+//                        : return Container(),
+//                  ),
+                ),
+        ),
+      ),
+    );
+  }
+
+  // Get List Of Posts of User [Posts, Saved Posts]
+//  List<Widget> _getListOfPostsOfUser() {
+//    int totalOfPosts = userModel.userPosts.length;
+//
+//    return [
+//      (totalOfPosts >= 1)
+//          ? AnimatedList(
+//              initialItemCount: totalOfPosts,
+//              itemBuilder: (BuildContext context, int index, Animation anim) {
+//                return SizeTransition(
+//                  axis: Axis.vertical,
+//                  sizeFactor: anim,
+//                  child: PostWidget(postModel: userModel.userPosts[index]),
+//                );
+//              })
+//          : Center(
+//              child: Text(Texts.NotFoundPosts,
+//                  style: TextStyle(
+//                      fontSize: 20,
+//                      fontFamily: 'Dubai',
+//                      color: AppColors.cBlack)))
+//    ];
+//  }
+
+  void _fetchUserProfileData() async {
     setState(() {
       _isLoading = true;
     });
@@ -55,81 +115,6 @@ class _UserProfileState extends State<UserProfile> {
       _isLoading = false;
     });
   }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _isLoading = false;
-  }
-
-
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Scaffold(
-      backgroundColor: AppColors.cBackground,
-      body: DefaultTabController(
-        length: myTabs.length,
-        child: InheritedUserProfile(
-          userModel: userModel,
-          child:(_isLoading) ? Center (
-              child: RefreshProgressIndicator(
-                backgroundColor: Colors.white,
-                valueColor: new AlwaysStoppedAnimation<Color>(AppColors.cGreen),
-              )
-          )
-              : NestedScrollView(
-            headerSliverBuilder: (context, value) {
-              return [
-                _sliverAppBar(),
-              ];
-            },
-            body: TabBarView(
-              children: (_isLoading) ? Center (
-                  child: RefreshProgressIndicator(
-                    backgroundColor: Colors.white,
-                    valueColor: new AlwaysStoppedAnimation<Color>(AppColors.cGreen),
-                  )
-              )
-                  : _getListOfPostsOfUser(),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// Get List Of Posts of User [Posts, Saved Posts]
-  List<Widget> _getListOfPostsOfUser(){
-    int totalOfPosts = userModel.userPosts.length;
-
-   return [
-     // Posts of User
-     (totalOfPosts >= 1) ?  AnimatedList(
-          initialItemCount: totalOfPosts,
-          itemBuilder:
-              (BuildContext context, int index, Animation anim) {
-            return SizeTransition(
-              axis: Axis.vertical,
-              sizeFactor: anim,
-              child: PostWidget(postModel: userModel.userPosts[index]),
-            );
-          }) : Center(child: Text(Texts.NotFoundPosts, style: TextStyle(fontSize: 20, fontFamily: 'Dubai', color: AppColors.cBlack))), ];
-
-//     // Saved Posts Of User
-//     (totalOfSavedPosts >= 1) ? AnimatedList(
-//          initialItemCount: totalOfSavedPosts,
-//          itemBuilder:
-//              (BuildContext context, int index, Animation anim) {
-//            return SizeTransition(
-//              axis: Axis.vertical,
-//              sizeFactor: anim,
-//              child: PostWidget(postModel: userModel.savedPosts[index])
-//            );
-//          }) : Center(child: Text(Texts.NotFoundSavedPosts, style: TextStyle(fontSize: 20, fontFamily: 'Dubai', color: MyColors.cBlack))),
-//    ];
-}
 
   Widget _sliverAppBar() {
     return InheritedUserProfile(
@@ -153,7 +138,7 @@ class _UserProfileState extends State<UserProfile> {
           tabs: myTabs,
         ),
         flexibleSpace: FlexibleSpaceBar(
-          background: ProfileAppBar(),
+          background: ProfileAppBar(currentUser: widget.currentUser),
           collapseMode: CollapseMode.pin,
           centerTitle: true,
         ),
@@ -169,17 +154,14 @@ class _UserProfileState extends State<UserProfile> {
         ),
         actions: <Widget>[
           IconButton(
-            icon: ImageIcon(
-              AssetImage(AppIcons.settings),
-              size: 20,
-              color: Colors.grey[800],
-            ), onPressed: () {
-            Navigator.push(
-                context,
-                new MaterialPageRoute(
-                    builder: (BuildContext context) => SettingsPage()));
-          }
-          ),
+              icon: ImageIcon(
+                AssetImage(AppIcons.settings),
+                size: 20,
+                color: Colors.grey[800],
+              ),
+              onPressed: () {
+                pushPage(context, GeneralSettingPage(currentUser: widget.currentUser));
+              }),
         ],
       ),
     );

@@ -103,7 +103,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
       child: Column(
         children: <Widget>[
           // Username
-          EntryField("إسم المستخدم", Icon(Icons.person),
+          EntryField("إسم المستخدم", inputIcon: Icon(Icons.person),
               editingController: userNameController,
               onValueChanged: (value) => { username = value},
               validator: (val) => val.trim().length < 3 || val.isEmpty ? 'لا تترك خانة الإسم فارغة' : null,
@@ -111,17 +111,16 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
           // Email Address
           EntryField(
             "البريد الإلكتروني",
-            Icon(Icons.email),
+            inputIcon: Icon(Icons.email),
               textInputType: TextInputType.emailAddress,
               editingController: emailController,
               onValueChanged: (value) => { email = value},
               validator: (val) => val.isEmpty ? 'لا تنسى كتابة الإيميل' : null,
           ),
-
           // Create a Password
           EntryField(
             "إنشاء كلمة سر",
-            Icon(Icons.lock),
+            inputIcon: Icon(Icons.lock),
             isPassword: _obscureText,
             visibleIcon: IconButton(
                 icon: (_obscureText)?Icon(Icons.visibility_off, color: Colors.grey):Icon(Icons.visibility, color: Colors.grey),
@@ -165,7 +164,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                           SizedBox(height: 10),
                           _emailPasswordWidget(),
                           SizedBox(height: 10),
-                          SubmitButton(color: AppColors.cGreen, title: "إنشاء حساب", gestureTapCallback: createAccount),
+                          SubmitButton(color: AppColors.cGreen, title: "إنشاء حساب", onTap: createAccount),
                           SizedBox(height: 10),
                           _loginAccountLabel(),
                           SizedBox(height: 10),
@@ -175,7 +174,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
 
                           // SignIn Anonymously Button
                           SubmitButton(color: Colors.grey.shade700,
-                              title: "الدخول كمستخدم خفي", gestureTapCallback: anonymousLoginButton)
+                              title: "الدخول كمستخدم خفي", onTap: anonymousLoginButton)
                         ],
                       ),
                     ),
@@ -216,7 +215,6 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
       }
     }
   }
-
 
   // Anonymous Login Button Function
   void anonymousLoginButton() async {

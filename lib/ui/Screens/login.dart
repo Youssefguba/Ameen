@@ -5,6 +5,7 @@ import 'package:ameen/ui/Screens/sign_up.dart';
 import 'package:ameen/ui/widgets/entry_field.dart';
 import 'package:ameen/ui/widgets/submit_button.dart';
 import 'package:ameencommon/utils/functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ameencommon/utils/constants.dart';
@@ -17,10 +18,11 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
   final TextEditingController emailController = new TextEditingController();
   final TextEditingController passwordController = new TextEditingController();
   final AuthService auth = AuthService();
+  FirebaseUser user;
+
 
   String email = '';
   String password = '';
@@ -57,7 +59,7 @@ class _LoginState extends State<Login> {
                       _emailPasswordWidget(),
                       _forgetPassword(),
                       SubmitButton(color: Color.fromRGBO(0, 153, 51, 1),
-                          title: "تسجيل الدخول", gestureTapCallback: signIn),
+                          title: "تسجيل الدخول", onTap: signIn),
                       SizedBox(
                         height: 10,
                       ),
@@ -167,7 +169,7 @@ class _LoginState extends State<Login> {
         children: <Widget>[
           EntryField(
             "البريد الإلكتروني",
-            Icon(Icons.email),
+            inputIcon: Icon(Icons.email),
             textInputType: TextInputType.emailAddress,
             editingController: emailController,
             onValueChanged: (val) => email = val,
@@ -175,7 +177,7 @@ class _LoginState extends State<Login> {
           ),
           EntryField(
             " كلمة سر",
-            Icon(Icons.lock),
+            inputIcon: Icon(Icons.lock),
             isPassword: _obscureText,
             visibleIcon: IconButton(
               icon: (_obscureText)?Icon(Icons.visibility_off, color: Colors.grey):Icon(Icons.visibility, color: Colors.grey),
@@ -195,11 +197,12 @@ class _LoginState extends State<Login> {
   }
 
 
-  // Normal Login Button Function
+  // Login Button
   void signIn() async {
     if(_formKey.currentState.validate()) {
-      dynamic result = await auth.signIn(email, password);
-      if(result == null) {
+      user = await auth.signIn(email, password);
+      print('This is a result of login ${user.toString()}');
+      if(user == null) {
         SnackBar snackBar = SnackBar(
           content: Text('حدث خطأ في تسجيل الدخول برجاء التأكد من البريد الالكتروني وكلمة السر', style: TextStyle(fontFamily: 'Dubai')),
           backgroundColor: Colors.red.shade700,
@@ -207,7 +210,7 @@ class _LoginState extends State<Login> {
         );
         _scaffoldKey.currentState.showSnackBar(snackBar);
       } else {
-        pushAndRemoveUntilPage(context, Home());
+        pushAndRemoveUntilPage(context, Home(currentUser: user,));
       }
     }
   }
