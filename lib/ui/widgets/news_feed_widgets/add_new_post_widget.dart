@@ -1,5 +1,10 @@
+import 'package:ameen/ui/Screens/ways_page.dart';
+import 'package:ameencommon/models/user_data.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/ui/Screens/create_post.dart';
+import 'package:ameencommon/utils/functions.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -10,16 +15,33 @@ import 'package:flutter/widgets.dart';
 /// of the user and *Redirect* him to Post Page..
 ///                           Y.G
 
-class AddNewPostWidget extends StatelessWidget {
+class AddNewPostWidget extends StatefulWidget {
   FirebaseUser currentUser;
   AddNewPostWidget({Key key, this.currentUser}): super(key: key);
 
-  final String hintText = "انشر الدعاء الذي تتمنى أن يتحقق ";
-  final Color color =  Colors.black;
+  @override
+  _AddNewPostWidgetState createState() => _AddNewPostWidgetState();
+}
+
+class _AddNewPostWidgetState extends State<AddNewPostWidget> {
+  CollectionReference usersRef = Firestore.instance.collection(DatabaseTable.users);
+  UserModel user;
+  dynamic userData;
+
+
+  @override
+  void initState() {
+    _getUserData();
+  }
+
+  // Get user data
+  _getUserData() {
+    userData = getCurrentUserData(usersRef: usersRef, userId: currentUser.uid);
+    userData.then((doc) => setState(() => user = UserModel.fromDocument(doc)));
+  }
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 9.0),
       decoration: BoxDecoration(
@@ -44,7 +66,7 @@ class AddNewPostWidget extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CreatePost(currentUser: currentUser),
+                      builder: (context) => CreatePost(currentUser: widget.currentUser),
                     ),
                   );
                 },
@@ -57,7 +79,7 @@ class AddNewPostWidget extends StatelessWidget {
                     border: Border.all(color: Colors.black12)
                     ),
                   child: Text(
-                    hintText,
+                    AppTexts.hintText,
                     style: TextStyle(fontFamily: 'Dubai', fontSize: 12, height: 1.0, color: Colors.black38),
                     textAlign: TextAlign.right,
                     textDirection: TextDirection.rtl,
@@ -67,10 +89,10 @@ class AddNewPostWidget extends StatelessWidget {
                 ),
               ),
           Container(
-            width: 45,
-            height: 45,
+            padding: EdgeInsets.symmetric(horizontal: 5.0),
             child: CircleAvatar(
-              backgroundImage: AssetImage('assets/images/icon_person.png'),
+              radius: 20,
+              backgroundImage: user.profilePicture == null ? AssetImage('assets/images/icon_person.png') : CachedNetworkImageProvider(user.profilePicture),
               backgroundColor: Colors.transparent,
             ),
           ),

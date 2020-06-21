@@ -7,7 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
 
 class ProfileAppBar extends StatefulWidget {
   FirebaseUser currentUser;
@@ -32,7 +31,6 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
   @override
   Widget build(BuildContext context) {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
-    UserModel userModel = InheritedUserProfile.of(context).userModel;
 
     return FutureBuilder(
       future: usersRef.document(userId).get(),

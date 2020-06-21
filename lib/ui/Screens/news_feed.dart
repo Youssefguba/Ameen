@@ -41,11 +41,6 @@ class _NewsFeedState extends State<NewsFeed> {
     _fetchPosts();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _isLoading = false;
-  }
 
   _fetchPosts() async {
     setState(() => _isLoading = true );
@@ -54,10 +49,18 @@ class _NewsFeedState extends State<NewsFeed> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _isLoading = false;
+
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.cBackground,
-      appBar: customAppBar(),
+      appBar: customAppBar(context, widget.currentUser),
       // Refresh Indicator to Fetch Latest Data..
       body: ConnectivityCheck(
         child: RefreshIndicator(
@@ -89,7 +92,7 @@ class _NewsFeedState extends State<NewsFeed> {
                           physics: AlwaysScrollableScrollPhysics(),
                           itemBuilder: (BuildContext context, int index, Animation anim) {
                             return GestureDetector(
-                              child: PostWidget(postModel: _apiResponse.data[index]),
+                              child: PostWidget(),
                               onTap: () {
                                 Navigator.of(context)
                                     .push(MaterialPageRoute(

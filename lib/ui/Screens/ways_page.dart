@@ -5,6 +5,7 @@ import 'package:ameencommon/utils/functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+FirebaseUser currentUser;
 class Wrapper extends StatefulWidget {
   @override
   _WrapperState createState() => _WrapperState();
@@ -12,7 +13,6 @@ class Wrapper extends StatefulWidget {
 
 class _WrapperState extends State<Wrapper> {
   FirebaseAuth _auth = FirebaseAuth.instance;
-  FirebaseUser currentUser;
   @override
   void initState() {
     super.initState();

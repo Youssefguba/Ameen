@@ -21,6 +21,7 @@ class _CreatePostState extends State<CreatePost> {
   String postId = Uuid().v4();
   String userId;
   String username;
+  String profilePicture;
 
   bool isUploading = false;
 
@@ -28,7 +29,10 @@ class _CreatePostState extends State<CreatePost> {
   void initState() {
     super.initState();
     userId = widget.currentUser.uid;
-    _usersRef.document(userId).get().then((user) => username = user.data['username']);
+    _usersRef.document(userId).get().then((user) {
+      username = user.data['username'];
+      profilePicture = user.data['profilePicture'];
+    });
 
     _postBodyController.addListener(() => setState(() {}));
   }
@@ -117,7 +121,7 @@ class _CreatePostState extends State<CreatePost> {
                     focusColor: AppColors.cBackground,
                     hoverColor: AppColors.cBackground,
                     onPressed: () {
-                      createPost(_postsRef, userId, DatabaseTable.userPosts, postId, username, _postBodyController.text);
+                      createPost(_postsRef, userId, DatabaseTable.userPosts, postId, username, _postBodyController.text, profilePicture);
                       showToast(context, 'لقد تم نشر الدعاء الخاص بك 🤲🏻', AppColors.cBlack);
                       popPage(context);
                     } ,

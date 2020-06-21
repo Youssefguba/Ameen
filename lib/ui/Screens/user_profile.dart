@@ -1,7 +1,7 @@
 import 'package:ameen/ui/Screens/general_setting.dart';
+import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:ameen/services/user_service.dart';
-import 'package:ameen/ui/Screens/profile_setting.dart';
 import 'package:ameen/ui/widgets/inherited_widgets/inherited_user_profile.dart';
 import 'package:ameen/ui/widgets/profile_app_bar.dart';
 import 'package:ameencommon/utils/functions.dart';
@@ -15,14 +15,19 @@ import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
 
 class UserProfile extends StatefulWidget {
   FirebaseUser currentUser;
-  UserProfile({Key key, @required this.currentUser}): super(key: key);
+  UserProfile({Key key, @required this.currentUser}) : super(key: key);
 
   @override
   _UserProfileState createState() => _UserProfileState();
 }
 
 class _UserProfileState extends State<UserProfile> {
-  CollectionReference usersRef = Firestore.instance.collection(DatabaseTable.users);
+  CollectionReference usersRef =
+      Firestore.instance.collection(DatabaseTable.users);
+  CollectionReference postsRef =
+      Firestore.instance.collection(DatabaseTable.posts);
+  List<PostWidget> posts = [];
+
   String userId;
   UserService get services => GetIt.I<UserService>();
   UserModel userModel;
@@ -40,7 +45,7 @@ class _UserProfileState extends State<UserProfile> {
   void initState() {
     super.initState();
     userId = widget.currentUser.uid;
-//    _fetchUserProfileData();
+    _fetchUserPosts();
   }
 
   @override
@@ -64,55 +69,36 @@ class _UserProfileState extends State<UserProfile> {
                     return [
                       _sliverAppBar(),
                     ];
-                  }, body: Container(),
-//                  body:
-//                  TabBarView(
-//                    children: (_isLoading)
-//                        ? RefreshProgress()
-//                        : return Container(),
-//                  ),
-                ),
+                  },
+                  body: (_isLoading)
+                      ? RefreshProgress()
+                      : (posts.length >= 1)
+                          ? SingleChildScrollView(
+                              child: Container(child: Column(children: posts)))
+                          : Center(
+                              child: Text(AppTexts.NotFoundPosts,
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontFamily: 'Dubai',
+                                      color: AppColors.cBlack)))),
         ),
       ),
     );
   }
 
-  // Get List Of Posts of User [Posts, Saved Posts]
-//  List<Widget> _getListOfPostsOfUser() {
-//    int totalOfPosts = userModel.userPosts.length;
-//
-//    return [
-//      (totalOfPosts >= 1)
-//          ? AnimatedList(
-//              initialItemCount: totalOfPosts,
-//              itemBuilder: (BuildContext context, int index, Animation anim) {
-//                return SizeTransition(
-//                  axis: Axis.vertical,
-//                  sizeFactor: anim,
-//                  child: PostWidget(postModel: userModel.userPosts[index]),
-//                );
-//              })
-//          : Center(
-//              child: Text(Texts.NotFoundPosts,
-//                  style: TextStyle(
-//                      fontSize: 20,
-//                      fontFamily: 'Dubai',
-//                      color: AppColors.cBlack)))
-//    ];
-//  }
+  _fetchUserPosts() async {
+    setState(() => _isLoading = true);
+    QuerySnapshot snapshot = await postsRef
+        .document(widget.currentUser.uid)
+        .collection('userPosts')
+        .orderBy('created_at', descending: true)
+        .getDocuments();
 
-  void _fetchUserProfileData() async {
-    setState(() {
-      _isLoading = true;
-    });
-    await services.getUserProfile().then((response) => {
-          if (response.error)
-            {errorMessage = response.errorMessage ?? 'حدث خلل ما'}
-          else
-            {userModel = response.data}
-        });
     setState(() {
       _isLoading = false;
+      posts = snapshot.documents
+          .map((doc) => PostWidget.fromDocument(doc))
+          .toList();
     });
   }
 
@@ -160,7 +146,8 @@ class _UserProfileState extends State<UserProfile> {
                 color: Colors.grey[800],
               ),
               onPressed: () {
-                pushPage(context, GeneralSettingPage(currentUser: widget.currentUser));
+                pushPage(context,
+                    GeneralSettingPage(currentUser: widget.currentUser));
               }),
         ],
       ),
