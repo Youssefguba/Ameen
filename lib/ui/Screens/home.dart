@@ -1,5 +1,6 @@
 import 'package:ameen/ui/Screens/contacts_list.dart';
 import 'package:ameen/ui/Screens/news_feed.dart';
+import 'package:ameen/ui/Screens/search_page.dart';
 import 'package:ameen/ui/Screens/user_profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -33,26 +34,29 @@ class _HomeState extends State<Home> {
         children: <Widget>[
           ContactList(),
           NewsFeed(currentUser: widget.currentUser,),
-          UserProfile(currentUser: widget.currentUser,),
+          UserProfile(profileId: widget.currentUser?.uid, currentUser: widget.currentUser,),
+          SearchPage(profileId: widget.currentUser?.uid, currentUser: widget.currentUser,)
         ],
         controller: pageController,
         onPageChanged: onPageChanged,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: AppColors.green[800],
+        selectedItemColor: AppColors.cGreen,
+        unselectedItemColor: AppColors.cBlack,
+        unselectedLabelStyle: TextStyle(color: AppColors.cBlack),
         currentIndex: pageIndex, //
         onTap: onTapPage,
         items: [
           BottomNavigationBarItem(
             icon: ImageIcon (
               AssetImage("assets/images/email.png"),
-              size: 24,
+              size: 22,
             ),
             title: new Text(
               'الرسائل',
               style: TextStyle(
                 fontFamily: 'Dubai',
-                fontSize: 12.0,
+                fontSize: 11.0,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -60,13 +64,13 @@ class _HomeState extends State<Home> {
           BottomNavigationBarItem(
             icon: ImageIcon (
               AssetImage("assets/images/home.png"),
-              size: 24,
+              size: 22,
             ),
             title: new Text(
               'الصفحة الرئيسية',
               style: TextStyle(
                 fontFamily: 'Dubai',
-                fontSize: 12.0,
+                fontSize: 11.0,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -74,13 +78,24 @@ class _HomeState extends State<Home> {
           BottomNavigationBarItem(
             icon: ImageIcon (
               AssetImage("assets/images/account.png"),
-              size: 24,
+              size: 22,
             ),
             title: Text(
               'الصفحة الشخصية',
               style: TextStyle(
                 fontFamily: 'Dubai',
-                fontSize: 12.0,
+                fontSize: 11.0,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search, size: 22),
+            title: Text(
+              'بحث',
+              style: TextStyle(
+                fontFamily: 'Dubai',
+                fontSize: 11.0,
                 fontWeight: FontWeight.w800,
               ),
             ),

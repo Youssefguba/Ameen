@@ -14,18 +14,17 @@ import 'package:logger/logger.dart';
 import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
 
 class UserProfile extends StatefulWidget {
+  String profileId;
   FirebaseUser currentUser;
-  UserProfile({Key key, @required this.currentUser}) : super(key: key);
+  UserProfile({Key key, @required this.profileId, @required this.currentUser}) : super(key: key);
 
   @override
   _UserProfileState createState() => _UserProfileState();
 }
 
 class _UserProfileState extends State<UserProfile> {
-  CollectionReference usersRef =
-      Firestore.instance.collection(DatabaseTable.users);
-  CollectionReference postsRef =
-      Firestore.instance.collection(DatabaseTable.posts);
+  CollectionReference usersRef = Firestore.instance.collection(DatabaseTable.users);
+  CollectionReference postsRef = Firestore.instance.collection(DatabaseTable.posts);
   List<PostWidget> posts = [];
 
   String userId;
@@ -54,42 +53,10 @@ class _UserProfileState extends State<UserProfile> {
     _isLoading = false;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.cBackground,
-      body: DefaultTabController(
-        length: myTabs.length,
-        child: InheritedUserProfile(
-          userModel: userModel,
-          child: (_isLoading)
-              ? RefreshProgress()
-              : NestedScrollView(
-                  headerSliverBuilder: (context, value) {
-                    return [
-                      _sliverAppBar(),
-                    ];
-                  },
-                  body: (_isLoading)
-                      ? RefreshProgress()
-                      : (posts.length >= 1)
-                          ? SingleChildScrollView(
-                              child: Container(child: Column(children: posts)))
-                          : Center(
-                              child: Text(AppTexts.NotFoundPosts,
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontFamily: 'Dubai',
-                                      color: AppColors.cBlack)))),
-        ),
-      ),
-    );
-  }
-
   _fetchUserPosts() async {
     setState(() => _isLoading = true);
     QuerySnapshot snapshot = await postsRef
-        .document(widget.currentUser.uid)
+        .document(widget.profileId)
         .collection('userPosts')
         .orderBy('created_at', descending: true)
         .getDocuments();
@@ -102,55 +69,81 @@ class _UserProfileState extends State<UserProfile> {
     });
   }
 
-  Widget _sliverAppBar() {
-    return InheritedUserProfile(
-      userModel: userModel,
-      child: SliverAppBar(
-        backgroundColor: Colors.white,
-        floating: true,
-        pinned: true,
-        elevation: 1.0,
-        centerTitle: true,
-        expandedHeight: 290.0,
-        bottom: TabBar(
-          labelColor: AppColors.green[800],
-          indicatorColor: AppColors.green[800],
-          unselectedLabelColor: Colors.grey[400],
-          labelStyle: TextStyle(
-            fontSize: 13.0,
-            fontFamily: 'Dubai',
-            fontWeight: FontWeight.bold,
-          ),
-          tabs: myTabs,
-        ),
-        flexibleSpace: FlexibleSpaceBar(
-          background: ProfileAppBar(currentUser: widget.currentUser),
-          collapseMode: CollapseMode.pin,
-          centerTitle: true,
-        ),
-        title: Text(
-          "الصفحة الشخصية",
-          textDirection: TextDirection.rtl,
-          style: TextStyle(
-            fontSize: 16.0,
-            fontFamily: 'Dubai',
-            fontWeight: FontWeight.w700,
-            color: Colors.black,
-          ),
-        ),
-        actions: <Widget>[
-          IconButton(
-              icon: ImageIcon(
-                AssetImage(AppIcons.settings),
-                size: 20,
-                color: Colors.grey[800],
-              ),
-              onPressed: () {
-                pushPage(context,
-                    GeneralSettingPage(currentUser: widget.currentUser));
-              }),
-        ],
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.cBackground,
+      body: DefaultTabController(
+        length: myTabs.length,
+        child: (_isLoading)
+            ? RefreshProgress()
+            : NestedScrollView(
+                headerSliverBuilder: (context, value) {
+                  return [
+                    _sliverAppBar(),
+                  ];
+                },
+                body: (_isLoading)
+                    ? RefreshProgress()
+                    : (posts.length >= 1)
+                        ? SingleChildScrollView(
+                            child: Container(child: Column(children: posts)))
+                        : Center(
+                            child: Text(AppTexts.NotFoundPosts,
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontFamily: 'Dubai',
+                                    color: AppColors.cBlack)))),
       ),
+    );
+  }
+
+  Widget _sliverAppBar() {
+    return SliverAppBar(
+      backgroundColor: Colors.white,
+      floating: true,
+      pinned: true,
+      elevation: 1.0,
+      centerTitle: true,
+      expandedHeight: 290.0,
+      bottom: TabBar(
+        labelColor: AppColors.green[800],
+        indicatorColor: AppColors.green[800],
+        unselectedLabelColor: Colors.grey[400],
+        labelStyle: TextStyle(
+          fontSize: 13.0,
+          fontFamily: 'Dubai',
+          fontWeight: FontWeight.bold,
+        ),
+        tabs: myTabs,
+      ),
+      flexibleSpace: FlexibleSpaceBar(
+        background: ProfileAppBar(profileId: widget.profileId, currentUser: widget.currentUser,),
+        collapseMode: CollapseMode.pin,
+        centerTitle: true,
+      ),
+      title: Text(
+        "الصفحة الشخصية",
+        textDirection: TextDirection.rtl,
+        style: TextStyle(
+          fontSize: 16.0,
+          fontFamily: 'Dubai',
+          fontWeight: FontWeight.w700,
+          color: Colors.black,
+        ),
+      ),
+      actions: <Widget>[
+        IconButton(
+            icon: ImageIcon(
+              AssetImage(AppIcons.settings),
+              size: 20,
+              color: Colors.grey[800],
+            ),
+            onPressed: () {
+              pushPage(context,
+                  GeneralSettingPage(currentUser: widget.currentUser));
+            }),
+      ],
     );
   }
 }

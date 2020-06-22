@@ -62,6 +62,17 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
               fontWeight: FontWeight.w800,
             ),
           ),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.search, size: 24),
+          title: Text(
+            'بحث',
+            style: TextStyle(
+              fontFamily: 'Dubai',
+              fontSize: 12.0,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
         )
       ],
     );

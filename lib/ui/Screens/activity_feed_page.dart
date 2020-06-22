@@ -8,7 +8,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-
 class ActivityFeed extends StatelessWidget {
   FirebaseUser currentUser;
   ActivityFeed({this.currentUser});
@@ -27,6 +26,7 @@ class ActivityFeed extends StatelessWidget {
     });
     return feedItems;
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
