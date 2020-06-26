@@ -1,77 +1,256 @@
-import 'package:ameen/blocs/models/choice.dart';
-import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+import 'package:ameen/ui/Screens/ways_page.dart';
+import 'package:ameencommon/models/user_data.dart';
+import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/ui/Screens/create_post.dart';
-import 'package:ameen/ui/widgets/choice_card.dart';
+import 'package:ameencommon/utils/functions.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class ProfileAppBar extends StatelessWidget {
+class ProfileAppBar extends StatefulWidget {
+  String profileId;
+  FirebaseUser currentUser;
+  ProfileAppBar({Key key, @required this.profileId, @required this.currentUser}): super(key: key);
+
+  @override
+  _ProfileAppBarState createState() => _ProfileAppBarState();
+}
+
+class _ProfileAppBarState extends State<ProfileAppBar> {
   final double appBarHeight = 80.0;
+  UserModel user;
+  String userId;
+  String errorMessage;
+  bool isFollowing = false;
+  int followerCount = 0;
+  int followingCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    userId = widget.currentUser.uid;
+    _checkIfFollowing();
+    _getFollowers();
+    _getFollowing();
+  }
+
+  _checkIfFollowing() async {
+    DocumentSnapshot doc = await DbRefs.followersRef
+        .document(widget.profileId)
+        .collection('userFollowers')
+        .document(userId)
+        .get();
+
+    setState(() {
+      isFollowing = doc.exists;
+    });
+  }
+
+  _getFollowers() async {
+    QuerySnapshot snapshot = await DbRefs.followersRef
+        .document(widget.profileId)
+        .collection('userFollowers')
+        .getDocuments();
+    setState(() {
+      followerCount = snapshot.documents.length;
+    });
+  }
+
+  _getFollowing() async {
+    QuerySnapshot snapshot = await DbRefs.followingRef
+        .document(widget.profileId)
+        .collection('userFollowing')
+        .getDocuments();
+    setState(() {
+      followingCount = snapshot.documents.length;
+    });
+  }
+
+  _handleUnfollowUser() {
+    setState(() {
+      isFollowing = false;
+    });
+
+    // remove follower
+    DbRefs.followersRef
+        .document(widget.profileId)
+        .collection('userFollowers')
+        .document(widget.currentUser.uid)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+
+    // remove following
+    DbRefs.followingRef
+        .document(widget.currentUser.uid)
+        .collection('userFollowing')
+        .document(widget.profileId)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+
+    // delete activity feed item for them
+    DbRefs.activityFeedRef
+        .document(widget.profileId)
+        .collection('feedItems')
+        .document(widget.currentUser.uid)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+  }
+
+  _handleFollowUser() {
+    setState(() {
+      isFollowing = true;
+    });
+
+    // Make auth user follower of THAT user (update THEIR followers collection)
+    DbRefs.followersRef
+        .document(widget.profileId)
+        .collection('userFollowers')
+        .document(widget.currentUser.uid)
+        .setData({});
+
+    // Put THAT user on YOUR following collection (update your following collection)
+    DbRefs.followingRef
+        .document(widget.currentUser.uid)
+        .collection('userFollowing')
+        .document(widget.profileId)
+        .setData({});
+
+    // add activity feed item for that user to notify about new follower (us)
+    DbRefs.activityFeedRef
+        .document(widget.profileId)
+        .collection('feedItems')
+        .document(widget.currentUser.uid)
+        .setData({
+      "type": "follow",
+      "ownerId": widget.profileId,
+      "username": user.username,
+      "userId": widget.currentUser.uid,
+      "profilePicture": user.profilePicture,
+      "timestamp": DateTime.now(),
+    });
+  }
+
+   _showButton() {
+    bool isProfileOwner = widget.currentUser.uid == widget.profileId;
+    if(isProfileOwner) {
+      return _addDoaaButton(context);
+    }
+    else if (isFollowing) {
+      return _followButton(
+        context,
+        text: AppTexts.unfollow,
+        function: _handleUnfollowUser,
+      );
+    }
+    else if (!isFollowing) {
+      return _followButton(
+        context,
+        text: AppTexts.follow,
+        function: _handleFollowUser,
+      );
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
 
-    return Container(
-      padding: new EdgeInsets.only(top: statusBarHeight),
-      height: statusBarHeight + appBarHeight,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.asset(
-              'assets/images/person_test.png',
-              width: 100.0,
-              height: 100.0,
-            ),
-            Container(
-              child: Text(
-                "محمد أحمد ",
-                textDirection: TextDirection.rtl,
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontFamily: 'Dubai',
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+    return FutureBuilder(
+      future: DbRefs.usersRef.document(widget.profileId).get(),
+      builder: (context, snapshot) {
+        if(!snapshot.hasData) {
+          return Container();
+        }
+        user = UserModel.fromDocSnapshot(snapshot.data);
+        return Container(
+          padding: new EdgeInsets.only(top: statusBarHeight),
+          height: statusBarHeight + appBarHeight,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                CircleAvatar(
+                  radius: 30,
+                  backgroundColor: Colors.grey,
+                  backgroundImage:  user.profilePicture == null ? AssetImage(AppIcons.AnonymousPerson): CachedNetworkImageProvider(user.profilePicture),
                 ),
-              ),
+                Container(
+                  child: Text(
+                    user.username,
+                    textDirection: TextDirection.rtl,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontFamily: 'Dubai',
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+
+                _followersAndFollowingRow(),
+                _showButton(),
+                SizedBox(
+                  height: 8,
+                ),
+              ],
             ),
-            _followersAndFollowingRow(),
-            _addDoaaButton(context),
-            SizedBox(
-              height: 8,
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
   Widget _addDoaaButton(BuildContext context) {
-    return RaisedButton(
-      onPressed: (){
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CreatePost(),
-          ),
-        );
-      },
-      color: myColors.green[900],
+    return FlatButton(
+      onPressed: () => pushPage(context, CreatePost(currentUser: widget.currentUser)),
+      color: AppColors.green[900],
       padding: EdgeInsets.all(5),
-      elevation: 1.0,
       hoverColor: Colors.white,
       textColor: Colors.white,
-      disabledColor: myColors.green,
+      disabledColor: AppColors.green,
       splashColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: new BorderRadius.circular(18.0),
       ),
-      animationDuration: Duration(seconds: 2),
       child: Text(
         "إضافة دعاء +",
         style:
             TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'Dubai'),
+      ),
+    );
+  }
+
+  Widget _followButton(BuildContext context, {String text, Function function}) {
+    return FlatButton(
+      onPressed: function,
+      color: AppColors.green[900],
+      padding: EdgeInsets.all(5),
+      hoverColor: Colors.white,
+      textColor: Colors.white,
+      disabledColor: AppColors.green,
+      splashColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: new BorderRadius.circular(18.0),
+      ),
+      child: Text(
+        text,
+        style:
+        TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'Dubai'),
       ),
     );
   }
@@ -84,8 +263,9 @@ class ProfileAppBar extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Flexible(
+            // Followers Text
             child: Text(
-              "50 متابعين      ",
+              "${followerCount} متابعاً ",
               textDirection: TextDirection.rtl,
               style: TextStyle(
                   fontSize: 14,
@@ -94,24 +274,9 @@ class ProfileAppBar extends StatelessWidget {
                   fontWeight: FontWeight.bold),
             ),
           ),
-          Text(
-            "50 متابعاً      ",
-            textDirection: TextDirection.rtl,
-            style: TextStyle(
-                fontSize: 14,
-                color: Colors.black,
-                fontFamily: 'Dubai',
-                fontWeight: FontWeight.bold),
-          )
+
         ],
       ),
     );
   }
-
-  // The Line that divide between Add Doaa and Posts and Saved Doaa..
-  Widget _horizontalLine() => Container(
-        height: 1.0,
-        margin: EdgeInsets.symmetric(vertical: 10),
-        color: Colors.grey.shade300,
-      );
 }

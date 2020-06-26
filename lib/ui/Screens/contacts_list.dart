@@ -1,6 +1,4 @@
-import 'package:ameen/helpers/ui/app_color.dart';
-import 'package:ameen/ui/Screens/news_feed.dart';
-import 'package:ameen/ui/widgets/bottom_navigation.dart';
+import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/ui/widgets/chat_widgets/chat_list_view_item.dart';
 import 'package:flutter/material.dart';
 
@@ -13,10 +11,10 @@ class ContactList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: cGreen,
+      backgroundColor: AppColors.cGreen,
       appBar: AppBar(
         elevation: 0.0,
-        backgroundColor: cGreen,
+        backgroundColor: AppColors.cGreen,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[

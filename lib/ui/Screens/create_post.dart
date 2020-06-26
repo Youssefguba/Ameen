@@ -1,11 +1,54 @@
-import 'package:flutter/gestures.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:ameen/helpers/ui/app_color.dart' as myColors;
+import 'package:ameencommon/utils/constants.dart';
+import 'package:ameencommon/utils/functions.dart';
+import 'package:uuid/uuid.dart';
 
-class CreatePost extends StatelessWidget {
+class CreatePost extends StatefulWidget {
+  FirebaseUser currentUser;
+  CreatePost({Key key, this.currentUser}): super(key: key);
+
+  @override
+  _CreatePostState createState() => _CreatePostState();
+}
+
+class _CreatePostState extends State<CreatePost> {
+  CollectionReference _postsRef  = Firestore.instance.collection(DatabaseTable.posts);
+  CollectionReference _usersRef  = Firestore.instance.collection(DatabaseTable.users);
+  TextEditingController _postBodyController = TextEditingController();
+
+  String postId = Uuid().v4();
+  String userId;
+  String username;
+  String profilePicture;
+
+  bool isUploading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    userId = widget.currentUser.uid;
+    _usersRef.document(userId).get().then((user) {
+      username = user.data['username'];
+      profilePicture = user.data['profilePicture'];
+    });
+
+    _postBodyController.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    isUploading = false;
+    _postBodyController.dispose();
+
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold (
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -13,57 +56,98 @@ class CreatePost extends StatelessWidget {
         centerTitle: true,
         title: Text(
           "أكتب دعاء ",
-        textDirection: TextDirection.rtl,
-        textAlign: TextAlign.left,
-        style: TextStyle(
-          fontFamily: 'Dubai',
-          color: Colors.black,
-          fontWeight: FontWeight.w700,
-        ),
+          textDirection: TextDirection.rtl,
+          textAlign: TextAlign.left,
+          style: TextStyle(
+            fontFamily: 'Dubai',
+            color: Colors.black,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         actions: <Widget>[
           IconButton(
-            onPressed: (){
+            onPressed: () {
               Navigator.pop(context);
             },
             icon: ImageIcon(
-            AssetImage("assets/images/arrow_back.png"),
-            size: 20,
+              AssetImage("assets/images/back.png"),
+              size: 20,
               color: Colors.black,
-          ),),
-
-        ],
-      ),
-      body: Container(
-          margin: EdgeInsets.all(15),
-          child: TextField(
-            textAlign: TextAlign.right,
-            textDirection: TextDirection.rtl,
-            maxLength: 220,
-            maxLines: 9,
-            style: TextStyle(
-              fontSize: 18,
-              fontFamily: 'Dubai'
-            ),
-            textInputAction: TextInputAction.newline,
-            autofocus: true,
-            showCursor: true,
-            maxLengthEnforced: true,
-            expands: false,
-            minLines: 1,
-            scrollPhysics:  BouncingScrollPhysics(),
-            cursorColor: myColors.green[900],
-            decoration: InputDecoration(
-              contentPadding:  EdgeInsets.all(15.0),
-              border: InputBorder.none,
-              hintText: " ... أكتب الدعاء الذي يجول بخاطرك ",
-              hintStyle: TextStyle(
-                fontFamily: 'Dubai',
-              ),
-
             ),
           ),
+        ],
+      ),
+      body: isUploading ? LinearProgressIndicator (
+        backgroundColor: AppColors.cBackground,
+        valueColor: AlwaysStoppedAnimation<Color>(AppColors.cGreen),
+      )
+          :  Container (
+        height: double.maxFinite,
+        margin: EdgeInsets.all(15),
+        child: Column (
+          children: <Widget> [
+
+            // TextField of Post
+            TextField(
+              controller: _postBodyController,
+              textAlign: TextAlign.right,
+              maxLength: 220,
+              maxLines: 9,
+              textInputAction: TextInputAction.newline,
+              autofocus: true,
+              showCursor: true,
+              maxLengthEnforced: false,
+              expands: false,
+              minLines: 1,
+              scrollController: ScrollController(),
+              scrollPhysics: BouncingScrollPhysics(),
+              cursorColor: AppColors.green[900],
+              style: TextStyle(fontSize: 18, fontFamily: 'Dubai'),
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.all(15.0),
+                border: InputBorder.none,
+                hintText: " ... أكتب الدعاء الذي يجول بخاطرك ",
+                hintStyle: TextStyle(
+                  fontFamily: 'Dubai',
+                ),
+              ),
+            ),
+            // Post Button
+            Expanded(
+              child: Align(
+                alignment: FractionalOffset.bottomCenter,
+                widthFactor: double.maxFinite,
+                child: Visibility(
+                  visible: _postBodyController.text.isEmpty ? false : true,
+                  child: FlatButton(
+                    focusColor: AppColors.cBackground,
+                    hoverColor: AppColors.cBackground,
+                    onPressed: () {
+                      createPost(_postsRef, userId, DatabaseTable.userPosts, postId, username, _postBodyController.text, profilePicture);
+                      showToast(context, 'لقد تم نشر الدعاء الخاص بك 🤲🏻', AppColors.cBlack);
+                      popPage(context);
+                    } ,
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    color: _postBodyController.text.isEmpty ? AppColors.cBackground : AppColors.cGreen,
+                    disabledColor:  _postBodyController.text.isEmpty ? AppColors.cBackground : AppColors.cGreen,
+                    child: Text(
+                      "نشر الدعاء",
+                      textDirection: TextDirection.rtl,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Dubai',
+                        color: Colors.white,
+                        fontSize: 19,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
+      ),
     );
   }
 }

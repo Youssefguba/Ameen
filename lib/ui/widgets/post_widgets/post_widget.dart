@@ -1,127 +1,330 @@
-import 'package:ameen/blocs/models/post_data.dart';
-import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_model.dart';
-import 'package:ameen/ui/widgets/news_feed_widgets/add_new_post_widget.dart';
+import 'package:ameen/ui/Screens/post_page.dart';
+import 'package:ameen/ui/Screens/ways_page.dart';
+import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
+import 'package:ameencommon/models/comment.dart';
+import 'package:ameencommon/models/user_data.dart';
+import 'package:ameen/ui/widgets/comment/add_new_comment.dart';
 import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
+import 'package:ameencommon/utils/constants.dart';
+import 'package:ameencommon/utils/functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart'; //for date locale
+import 'package:ameen/helpers/ui/images.dart' as myImages;
+import 'package:ameen/helpers/ui/text_styles.dart' as mytextStyle;
+import 'package:intl/intl.dart';
 
-/*
-* This class represent the UI of Post and every thing related with it..
-* Y.G
-* */
+// This class represent the UI of Post and every thing related with it..
+class PostWidget extends StatefulWidget  {
+  UserModel userModel;
+  String postId;
+  String postBody;
+  String authorName;
+  String authorId;
+  String authorPhoto;
+  int ameenCount;
+  Timestamp postTime;
+  dynamic ameenReaction;
 
-class PostWidget extends StatelessWidget {
-  final PostData postModel;
-  const PostWidget({Key key, @required this.postModel}) : super(key: key);
+  PostWidget(
+      {Key key,
+      this.userModel,
+      this.postId,
+      this.postBody,
+      this.authorId,
+      this.ameenCount,
+      this.ameenReaction,
+      this.authorName,
+      this.authorPhoto,
+      this.postTime})
+      : super(key: key);
+
+  factory PostWidget.fromDocument(DocumentSnapshot doc) {
+    return PostWidget(
+      postId: doc['postId'],
+      postBody: doc['postBody'],
+      authorName: doc['username'],
+      authorId: doc['userId'],
+      ameenReaction: doc['ameen'],
+      postTime: doc['created_at'],
+      authorPhoto: doc['profilePicture'],
+    );
+  }
+
+  int getAmeenCount(ameen) {
+    // if no likes, return 0
+    if (ameenReaction == null) {
+      return 0;
+    }
+    int count = 0;
+    ameenReaction.values.forEach((val) {
+      if (val == true) {
+        count += 1;
+      }
+    });
+    return count;
+  }
+
+
+  @override
+  _PostWidgetState createState() => _PostWidgetState(
+        postId: this.postId,
+        authorId: this.authorId,
+        authorName: this.authorName,
+        authorPhoto: this.authorPhoto,
+        postBody: this.postBody,
+        postTime: this.postTime,
+        ameenReaction: this.ameenReaction,
+        ameenCount: getAmeenCount(this.ameenReaction),
+      );
+}
+
+class _PostWidgetState extends State<PostWidget> {
+  _PostWidgetState(
+      {Key key,
+      this.postId,
+      this.postBody,
+      this.authorId,
+      this.ameenCount,
+      this.ameenReaction,
+      this.authorName,
+      this.authorPhoto,
+      this.postTime});
+
+  CollectionReference usersRef = Firestore.instance.collection(DatabaseTable.users);
+  CollectionReference postsRef = Firestore.instance.collection(DatabaseTable.posts);
+  CollectionReference commentsRef = Firestore.instance.collection(DatabaseTable.comments);
+
+
+  String postId;
+  String postBody;
+  String authorName;
+  String authorId;
+  String authorPhoto;
+  Timestamp postTime;
+
+  int ameenCount;
+  int counterOfAmeen;
+  int commentsCount;
+  int counterOfComments;
+  Map ameenReaction;
+
+  @override
+  void initState() {
+    counterOfAmeen = ameenCount;
+    _getTotalOfComments();
+    super.initState();
+  }
+
+  // Get the number of total Comments
+  _getTotalOfComments () {
+   commentsRef
+        .document(widget.postId)
+        .collection(DatabaseTable.comments)
+        .getDocuments()
+        .then((data) {
+          setState(() {
+            commentsCount = data.documents.length;
+            counterOfComments = commentsCount;
+          });
+    });
+}
+
+  // Note: To delete post, ownerId and currentUserId must be equal, so they can be used interchangeably
+  _deletePost() async {
+    // delete post itself
+    postsRef
+        .document(authorId)
+        .collection('userPosts')
+        .document(postId)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+
+    // then delete all activity feed notifications
+    QuerySnapshot activityFeedSnapshot = await DbRefs.activityFeedRef
+        .document(authorId)
+        .collection("feedItems")
+        .where('postId', isEqualTo: postId)
+        .getDocuments();
+    activityFeedSnapshot.documents.forEach((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+
+    // then delete all comments
+    QuerySnapshot commentsSnapshot = await commentsRef
+        .document(postId)
+        .collection('comments')
+        .getDocuments();
+    commentsSnapshot.documents.forEach((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
-
-    return InheritedPostModel(
-      postData: postModel,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey,
-              blurRadius: 1.0, // has the effect of softening the shadow
-              offset: new Offset(1.0, 1.0),
-            ),
-          ],
-        ),
-        margin: EdgeInsets.symmetric(vertical: 10),
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 13),
-            ),
-            /*
-             * The top Section of Post (Photo, Time, Settings, Name)
-             * */
-            _HeadOfPost(),
-
-            /*
-            * The Beginning of Text of the Post
-            * */
-            Container(
-              margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-              padding: EdgeInsets.symmetric(horizontal: 13),
-              child: Text(
-                postModel.postBody,
-                style: TextStyle(
-                  fontFamily: 'Dubai',
-                  fontSize: 15,
+    return Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey,
+                  blurRadius: 0.5, // has the effect of softening the shadow
+                  offset: new Offset(0.5, 0.5),
                 ),
-                textDirection: TextDirection.rtl,
-              ),
+              ],
             ),
-            /*
-            * The End of Text of the Post
-            * */
+            margin: const EdgeInsets.symmetric(vertical: 5),
+            child: FutureBuilder(
+              future: usersRef.document(authorId).get(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return  Container();
+                }
+                return Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 13),
+                    ),
+                    _headOfPost(),
 
-            /*
-            * The Beginning of Reaction Buttons Row
-            * */
-            SizedBox(
-              height: 8,
+                    Container(
+                      child: InkWell(
+                        onTap: () => pushPage(context, PostPage(postId: postId, authorId: authorId, authorName: authorName)),
+                        child: Column(
+                          children: [
+                            _postBody(),
+                            _reactAndCommentCounter(),
+                            SizedBox(height: 8),
+                          ],
+                        ),
+                      ),
+                    ),
+                    ReactionsButtons(
+                      ameenReaction: ameenReaction,
+                      ameenCount: ameenCount,
+                      authorId: authorId,
+                      postId: postId,
+
+                    ),
+                    InkWell(
+                        onTap: () => pushPage(context, PostPage(postId: postId, authorId: authorId, authorName: authorName)),
+                        child: AddNewCommentWidget(authorPhoto: authorPhoto,)),
+                  ],
+                );
+              },
             ),
-            _ReactionsButtons(),
-            /*
-            * The End of Reaction Buttons Row
-            * */
-            AddNewPostWidget("أكتب تعليقا ...", Colors.grey[300]),
-          ],
+          );
+  }
+
+  Widget _postBody() {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+      padding: EdgeInsets.symmetric(horizontal: 15),
+      alignment: AlignmentDirectional.topEnd,
+      child: Text(
+        postBody,
+        style: TextStyle(
+          fontFamily: 'Dubai',
+          fontSize: 15,
         ),
       ),
     );
   }
-}
 
-/*
-  * The top Section of Post (Photo, Time, Settings, Name)
-  * */
-class _HeadOfPost extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final PostData postData = InheritedPostModel.of(context).postData;
+//   The top Section of Post (Photo, Time, Settings, Name)
+  Widget _headOfPost() {
+    bool isPostOwner = currentUser.uid == authorId;
+
+    // To handle function of selected Item in PopupMenuButton
+    void choiceAction(String option) async {
+      if (option == AppTexts.RemovePost) {
+        _handleDeletePost(context);
+      } else if (option == AppTexts.SavePost) {
+        //TODO => Handle it Later to Save Post.
+        print('Button Clicked');
+      }
+    }
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
+       // Show Popup More Button
         Flexible(
-          child: IconButton(
+          // More button to show options of post.
+          child: PopupMenuButton<String>(
             icon: Icon(Icons.more_horiz),
+            onSelected: choiceAction,
+            itemBuilder: (context) => [
+              /// Remove Post Item
+              PopupMenuItem(
+                // Check if the post is belong to the current User or not .. to show or remove (Remove Post)
+                child: Visibility(visible: isPostOwner ? true : false, child: Text(AppTexts.RemovePost)),
+                textStyle: TextStyle(
+                    fontSize: 12, fontFamily: 'Dubai', color: Colors.black),
+                height: isPostOwner ? 30 : 0,
+                value: AppTexts.RemovePost,
+              ),
+
+              /// Save Post Item
+              PopupMenuItem(
+                child: Text(AppTexts.SavePost),
+                textStyle: TextStyle(
+                    fontSize: 12, fontFamily: 'Dubai', color: Colors.black),
+                height: 30,
+                value: AppTexts.SavePost,
+              ),
+            ],
           ),
         ),
+
+        // Show Name of the author, Time of post and Image of User
         Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
+                // Name of the user
                 Container(
                   margin: EdgeInsets.fromLTRB(5, 10, 5, 1),
                   child: Text(
-                    postData.authorName,
+                    authorName.toString(),
+                    textAlign: TextAlign.start,
                     style: TextStyle(
                       fontFamily: 'Dubai',
                       fontSize: 15,
                     ),
                   ),
                 ),
-                _PostTimeStamp(),
+
+                // Time of the post
+                _postTimeStamp(),
+
               ],
             ),
             Container(
-              width: 45,
-              height: 45,
               margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: CircleAvatar(
-                backgroundImage: NetworkImage("https://quiet-tundra-98924.herokuapp.com/users/5eb0c28fe1be6b44a094cbf7/images/5eb0db541495e11b5c3e2694"),
                 backgroundColor: Colors.transparent,
-                radius: 30.0,
+                radius: 22.0,
+                backgroundImage: authorPhoto == null ? AssetImage(AppIcons.AnonymousPerson) : CachedNetworkImageProvider(authorPhoto),
               ),
             ),
           ],
@@ -129,82 +332,130 @@ class _HeadOfPost extends StatelessWidget {
       ],
     );
   }
-}
 
-/*
-* Time of post created..
-* */
-class _PostTimeStamp extends StatelessWidget {
-  const _PostTimeStamp({
-    Key key,
-  }) : super(key: key);
+  // Time of post created..
+  Widget _postTimeStamp() {
+    initializeDateFormatting();
+    var timestamp = postTime.toDate();
+    var date = DateFormat.yMMMd('ar').add_jm().format(timestamp);
 
-  @override
-  Widget build(BuildContext context) {
-    final PostData postData = InheritedPostModel.of(context).postData;
-    var timeTheme = new TextStyle( fontFamily: 'Dubai', fontSize: 13, color: Colors.grey.shade500);
+    var timeTheme = new TextStyle(fontFamily: 'Dubai', fontSize: 13, color: Colors.grey.shade500);
 
+    initializeDateFormatting('ar');
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-      child: Text(postData.postTimeFormatted, style: timeTheme),
+      child: Text(date.toString(), style: timeTheme, textAlign: TextAlign.end,),
     );
   }
-}
 
-/*
-* Reactions Buttons Widget (Ameen, Comment, Share)
-* */
-class _ReactionsButtons extends StatefulWidget {
-  @override
-  __ReactionsButtonsState createState() => __ReactionsButtonsState();
-}
-
-class __ReactionsButtonsState extends State<_ReactionsButtons> {
-  @override
-  Widget build(BuildContext context) {
+  // React counter
+  Widget _reactAndCommentCounter() {
     return Container(
-      width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(
-            color: Colors.grey[300],
-          ),
-          bottom: BorderSide(
-            color: Colors.grey[300],
-          ),
-        ),
-      ),
+      height: 20,
+      margin: EdgeInsets.all(8),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 7.0),
-            decoration: BoxDecoration(
-              border: Border(
-                right: BorderSide(
-                  color: Colors.grey[300],
+          // Counter of Comments (Numbers)
+          Visibility(
+              visible: counterOfComments != null && counterOfComments >= 1  ? true : false,
+              child: Container(
+                child: Row(
+                  children: <Widget>[
+                    // "Comment Word"
+                    Text('تعليق', style: mytextStyle.reactCounterTextStyle),
+
+                    // Number of comments
+                    Text(counterOfComments== null ? '' : counterOfComments.toString(), style: mytextStyle.reactCounterTextStyle),
+
+                  ],
                 ),
+              )),
+
+          // Container of Numbers and Reactions Icons
+          Visibility(
+            maintainSize: true,
+            maintainAnimation: true,
+            maintainState: true,
+            visible: counterOfAmeen >= 1 ? true : false,
+            child: Container(
+              margin: EdgeInsets.only(right: 5, left: 5),
+              child: Row(
+                children: <Widget>[
+                  // Counter of Reaction (Numbers)
+                  Container(
+                    margin: EdgeInsets.only(right: 2, left: 2),
+                    child: Text(
+                      //Check if the Total Reactions = 0 or not
+                      counterOfAmeen >= 1 ? counterOfAmeen.toString() : '',
+                      style: mytextStyle.reactCounterTextStyle,
+                    ),
+                  ),
+
+                  // Counter of Reaction (Icons)
+                  Container(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        // Ameen React
+                        Visibility(
+                          maintainSize: true,
+                          maintainAnimation: true,
+                          maintainState: true,
+                          visible: counterOfAmeen >= 1 ? true : false,
+                          child: myImages.ameenIconReactCounter,
+                        ),
+
+                        // Recommend React
+                        Visibility(
+                          visible: false,
+                          child: myImages.recommendIconReactCounter,
+                        ),
+
+                        // Forbidden React
+                        Visibility(
+                          visible: false,
+                          child: myImages.forbiddenIconReactCounter,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-            child: reactionsButtonRow(
-                AssetImage("assets/images/share_icon.png"), 'مشاركة'),
           ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 7.0),
-            decoration: BoxDecoration(
-              border: Border(
-                right: BorderSide(
-                  color: Colors.grey[300],
-                ),
-              ),
-            ),
-            child: reactionsButtonRow(
-                AssetImage("assets/images/comment.png"), 'تعليق'),
-          ),
-          reactionsButtonRow(
-              AssetImage("assets/images/pray_icon.png"), 'آمين'),
         ],
       ),
     );
   }
+
+  _handleDeletePost(BuildContext parentContext) {
+    return showDialog(
+        context: parentContext,
+        builder: (context) {
+          return SimpleDialog(
+            title: Text("هل تريد حذف المنشور"),
+            children: <Widget>[
+              SimpleDialogOption(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _deletePost();
+                  },
+                  child: Text(
+                    'نعم',
+                    style: TextStyle(color: Colors.red),
+                  )),
+              SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('إلغاء')),
+            ],
+          );
+        });
+  }
 }
+
+
+
+
+

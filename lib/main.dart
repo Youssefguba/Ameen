@@ -1,16 +1,15 @@
-import 'package:ameen/helpers/ui/app_color.dart';
-import 'package:ameen/services/post_service.dart';
-import 'package:ameen/ui/Screens/home.dart';
+import 'package:ameen/services/authentication.dart';
+import 'package:ameen/ui/Screens/ways_page.dart';
+import 'package:ameencommon/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:ameencommon/models/user_data.dart';
+import 'package:ameencommon/localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
-void setupLocator(){
-    GetIt.I.registerLazySingleton(() => PostsService());
-}
 
 void main() {
-  setupLocator();
   runApp(MyApp());
 }
 
@@ -18,17 +17,46 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: cGreen,
+      statusBarColor: AppColors.cGreen,
       statusBarIconBrightness: Brightness.dark,
     ));
 
-    return MaterialApp(
-      title: 'Ameen آميين',
-      theme: ThemeData(
-        primaryColor: Color.fromRGBO(62, 146, 42, 1),
-      ),
-      debugShowCheckedModeBanner: false,
-      home: Home(),
-    );
+    return StreamProvider<UserModel>.value(
+      value: AuthService().currentUser,
+      child: MaterialApp(
+        localizationsDelegates: [
+          AppLocalizationsDelegate(),
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        supportedLocales: [
+          const Locale('en', ''),
+          const Locale('ar', ''),
+        ],
+            builder: (context, child) {
+              return ScrollConfiguration(
+                behavior: RemoveGlowEffect(),
+                child: child,
+              );
+            },
+            title: 'Ameen آميين',
+            theme: ThemeData(
+              primaryColor: Color.fromRGBO(62, 146, 42, 1),
+            ),
+            debugShowCheckedModeBanner: false,
+            home: Wrapper(),
+          ),
+        );
+  }
+}
+
+/*
+* To Remove Glow Effect from the entire App.
+* */
+class RemoveGlowEffect extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
   }
 }

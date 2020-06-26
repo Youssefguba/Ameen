@@ -1,66 +1,90 @@
-import 'dart:developer';
-
-import 'package:ameen/blocs/models/api_response.dart';
-import 'package:ameen/blocs/models/post_data.dart';
-import 'package:ameen/helpers/ui/app_color.dart' as myColors;
-import 'package:ameen/services/post_service.dart';
+import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
+import 'package:ameencommon/utils/constants.dart';
+import 'package:ameen/services/connection_check.dart';
 import 'package:ameen/ui/widgets/custom_app_bar.dart';
+import 'package:ameen/ui/widgets/news_feed_widgets/add_new_post_widget.dart';
 import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:get_it/get_it.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+/// ** This page to display the General Timeline of posts
 class NewsFeed extends StatefulWidget {
-  const NewsFeed({Key key}) : super(key: key);
+  final FirebaseUser currentUser;
+
+  NewsFeed({Key key, this.currentUser}) : super(key: key);
 
   @override
   _NewsFeedState createState() => _NewsFeedState();
 }
 
-class _NewsFeedState extends State<NewsFeed> {
-  PostsService get services => GetIt.I<PostsService>();
-  APIResponse<List<PostData>> _apiResponse;
+class _NewsFeedState extends State<NewsFeed>  with AutomaticKeepAliveClientMixin<NewsFeed> {
+  List<PostWidget> posts = [];
   bool _isLoading = false;
+
 
   @override
   void initState() {
-    _fetchPosts();
+    getTimeline();
     super.initState();
   }
 
-  _fetchPosts() async {
-    setState(() {
-      _isLoading = true;
-    });
-    _apiResponse = await services.getPostsList();
+  @override
+  void dispose() {
+    super.dispose();
+    _isLoading = false;
+  }
 
-    setState(() {
-      _isLoading = false;
-    });
+  getTimeline() async {
+    setState(() => _isLoading = true);
+    QuerySnapshot snapshot = await DbRefs.timelineRef
+        .orderBy('created_at', descending: true)
+        .getDocuments();
+
+    posts =
+    snapshot.documents.map((doc) => PostWidget.fromDocument(doc)).toList();
+    setState(() => _isLoading = false);
+
+  }
+
+  buildTimeline() {
+    if (posts == null) {
+      return RefreshProgress();
+    } else if (posts.isEmpty) {
+      return Center(child: Text('لا يوجد أدعية قم بمشاركة دعاءك الذي تتمنه أن يتحقق'),);
+    } else {
+      return ListView(children: posts);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
-      backgroundColor: myColors.cBackground,
-      appBar: CustomAppBar(),
-      body: Builder(builder: (context) {
-        if (_isLoading) {
-          return Center(child: CircularProgressIndicator(
-            backgroundColor: myColors.cGreen,
-          ));
-        }
-        if(_apiResponse.error){
-          return Center(child: Text(_apiResponse.errorMessage));
-        }
-
-        return ListView.builder(
-            itemCount: _apiResponse.data.length,
-            itemBuilder: (BuildContext context, int index) {
-              return PostWidget(postModel: _apiResponse.data[index]);
-
-            });
-      }),
+      backgroundColor: AppColors.cBackground,
+      appBar: customAppBar(context, widget.currentUser),
+      // Refresh Indicator to Fetch Latest Data..
+      body: ConnectivityCheck(
+        child: RefreshIndicator(
+          color:  AppColors.cGreen,
+          backgroundColor: Colors.white,
+          onRefresh: () async => getTimeline(),
+           child:  _isLoading ? RefreshProgress() : Container(
+            child: Column(
+              children: <Widget>[
+                AddNewPostWidget(currentUser: widget.currentUser),
+                Expanded(child:  _isLoading ? RefreshProgress() : buildTimeline(),),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
+
 }

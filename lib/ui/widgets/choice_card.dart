@@ -1,4 +1,4 @@
-import 'package:ameen/blocs/models/choice.dart';
+import 'package:ameencommon/models/choice.dart';
 import 'package:flutter/material.dart';
 
 class ChoiceCard extends StatelessWidget {
