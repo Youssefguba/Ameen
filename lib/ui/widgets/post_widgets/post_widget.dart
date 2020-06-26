@@ -97,7 +97,6 @@ class _PostWidgetState extends State<PostWidget> {
   CollectionReference commentsRef = Firestore.instance.collection(DatabaseTable.comments);
 
 
-  String userId;
   String postId;
   String postBody;
   String authorName;
@@ -106,38 +105,79 @@ class _PostWidgetState extends State<PostWidget> {
   Timestamp postTime;
 
   int ameenCount;
-  int counter;
+  int counterOfAmeen;
   int commentsCount;
+  int counterOfComments;
   Map ameenReaction;
 
   @override
   void initState() {
-    super.initState();
-    userId = currentUser.uid;
+    counterOfAmeen = ameenCount;
     _getTotalOfComments();
+    super.initState();
   }
+
   // Get the number of total Comments
-  _getTotalOfComments() {
-    commentsRef
+  _getTotalOfComments () {
+   commentsRef
         .document(widget.postId)
         .collection(DatabaseTable.comments)
         .getDocuments()
         .then((data) {
-      setState(() {
-        commentsCount = data.documents.length;
-      });
+          setState(() {
+            commentsCount = data.documents.length;
+            counterOfComments = commentsCount;
+          });
+    });
+}
+
+  // Note: To delete post, ownerId and currentUserId must be equal, so they can be used interchangeably
+  _deletePost() async {
+    // delete post itself
+    postsRef
+        .document(authorId)
+        .collection('userPosts')
+        .document(postId)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+
+    // then delete all activity feed notifications
+    QuerySnapshot activityFeedSnapshot = await DbRefs.activityFeedRef
+        .document(authorId)
+        .collection("feedItems")
+        .where('postId', isEqualTo: postId)
+        .getDocuments();
+    activityFeedSnapshot.documents.forEach((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+
+    // then delete all comments
+    QuerySnapshot commentsSnapshot = await commentsRef
+        .document(postId)
+        .collection('comments')
+        .getDocuments();
+    commentsSnapshot.documents.forEach((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
     });
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: usersRef.document(authorId).get(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Container();
-          }
-          return Container(
+    return Container(
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
@@ -148,43 +188,49 @@ class _PostWidgetState extends State<PostWidget> {
                 ),
               ],
             ),
-            margin: EdgeInsets.symmetric(vertical: 5),
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 13),
-                ),
-                _headOfPost(),
-
-                Container(
-                  child: InkWell(
-                    onTap: () => _getPostPage(context, postId: postId, authorId: authorId, authorName: authorName),
-                    child: Column(
-                      children: [
-                        _postBody(),
-                        _reactAndCommentCounter(),
-                        SizedBox(
-                          height: 8,
-                        ),
-                      ],
+            margin: const EdgeInsets.symmetric(vertical: 5),
+            child: FutureBuilder(
+              future: usersRef.document(authorId).get(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return  Container();
+                }
+                return Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 13),
                     ),
-                  ),
-                ),
-                ReactionsButtons(
-                    ameenReaction: ameenReaction,
-                    ameenCount: ameenCount,
-                    authorId: authorId,
-                    postId: postId,
+                    _headOfPost(),
 
-                ),
-                AddNewCommentWidget(),
-              ],
+                    Container(
+                      child: InkWell(
+                        onTap: () => pushPage(context, PostPage(postId: postId, authorId: authorId, authorName: authorName)),
+                        child: Column(
+                          children: [
+                            _postBody(),
+                            _reactAndCommentCounter(),
+                            SizedBox(height: 8),
+                          ],
+                        ),
+                      ),
+                    ),
+                    ReactionsButtons(
+                      ameenReaction: ameenReaction,
+                      ameenCount: ameenCount,
+                      authorId: authorId,
+                      postId: postId,
+
+                    ),
+                    InkWell(
+                        onTap: () => pushPage(context, PostPage(postId: postId, authorId: authorId, authorName: authorName)),
+                        child: AddNewCommentWidget(authorPhoto: authorPhoto,)),
+                  ],
+                );
+              },
             ),
           );
-        });
   }
 
-  // The Body of the Post ..
   Widget _postBody() {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
@@ -200,12 +246,14 @@ class _PostWidgetState extends State<PostWidget> {
     );
   }
 
-  // The top Section of Post (Photo, Time, Settings, Name)
+//   The top Section of Post (Photo, Time, Settings, Name)
   Widget _headOfPost() {
+    bool isPostOwner = currentUser.uid == authorId;
+
     // To handle function of selected Item in PopupMenuButton
     void choiceAction(String option) async {
       if (option == AppTexts.RemovePost) {
-        //TODO => Handle it Later to remove Post.
+        _handleDeletePost(context);
       } else if (option == AppTexts.SavePost) {
         //TODO => Handle it Later to Save Post.
         print('Button Clicked');
@@ -216,7 +264,6 @@ class _PostWidgetState extends State<PostWidget> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        //TODO Show Popup menu
        // Show Popup More Button
         Flexible(
           // More button to show options of post.
@@ -227,11 +274,10 @@ class _PostWidgetState extends State<PostWidget> {
               /// Remove Post Item
               PopupMenuItem(
                 // Check if the post is belong to the current User or not .. to show or remove (Remove Post)
-                child:
-                    Visibility(visible: true, child: Text(AppTexts.RemovePost)),
+                child: Visibility(visible: isPostOwner ? true : false, child: Text(AppTexts.RemovePost)),
                 textStyle: TextStyle(
                     fontSize: 12, fontFamily: 'Dubai', color: Colors.black),
-                height: 30,
+                height: isPostOwner ? 30 : 0,
                 value: AppTexts.RemovePost,
               ),
 
@@ -249,16 +295,17 @@ class _PostWidgetState extends State<PostWidget> {
 
         // Show Name of the author, Time of post and Image of User
         Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 // Name of the user
                 Container(
                   margin: EdgeInsets.fromLTRB(5, 10, 5, 1),
                   child: Text(
-                    authorName,
+                    authorName.toString(),
                     textAlign: TextAlign.start,
                     style: TextStyle(
                       fontFamily: 'Dubai',
@@ -269,15 +316,14 @@ class _PostWidgetState extends State<PostWidget> {
 
                 // Time of the post
                 _postTimeStamp(),
+
               ],
             ),
             Container(
-              width: 45,
-              height: 45,
               margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: CircleAvatar(
                 backgroundColor: Colors.transparent,
-                radius: 30.0,
+                radius: 22.0,
                 backgroundImage: authorPhoto == null ? AssetImage(AppIcons.AnonymousPerson) : CachedNetworkImageProvider(authorPhoto),
               ),
             ),
@@ -298,7 +344,7 @@ class _PostWidgetState extends State<PostWidget> {
     initializeDateFormatting('ar');
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-      child: Text(date.toString(), style: timeTheme),
+      child: Text(date.toString(), style: timeTheme, textAlign: TextAlign.end,),
     );
   }
 
@@ -312,7 +358,7 @@ class _PostWidgetState extends State<PostWidget> {
         children: <Widget>[
           // Counter of Comments (Numbers)
           Visibility(
-              visible: commentsCount >= 1 ? true : false,
+              visible: counterOfComments != null && counterOfComments >= 1  ? true : false,
               child: Container(
                 child: Row(
                   children: <Widget>[
@@ -320,7 +366,7 @@ class _PostWidgetState extends State<PostWidget> {
                     Text('تعليق', style: mytextStyle.reactCounterTextStyle),
 
                     // Number of comments
-                    Text(commentsCount.toString(), style: mytextStyle.reactCounterTextStyle),
+                    Text(counterOfComments== null ? '' : counterOfComments.toString(), style: mytextStyle.reactCounterTextStyle),
 
                   ],
                 ),
@@ -331,7 +377,7 @@ class _PostWidgetState extends State<PostWidget> {
             maintainSize: true,
             maintainAnimation: true,
             maintainState: true,
-            visible: ameenCount >= 1 ? true : false,
+            visible: counterOfAmeen >= 1 ? true : false,
             child: Container(
               margin: EdgeInsets.only(right: 5, left: 5),
               child: Row(
@@ -341,7 +387,7 @@ class _PostWidgetState extends State<PostWidget> {
                     margin: EdgeInsets.only(right: 2, left: 2),
                     child: Text(
                       //Check if the Total Reactions = 0 or not
-                      ameenCount >= 1 ? ameenCount.toString() : '',
+                      counterOfAmeen >= 1 ? counterOfAmeen.toString() : '',
                       style: mytextStyle.reactCounterTextStyle,
                     ),
                   ),
@@ -357,7 +403,7 @@ class _PostWidgetState extends State<PostWidget> {
                           maintainSize: true,
                           maintainAnimation: true,
                           maintainState: true,
-                          visible: ameenCount >= 1 ? true : false,
+                          visible: counterOfAmeen >= 1 ? true : false,
                           child: myImages.ameenIconReactCounter,
                         ),
 
@@ -384,7 +430,32 @@ class _PostWidgetState extends State<PostWidget> {
     );
   }
 
-  _getPostPage(BuildContext context, {String postId, String authorId, String authorName}) {
-      pushPage(context, PostPage(postId: postId, authorId: authorId, authorName: authorName));
+  _handleDeletePost(BuildContext parentContext) {
+    return showDialog(
+        context: parentContext,
+        builder: (context) {
+          return SimpleDialog(
+            title: Text("هل تريد حذف المنشور"),
+            children: <Widget>[
+              SimpleDialogOption(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _deletePost();
+                  },
+                  child: Text(
+                    'نعم',
+                    style: TextStyle(color: Colors.red),
+                  )),
+              SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('إلغاء')),
+            ],
+          );
+        });
   }
 }
+
+
+
+
+

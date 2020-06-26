@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:ameen/services/authentication.dart';
 import 'package:ameen/ui/Screens/home.dart';
 import 'package:ameen/ui/Screens/sign_up.dart';
+import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameen/ui/widgets/entry_field.dart';
 import 'package:ameen/ui/widgets/submit_button.dart';
 import 'package:ameencommon/utils/functions.dart';
@@ -18,16 +19,102 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _resetEmailFormKey = GlobalKey<FormState>();
   final TextEditingController emailController = new TextEditingController();
   final TextEditingController passwordController = new TextEditingController();
+  final TextEditingController resetEmailController = new TextEditingController();
   final AuthService auth = AuthService();
   FirebaseUser user;
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
 
   String email = '';
   String password = '';
   bool _obscureText = true;
   bool _isLoading = false;
+
+  //Login Button
+  void signIn() async {
+    if(_formKey.currentState.validate()) {
+      user = await auth.signIn(email, password);
+      print('This is a result of login ${user.toString()}');
+      if(user == null) {
+        SnackBar snackBar = SnackBar(
+          content: Text('حدث خطأ في تسجيل الدخول برجاء التأكد من البريد الالكتروني وكلمة السر', style: TextStyle(fontFamily: 'Dubai')),
+          backgroundColor: Colors.red.shade700,
+          duration: Duration(seconds: 3),
+        );
+        _scaffoldKey.currentState.showSnackBar(snackBar);
+      } else {
+        currentUser = user;
+        pushAndRemoveUntilPage(context, Home(currentUser: user,));
+      }
+    }
+  }
+
+   _resetPasswordDialog(BuildContext context) {
+     return showDialog(
+         context: context,
+         builder: (context) {
+           return SimpleDialog(
+             title: Text("إسترجاع كلمة السر"),
+             children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Form(
+                    key: _resetEmailFormKey,
+                    child: Column(
+                      children: <Widget>[
+                        EntryField('اكتب الإيميل الالكتروني الخاص بك',
+                          inputIcon: Icon(Icons.email),
+                          textInputType: TextInputType.emailAddress,
+                          editingController: resetEmailController,
+                          validator: (val) => val.isEmpty ? 'لا يمكن ترك الإيميل الالكتروني فارغا' : null ),
+                      ],
+                    ),
+                  ),
+                ),
+               Row(
+                 children: <Widget>[
+                   SimpleDialogOption(
+                     child: Text('إسترجاع كلمة السر', style: TextStyle(fontFamily: 'Dubai', color:AppColors.cGreen)),
+                     onPressed: () {
+                       if(_resetEmailFormKey.currentState.validate()){
+                         _resetPassword();
+                       }},
+                   ),
+
+                   SimpleDialogOption(
+                     child: Text('إلغاء', style: TextStyle(fontFamily: 'Dubai', color: Colors.black)),
+                     onPressed: () => Navigator.pop(context) ,
+                   ),
+                 ],
+               ),
+             ],
+           );
+         });
+  }
+
+  _resetPassword() async {
+    dynamic userEmail = firebaseAuth.sendPasswordResetEmail(email: resetEmailController.text);
+    if(userEmail == null) {
+      SnackBar snackBar = SnackBar(
+        content: Text('هذا الإيميل غير موجود',
+          style: TextStyle(fontFamily: 'Dubai', color: Colors.white)),
+        backgroundColor: Colors.red.shade500,
+        duration: Duration(seconds: 3));
+      _scaffoldKey.currentState.showSnackBar(snackBar);
+  } else {
+      SnackBar snackBar = SnackBar(
+          content: Text('تم الإرسال',
+              style: TextStyle(fontFamily: 'Dubai', color: Colors.white)),
+          backgroundColor: Colors.black,
+          duration: Duration(seconds: 3));
+      _scaffoldKey.currentState.showSnackBar(snackBar);
+      Navigator.pop(context);
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +209,9 @@ class _LoginState extends State<Login> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           InkWell(
-            child: Text(
+            onTap: () {_resetPasswordDialog(context);},
+            child:
+            Text(
               'إسترجاع كلمة السر',
               style: TextStyle(
                   color: Color.fromRGBO(0, 153, 51, 1),
@@ -197,21 +286,4 @@ class _LoginState extends State<Login> {
   }
 
 
-  // Login Button
-  void signIn() async {
-    if(_formKey.currentState.validate()) {
-      user = await auth.signIn(email, password);
-      print('This is a result of login ${user.toString()}');
-      if(user == null) {
-        SnackBar snackBar = SnackBar(
-          content: Text('حدث خطأ في تسجيل الدخول برجاء التأكد من البريد الالكتروني وكلمة السر', style: TextStyle(fontFamily: 'Dubai')),
-          backgroundColor: Colors.red.shade700,
-          duration: Duration(seconds: 3),
-        );
-        _scaffoldKey.currentState.showSnackBar(snackBar);
-      } else {
-        pushAndRemoveUntilPage(context, Home(currentUser: user,));
-      }
-    }
-  }
 }

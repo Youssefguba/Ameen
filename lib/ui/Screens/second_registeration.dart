@@ -3,12 +3,14 @@ import 'dart:io';
 import 'dart:async';
 
 import 'package:ameen/blocs/global/global.dart';
+import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:ameen/ui/Screens/home.dart';
 import 'package:ameen/ui/widgets/submit_button.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameencommon/utils/functions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
@@ -16,6 +18,10 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 class SecondRegisteration extends StatefulWidget {
+  final FirebaseUser firebaseUser;
+
+  const SecondRegisteration({Key key, this.firebaseUser}) : super(key: key);
+
   @override
   _SecondRegisterationState createState() => _SecondRegisterationState();
 }
@@ -26,10 +32,15 @@ class _SecondRegisterationState extends State<SecondRegisteration> {
   GlobalKey _circleAvatar = GlobalKey();
   FacebookLogin facebookLogin = FacebookLogin();
   ImagePicker picker = ImagePicker();
-  UserModel currentUser;
+  UserModel current_user;
   File _imageSelected;
   var imageOfUser;
 
+  @override
+  void initState() {
+    super.initState();
+     currentUser = widget.firebaseUser;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +49,7 @@ class _SecondRegisterationState extends State<SecondRegisteration> {
         actions: [
           Center(
             child: GestureDetector(
-              onTap: () => pushPage(context, Home()),
+              onTap: () => pushAndRemoveUntilPage(context, Home(currentUser: currentUser)),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
@@ -114,7 +125,7 @@ class _SecondRegisterationState extends State<SecondRegisteration> {
         });
         DocumentSnapshot doc = await usersRef.document(result.accessToken.userId).get();
         doc = await usersRef.document(result.accessToken.userId).get();
-        currentUser = UserModel.fromDocument(doc);
+        current_user = UserModel.fromDocument(doc);
 
         break;
       case FacebookLoginStatus.cancelledByUser:

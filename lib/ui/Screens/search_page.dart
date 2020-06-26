@@ -26,7 +26,6 @@ class _SearchState extends State<SearchPage> {
 
   @override
   void initState() {
-
   }
 
   _search(String query) {
@@ -40,6 +39,14 @@ class _SearchState extends State<SearchPage> {
 
   _clearSearch() {
     searchController.clear();
+    FocusScope.of(context).unfocus();
+
+    return _noContent();
+  }
+  @override
+  void dispose() {
+    super.dispose();
+    searchController?.dispose();
   }
 
   @override

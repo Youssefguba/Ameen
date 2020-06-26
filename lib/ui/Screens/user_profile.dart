@@ -22,7 +22,7 @@ class UserProfile extends StatefulWidget {
   _UserProfileState createState() => _UserProfileState();
 }
 
-class _UserProfileState extends State<UserProfile> {
+class _UserProfileState extends State<UserProfile> with AutomaticKeepAliveClientMixin<UserProfile> {
   CollectionReference usersRef = Firestore.instance.collection(DatabaseTable.users);
   CollectionReference postsRef = Firestore.instance.collection(DatabaseTable.posts);
   List<PostWidget> posts = [];
@@ -62,15 +62,18 @@ class _UserProfileState extends State<UserProfile> {
         .getDocuments();
 
     setState(() {
-      _isLoading = false;
       posts = snapshot.documents
           .map((doc) => PostWidget.fromDocument(doc))
           .toList();
+      _isLoading = false;
+
     });
+
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       backgroundColor: AppColors.cBackground,
       body: DefaultTabController(
@@ -146,4 +149,7 @@ class _UserProfileState extends State<UserProfile> {
       ],
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

@@ -1,40 +1,30 @@
-import 'package:ameen/blocs/global/global.dart';
 import 'package:ameen/ui/Screens/post_page.dart';
 import 'package:ameen/ui/Screens/ways_page.dart';
-import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
-import 'package:ameencommon/models/post_data.dart';
-import 'package:ameencommon/models/reaction_model.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:ameencommon/utils/constants.dart';
-import 'package:ameen/services/post_service.dart';
-import 'package:ameen/ui/widgets/inherited_widgets/inherited_post_model.dart';
 import 'package:ameencommon/utils/functions.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
-import 'package:provider/provider.dart';
 
 class ReactionsButtonRow extends StatelessWidget {
-  Widget image;
-  Widget label;
+  final Widget image;
+  final Widget label;
   ReactionsButtonRow({this.image, this.label});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 5),
-      padding: EdgeInsets.symmetric(horizontal: 7.0),
+      margin: const EdgeInsets.symmetric(vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 7.0),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.all(1.0),
+            padding: const EdgeInsets.all(1.0),
           ),
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 13.0, vertical: 8.0),
+            margin: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 8.0),
             child: label,
           ),
           image,
@@ -50,8 +40,8 @@ class ReactionsButtonRow extends StatelessWidget {
  *       (Like, Comment, Share)
  **/
 class ReactionsButtons extends StatefulWidget {
-  String authorId;
-  String postId;
+  final String authorId;
+  final String postId;
   Map ameenReaction;
   int ameenCount;
   static int counter;
@@ -73,7 +63,7 @@ class ReactionsButtons extends StatefulWidget {
 }
 
 class ReactionsButtonsState extends State<ReactionsButtons>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<ReactionsButtons> {
   String authorId;
   String postId;
   Map ameenReaction;
@@ -83,13 +73,6 @@ class ReactionsButtonsState extends State<ReactionsButtons>
       @required this.ameenCount,
       @required this.authorId,
       @required this.postId});
-
-  CollectionReference postsRef =
-      Firestore.instance.collection(DatabaseTable.posts);
-  CollectionReference usersRef =
-      Firestore.instance.collection(DatabaseTable.users);
-  CollectionReference activityFeedRef =
-      Firestore.instance.collection(DatabaseTable.feeds);
 
   UserModel user;
   dynamic userData;
@@ -124,6 +107,13 @@ class ReactionsButtonsState extends State<ReactionsButtons>
     initAmeenBtn();
   }
 
+
+  @override
+  void dispose() {
+    super.dispose();
+    animControlBtnShortPress.dispose();
+  }
+
   initAmeenBtn() {
     // short press
     animControlBtnShortPress = AnimationController(
@@ -143,12 +133,14 @@ class ReactionsButtonsState extends State<ReactionsButtons>
 
   // Get user data
   _getUserData() {
-    userData = getCurrentUserData(usersRef: usersRef, userId: currentUser.uid);
-    userData.then((doc) => setState(() => user = UserModel.fromDocument(doc)));
+    userData = getCurrentUserData(userId: currentUser.uid);
+    userData.then((doc) =>  user = UserModel.fromDocument(doc));
+
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
@@ -235,12 +227,20 @@ class ReactionsButtonsState extends State<ReactionsButtons>
   void handleAmeenReact() {
     isPressed = ameenReaction[userId] == true;
     if (!isPressed) {
-      postsRef
+      // Update data in user profile
+      DbRefs.postsRef
           .document(authorId)
           .collection(DatabaseTable.userPosts)
           .document(postId)
           .updateData({'ameen.$userId': true});
+
+      // Update data in timeline
+      DbRefs.timelineRef
+          .document(postId)
+          .updateData({'ameen.$userId': true});
+
       addReactionToActivityFeed();
+
       setState(() {
         isPressed = true;
         ameenCount += 1;
@@ -248,11 +248,18 @@ class ReactionsButtonsState extends State<ReactionsButtons>
         animControlBtnShortPress.forward();
       });
     } else if (isPressed) {
-      postsRef
+      // Update data in user profile
+      DbRefs.postsRef
           .document(authorId)
           .collection(DatabaseTable.userPosts)
           .document(postId)
           .updateData({'ameen.$userId': false});
+
+      // Update data in timeline
+      DbRefs.timelineRef
+          .document(postId)
+          .updateData({'ameen.$userId': false});
+
       deleteReactionToActivityFeed();
       setState(() {
         isPressed = false;
@@ -266,7 +273,7 @@ class ReactionsButtonsState extends State<ReactionsButtons>
   void addReactionToActivityFeed() {
     bool isNotPostOwner = currentUser.uid != authorId;
     if (isNotPostOwner) {
-      activityFeedRef
+      DbRefs.activityFeedRef
           .document(authorId)
           .collection('feedItems')
           .document(postId)
@@ -284,7 +291,7 @@ class ReactionsButtonsState extends State<ReactionsButtons>
   void deleteReactionToActivityFeed() {
     bool isNotPostOwner = currentUser.uid != authorId;
     if (isNotPostOwner) {
-      activityFeedRef
+      DbRefs.activityFeedRef
           .document(authorId)
           .collection('feedItems')
           .document(postId)
@@ -316,4 +323,7 @@ class ReactionsButtonsState extends State<ReactionsButtons>
       return 0.8 + value;
     }
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

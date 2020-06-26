@@ -1,23 +1,18 @@
-import 'package:ameencommon/models/api_response.dart';
-import 'package:ameencommon/models/post_data.dart';
+import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/services/connection_check.dart';
-import 'package:ameen/services/post_service.dart';
-import 'package:ameen/ui/Screens/post_page.dart';
 import 'package:ameen/ui/widgets/custom_app_bar.dart';
 import 'package:ameen/ui/widgets/news_feed_widgets/add_new_post_widget.dart';
 import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:get_it/get_it.dart';
-import 'package:logger/logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// ** This page to display the General Timeline of posts
 class NewsFeed extends StatefulWidget {
-  FirebaseUser currentUser;
+  final FirebaseUser currentUser;
 
   NewsFeed({Key key, this.currentUser}) : super(key: key);
 
@@ -25,39 +20,48 @@ class NewsFeed extends StatefulWidget {
   _NewsFeedState createState() => _NewsFeedState();
 }
 
-class _NewsFeedState extends State<NewsFeed> {
-  final CollectionReference usersRef = Firestore.instance.collection(DatabaseTable.users);
-  final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
-  final logger = Logger();
-
-  PostsService get services => GetIt.I<PostsService>();
-  APIResponse<List<PostData>> _apiResponse;
-  SharedPreferences sharedPreferences;
+class _NewsFeedState extends State<NewsFeed>  with AutomaticKeepAliveClientMixin<NewsFeed> {
+  List<PostWidget> posts = [];
   bool _isLoading = false;
+
 
   @override
   void initState() {
+    getTimeline();
     super.initState();
-    _fetchPosts();
-  }
-
-
-  _fetchPosts() async {
-    setState(() => _isLoading = true );
-    _apiResponse = await services.getPostsList();
-    setState(() => _isLoading = false );
   }
 
   @override
   void dispose() {
     super.dispose();
     _isLoading = false;
+  }
+
+  getTimeline() async {
+    setState(() => _isLoading = true);
+    QuerySnapshot snapshot = await DbRefs.timelineRef
+        .orderBy('created_at', descending: true)
+        .getDocuments();
+
+    posts =
+    snapshot.documents.map((doc) => PostWidget.fromDocument(doc)).toList();
+    setState(() => _isLoading = false);
 
   }
 
+  buildTimeline() {
+    if (posts == null) {
+      return RefreshProgress();
+    } else if (posts.isEmpty) {
+      return Center(child: Text('لا يوجد أدعية قم بمشاركة دعاءك الذي تتمنه أن يتحقق'),);
+    } else {
+      return ListView(children: posts);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       backgroundColor: AppColors.cBackground,
       appBar: customAppBar(context, widget.currentUser),
@@ -66,54 +70,21 @@ class _NewsFeedState extends State<NewsFeed> {
         child: RefreshIndicator(
           color:  AppColors.cGreen,
           backgroundColor: Colors.white,
-          onRefresh: () async => await _fetchPosts(),
-          child: Builder(builder: (context) {
-            // If the data don't retrieved yet it will show Progress Indicator until data retrieved
-            if (_isLoading) {
-              return Center(
-                  child: RefreshProgressIndicator(
-                backgroundColor: Colors.white,
-                valueColor: new AlwaysStoppedAnimation<Color>(AppColors.cGreen),
-              ));
-            }
-            if (_apiResponse.error) Center(child: Text(_apiResponse.errorMessage));
-            return Container(
-              child: Column(
-                  children: <Widget>[
-                    // Add New Post Widget at the Top and Fixed when Scrolling
-                    AddNewPostWidget(currentUser: widget.currentUser),
-                    SizedBox(height: 0.5),
-                    // List of Posts of Users
-                    Expanded(
-                      child: AnimatedList(
-                          key: listKey,
-                          controller: ScrollController(),
-                          initialItemCount: _apiResponse.data.length,
-                          physics: AlwaysScrollableScrollPhysics(),
-                          itemBuilder: (BuildContext context, int index, Animation anim) {
-                            return GestureDetector(
-                              child: PostWidget(),
-                              onTap: () {
-                                Navigator.of(context)
-                                    .push(MaterialPageRoute(
-                                        fullscreenDialog: true,
-                                        maintainState: true ,
-                                        builder: (_) => PostPage(
-                                              postId: _apiResponse.data[index].postId,
-                                            )))
-                                    .then((_) {
-                                  _fetchPosts();
-                                });
-                              },
-                            );
-                          }),
-                    ),
-                  ],
-              ),
-            );
-          }),
+          onRefresh: () async => getTimeline(),
+           child:  _isLoading ? RefreshProgress() : Container(
+            child: Column(
+              children: <Widget>[
+                AddNewPostWidget(currentUser: widget.currentUser),
+                Expanded(child:  _isLoading ? RefreshProgress() : buildTimeline(),),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
+
 }

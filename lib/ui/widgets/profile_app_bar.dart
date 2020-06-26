@@ -263,7 +263,6 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Flexible(
-
             // Followers Text
             child: Text(
               "${followerCount} متابعاً ",

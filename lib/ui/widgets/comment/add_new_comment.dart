@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ameencommon/utils/constants.dart';
 
@@ -8,8 +9,8 @@ import 'package:ameencommon/utils/constants.dart';
 class AddNewCommentWidget extends StatelessWidget {
   final String hintText = "أكتب تعليقا ...";
   final Color color = Colors.grey[300];
-
-  final imageOfUser = 'assets/images/icon_person.png';
+  String authorPhoto;
+  AddNewCommentWidget({this.authorPhoto});
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +28,8 @@ class AddNewCommentWidget extends StatelessWidget {
         children: <Widget>[
           Expanded(
             child:Container(
-              padding: EdgeInsets.all(18),
-              height: 50,
+              padding: EdgeInsets.all(14),
+              height: 40,
               decoration: BoxDecoration(
                   color: AppColors.cBackground,
                   borderRadius: BorderRadius.circular(20.0),
@@ -42,14 +43,14 @@ class AddNewCommentWidget extends StatelessWidget {
               ),
             ),
           ),
-          Container(
-            width: 45,
-            height: 45,
-            child: CircleAvatar(
-              backgroundImage: AssetImage(imageOfUser),
-              backgroundColor: Colors.transparent,
-            ),
-          ),
+//          Container(
+//            margin: EdgeInsets.symmetric(horizontal: 5),
+//            child: CircleAvatar(
+//              radius: 15,
+//              backgroundImage: authorPhoto == null ? AssetImage(AppIcons.AnonymousPerson) : CachedNetworkImageProvider(authorPhoto),
+//              backgroundColor: Colors.transparent,
+//            ),
+//          ),
         ],
       ),
     );

@@ -25,8 +25,8 @@ import 'package:logger/logger.dart';
 import 'package:toast/toast.dart';
 
 class PostPage extends StatefulWidget {
-  final String postId;
-  final String authorId;
+  String postId;
+  String authorId;
   String authorName;
   PostPage({this.postId, this.authorId, this.authorName});
 
@@ -35,17 +35,13 @@ class PostPage extends StatefulWidget {
 }
 
 class _PostPageState extends State<PostPage> {
-  CollectionReference usersRef = Firestore.instance.collection(DatabaseTable.users);
-  CollectionReference postsRef = Firestore.instance.collection(DatabaseTable.posts);
-  CollectionReference commentsRef = Firestore.instance.collection(DatabaseTable.comments);
-  CollectionReference activityFeedRef = Firestore.instance.collection(DatabaseTable.feeds);
-
   final GlobalKey<AnimatedListState> listOfComment = GlobalKey();
   CommentModel commentModel;
   PostData postModel;
   UserModel user;
   int ameenCount;
   int commentsCount;
+  String postId;
 
   String errorMessage;
   dynamic data, userData;
@@ -56,20 +52,23 @@ class _PostPageState extends State<PostPage> {
   @override
   void initState() {
     super.initState();
-    _getUserData();
+      postId = widget.postId;
     _getPostData();
+    _getUserData();
     _getTotalOfComments();
+
   }
 
   @override
   void dispose() {
     super.dispose();
+    _isLoading = false;
   }
 
   // Get the number of total Comments
   _getTotalOfComments() {
-    commentsRef
-        .document(widget.postId)
+    DbRefs.commentsRef
+        .document(postId)
         .collection(DatabaseTable.comments)
         .getDocuments()
         .then((data) {
@@ -81,16 +80,19 @@ class _PostPageState extends State<PostPage> {
 
   // Get user data
   _getUserData() {
-    userData = getCurrentUserData(usersRef: usersRef, userId: currentUser.uid);
-    userData.then((doc) => setState(() => user = UserModel.fromDocument(doc)));
+    userData = getCurrentUserData(userId: currentUser.uid);
+    userData.then((doc) => setState(() {
+      user = UserModel.fromDocument(doc);
+      print(user.uid);
+    } ));
   }
 
   // Get Post Data
   _getPostData() {
     data = getPostData(
-        postsRef: postsRef,
-        postId: widget.postId,
-        currentUserId: currentUser.uid);
+        postsRef: DbRefs.postsRef,
+        postId: postId,
+        userId: widget.authorId);
     data.then((doc) {
       setState(() {
         postModel = PostData.fromDocument(doc);
@@ -124,9 +126,9 @@ class _PostPageState extends State<PostPage> {
       ),
       body: FutureBuilder(
           future: getPostData(
-              postsRef: postsRef,
+              postsRef: DbRefs.postsRef,
               postId: widget.postId,
-              currentUserId: currentUser.uid),
+              userId: widget.authorId),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return RefreshProgress();
@@ -200,9 +202,6 @@ class _PostPageState extends State<PostPage> {
               ),
             );
           }),
-
-//      bottomNavigationBar:
-//            AddNewPostWidget("أكتب تعليقا ...", Colors.grey[300]),
     );
   }
 
@@ -453,7 +452,7 @@ class _PostPageState extends State<PostPage> {
                   } else {
                     // Check Internet Connection..
                     ConnectivityCheck();
-                    commentsRef
+                    DbRefs.commentsRef
                         .document(postModel.postId)
                         .collection("comments")
                         .add({
@@ -464,16 +463,16 @@ class _PostPageState extends State<PostPage> {
                       "userId": currentUser.uid,
                     });
 
-                    bool isNotPostOwner = widget.postId != currentUser.uid;
+                    bool isNotPostOwner = postId != currentUser.uid;
                     if  (isNotPostOwner) {
-                      activityFeedRef.document(postModel.authorId).collection('feedItems')
+                      DbRefs.activityFeedRef.document(postModel.authorId).collection('feedItems')
                           .add({
                         'type': 'comment',
                         'commentBody': _text.text,
                         'username': user.username,
                         'userId': currentUser.uid,
                         'profilePicture': user.profilePicture,
-                        'postId': widget.postId,
+                        'postId': postId,
                         'created_at': DateTime.now()
                       });
                     }
@@ -513,7 +512,7 @@ class _PostPageState extends State<PostPage> {
   // List Of Comment
   Widget _listOfComment() {
     return StreamBuilder(
-        stream: commentsRef
+        stream: DbRefs.commentsRef
             .document(postModel.postId)
             .collection(DatabaseTable.comments)
             .orderBy("created_at", descending: false)

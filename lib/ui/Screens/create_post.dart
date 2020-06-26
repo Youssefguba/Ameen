@@ -40,7 +40,9 @@ class _CreatePostState extends State<CreatePost> {
   @override
   void dispose() {
     super.dispose();
-    setState(() => isUploading = false);
+    isUploading = false;
+    _postBodyController.dispose();
+
   }
 
   @override

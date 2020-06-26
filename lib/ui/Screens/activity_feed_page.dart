@@ -1,4 +1,5 @@
 import 'package:ameen/ui/Screens/post_page.dart';
+import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameencommon/utils/functions.dart';
@@ -82,10 +83,10 @@ class ActivityFeedItem extends StatelessWidget {
   }
 
   configureMediaPreview() {
-    if (type == 'ameen') {
-      activityItemText = "amen your post";
+    if (type == 'amen') {
+      activityItemText = "قال آمين على دعوتك";
     } else if (type == 'follow') {
-      activityItemText = "is following you";
+      activityItemText = "قام بمتابعتك";
     } else if (type == 'comment') {
       activityItemText = 'قام بالتعليق:  $commentBody';
     } else {
@@ -104,7 +105,10 @@ class ActivityFeedItem extends StatelessWidget {
         color: Colors.grey.withOpacity(0.1),
         child: ListTile(
           title: GestureDetector(
-            onTap: () => pushPage(context, PostPage(postId: postId, authorId: userId)),
+            onTap: () => {
+              pushPage(context, PostPage(postId: postId, authorId: currentUser.uid)),
+
+            },
             child: RichText(
               overflow: TextOverflow.ellipsis,
               text: TextSpan(

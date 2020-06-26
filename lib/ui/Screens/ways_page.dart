@@ -23,7 +23,8 @@ class _WrapperState extends State<Wrapper> {
       if(user == null) {
         pushAndRemoveUntilPage(context, Login()) ;
       } else {
-        //TODO Check if the user has photo or not to redirect to the second registeration page
+        pushAndRemoveUntilPage(context, Home(currentUser: currentUser)) ;
+
       }
     });
   }

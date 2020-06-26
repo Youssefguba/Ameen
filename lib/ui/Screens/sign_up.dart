@@ -9,6 +9,7 @@ import 'package:ameen/ui/widgets/or_line.dart';
 import 'package:ameen/ui/widgets/submit_button.dart';
 import 'package:ameencommon/utils/functions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
@@ -189,7 +190,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
   void createAccount () async {
     if(_formKey.currentState.validate()) {
       setState(() => _isLoading = true );
-      dynamic user = await auth.signUp(email, password);
+      FirebaseUser user = await auth.signUp(email, password);
 
       setState(() => _isLoading = false );
       if(user == null) {
@@ -207,11 +208,11 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
           "joined_date": DateTime.now(),
         }); 
         GlobalVariable.currentUserId = user.uid;
-
         DocumentSnapshot doc = await usersRef.document(user.uid).get();
         doc = await usersRef.document(user.uid).get();
         currentUser = UserModel.fromDocument(doc);
-        pushPage(context, SecondRegisteration());
+
+        pushAndRemoveUntilPage(context, SecondRegisteration(firebaseUser: user));
       }
     }
   }

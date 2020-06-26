@@ -1,21 +1,15 @@
 import 'package:ameen/services/authentication.dart';
-import 'package:ameen/services/user_service.dart';
 import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameencommon/utils/constants.dart';
-import 'package:ameen/services/post_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:ameencommon/models/user_data.dart';
+import 'package:ameencommon/localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
-void setupLocator() {
-  GetIt.I.registerLazySingleton(() => UserService());
-  GetIt.I.registerLazySingleton(() => PostsService());
-}
 
 void main() {
-  setupLocator();
   runApp(MyApp());
 }
 
@@ -30,6 +24,15 @@ class MyApp extends StatelessWidget {
     return StreamProvider<UserModel>.value(
       value: AuthService().currentUser,
       child: MaterialApp(
+        localizationsDelegates: [
+          AppLocalizationsDelegate(),
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        supportedLocales: [
+          const Locale('en', ''),
+          const Locale('ar', ''),
+        ],
             builder: (context, child) {
               return ScrollConfiguration(
                 behavior: RemoveGlowEffect(),

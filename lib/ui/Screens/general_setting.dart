@@ -1,6 +1,7 @@
 import 'package:ameen/services/authentication.dart';
 import 'package:ameen/ui/Screens/login.dart';
 import 'package:ameen/ui/Screens/profile_setting.dart';
+import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameencommon/utils/functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -44,8 +45,8 @@ class GeneralSettingPage extends StatelessWidget {
                   style: TextStyle(fontFamily: 'Dubai', fontSize: 15)),
               leading: Icon(Icons.exit_to_app),
               onTap: () async {
-                await auth.signOut();
-                pushAndRemoveUntilPage(context, Login());
+                await FirebaseAuth.instance.signOut();
+                pushAndRemoveUntilPage(context, Wrapper());
               },
             ),
           ],
