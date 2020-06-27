@@ -50,7 +50,9 @@ dependencies:
   firebase_core: ^0.4.5
   firebase_auth: ^0.16.1
   firebase_storage: ^3.1.6
+  firebase_messaging: ^6.0.16
   flutter_facebook_login: ^3.0.0
+  share: ^0.6.4+3
 
   flutter_spinkit: ^4.1.2
   image_picker: ^0.6.7+1

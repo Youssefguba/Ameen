@@ -1,5 +1,4 @@
 import 'package:ameen/services/authentication.dart';
-import 'package:ameen/ui/Screens/login.dart';
 import 'package:ameen/ui/Screens/profile_setting.dart';
 import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameencommon/utils/constants.dart';

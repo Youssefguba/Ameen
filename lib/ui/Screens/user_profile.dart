@@ -2,7 +2,6 @@ import 'package:ameen/ui/Screens/general_setting.dart';
 import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:ameen/services/user_service.dart';
-import 'package:ameen/ui/widgets/inherited_widgets/inherited_user_profile.dart';
 import 'package:ameen/ui/widgets/profile_app_bar.dart';
 import 'package:ameencommon/utils/functions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

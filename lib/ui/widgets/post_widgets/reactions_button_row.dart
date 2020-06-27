@@ -5,6 +5,7 @@ import 'package:ameencommon/utils/constants.dart';
 import 'package:ameencommon/utils/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:share/share.dart';
 
 class ReactionsButtonRow extends StatelessWidget {
   final Widget image;
@@ -42,6 +43,7 @@ class ReactionsButtonRow extends StatelessWidget {
 class ReactionsButtons extends StatefulWidget {
   final String authorId;
   final String postId;
+  final String postBody;
   Map ameenReaction;
   int ameenCount;
   static int counter;
@@ -51,7 +53,8 @@ class ReactionsButtons extends StatefulWidget {
       @required this.ameenReaction,
       @required this.ameenCount,
       @required this.authorId,
-      @required this.postId})
+      @required this.postId,
+      @required this.postBody})
       : super(key: key);
 
   @override
@@ -59,6 +62,7 @@ class ReactionsButtons extends StatefulWidget {
       ameenReaction: this.ameenReaction,
       ameenCount: this.ameenCount,
       authorId: this.authorId,
+      postBody: this.postBody,
       postId: this.postId);
 }
 
@@ -66,13 +70,17 @@ class ReactionsButtonsState extends State<ReactionsButtons>
     with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<ReactionsButtons> {
   String authorId;
   String postId;
+  String postBody;
   Map ameenReaction;
   int ameenCount;
+
   ReactionsButtonsState(
       {@required this.ameenReaction,
       @required this.ameenCount,
       @required this.authorId,
-      @required this.postId});
+      @required this.postId,
+      @required this.postBody,
+      });
 
   UserModel user;
   dynamic userData;
@@ -210,14 +218,25 @@ class ReactionsButtonsState extends State<ReactionsButtons>
           ),
 
           //Share Button
-          ReactionsButtonRow(
-            image: Image.asset(shareImage, width: 20, height: 20),
-            label: Text("مشاركة",
-                style: TextStyle(
-                  fontFamily: 'Dubai',
-                  fontSize: 13,
-                  color: AppColors.cTextColor,
-                )),
+          InkWell(
+            onTap: () {
+              final RenderBox box = context.findRenderObject();
+              Share.share(""" ${widget.postBody} 
+              
+             تم نقل هذا المنشور بواسطة تطبيق آمين """,
+                  sharePositionOrigin:
+                  box.localToGlobal(Offset.zero) &
+                  box.size);
+            },
+            child: ReactionsButtonRow(
+              image: Image.asset(shareImage, width: 20, height: 20),
+              label: Text("مشاركة",
+                  style: TextStyle(
+                    fontFamily: 'Dubai',
+                    fontSize: 13,
+                    color: AppColors.cTextColor,
+                  )),
+            ),
           ),
         ],
       ),

@@ -2,7 +2,6 @@ import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
 import 'package:ameencommon/models/comment.dart';
 import 'package:ameencommon/models/post_data.dart';
-import 'package:ameencommon/models/reaction_model.dart';
 import 'package:ameen/services/connection_check.dart';
 import 'package:ameen/ui/Screens/news_feed.dart';
 import 'package:ameen/ui/widgets/comment/comment_widget.dart';
@@ -10,7 +9,6 @@ import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:ameencommon/utils/functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -185,6 +183,7 @@ class _PostPageState extends State<PostPage> {
                             ameenReaction: postModel.ameenReaction,
                             authorId: postModel.authorId,
                             ameenCount: ameenCount,
+                            postBody: postModel.body,
                           ),
                         ],
                       ),

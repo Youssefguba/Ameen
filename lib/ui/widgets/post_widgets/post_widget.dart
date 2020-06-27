@@ -1,7 +1,5 @@
 import 'package:ameen/ui/Screens/post_page.dart';
 import 'package:ameen/ui/Screens/ways_page.dart';
-import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
-import 'package:ameencommon/models/comment.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:ameen/ui/widgets/comment/add_new_comment.dart';
 import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
@@ -219,6 +217,7 @@ class _PostWidgetState extends State<PostWidget> {
                       ameenCount: ameenCount,
                       authorId: authorId,
                       postId: postId,
+                      postBody: postBody,
 
                     ),
                     InkWell(

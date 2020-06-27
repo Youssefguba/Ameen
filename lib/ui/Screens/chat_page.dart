@@ -13,7 +13,6 @@ class ChatPage extends StatelessWidget {
   ChatPage({Key key, this.username}) : super(key: key);
 
 
-  @override
   void initState() {
     childList.add(Align(
         alignment: Alignment(0, 0),
@@ -155,10 +154,6 @@ class ChatPage extends StatelessWidget {
     ));
   }
 
-//  @override
-//  void dispose() {
-//    super.dispose();
-//  }
 
   @override
   Widget build(BuildContext context) {
@@ -269,7 +264,7 @@ class ChatPage extends StatelessWidget {
                         cursorColor: AppColors.green[900],
                         controller: _text,
                         decoration: InputDecoration(
-//                           contentPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 2.0),
                           prefixIcon: IconButton(
                             icon: Icon(Icons.send, color: AppColors.green[800],),
                             onPressed: () {},

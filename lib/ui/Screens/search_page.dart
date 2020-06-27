@@ -1,5 +1,4 @@
 import 'package:ameen/ui/Screens/user_profile.dart';
-import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:ameencommon/utils/constants.dart';

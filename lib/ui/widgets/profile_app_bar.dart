@@ -1,4 +1,3 @@
-import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/ui/Screens/create_post.dart';

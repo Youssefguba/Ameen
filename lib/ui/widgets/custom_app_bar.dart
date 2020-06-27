@@ -1,4 +1,3 @@
-import 'package:ameen/services/authentication.dart';
 import 'package:ameen/ui/Screens/activity_feed_page.dart';
 import 'package:ameencommon/utils/functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
