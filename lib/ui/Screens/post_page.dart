@@ -26,7 +26,8 @@ class PostPage extends StatefulWidget {
   String postId;
   String authorId;
   String authorName;
-  PostPage({this.postId, this.authorId, this.authorName});
+  int ameenCount;
+  PostPage({this.postId, this.authorId, this.authorName, this.ameenCount});
 
   @override
   _PostPageState createState() => _PostPageState();
@@ -53,7 +54,7 @@ class _PostPageState extends State<PostPage> {
       postId = widget.postId;
     _getPostData();
     _getUserData();
-    _getTotalOfComments();
+//    _getTotalOfComments();
 
   }
 
@@ -64,17 +65,17 @@ class _PostPageState extends State<PostPage> {
   }
 
   // Get the number of total Comments
-  _getTotalOfComments() {
-    DbRefs.commentsRef
-        .document(postId)
-        .collection(DatabaseTable.comments)
-        .getDocuments()
-        .then((data) {
-      setState(() {
-        commentsCount = data.documents.length;
-      });
-    });
-  }
+//  _getTotalOfComments() {
+//    DbRefs.commentsRef
+//        .document(postId)
+//        .collection(DatabaseTable.comments)
+//        .getDocuments()
+//        .then((data) {
+//      setState(() {
+//        commentsCount = data.documents.length;
+//      });
+//    });
+//  }
 
   // Get user data
   _getUserData() {
@@ -115,7 +116,7 @@ class _PostPageState extends State<PostPage> {
                     fontWeight: FontWeight.w700,
                     color: AppColors.cBackground)),
         leading: IconButton(
-          icon: ImageIcon(AssetImage(AppIcons.arrowBack)),
+          icon: ImageIcon(AssetImage(AppIcons.arrowBack)), iconSize: 18,
           onPressed: () {
             Navigator.of(context).pop(NewsFeed);
           },
@@ -329,73 +330,100 @@ class _PostPageState extends State<PostPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           // Counter of Comments (Numbers)
-          Visibility(
-              visible: commentsCount >= 1 ? true : false,
-              child: Container(
-                child: Row(
-                  children: <Widget>[
-                    // "Comment Word"
-                    Text('تعليق', style: mytextStyle.reactCounterTextStyle),
+          StreamBuilder(
+            stream: commentsRef.document(widget.postId)
+                    .collection(DatabaseTable.comments)
+                    .snapshots(),
+            builder: (context, snapshot) {
+              if(!snapshot.hasData) {return Container();}
+              if(snapshot.connectionState == ConnectionState.active) {
+                final commentsCount = snapshot.data.documents.length;
+                return Visibility(
+                    visible: commentsCount >= 1 ? true : false,
+                    child: Container(
+                      child: Row(
+                        children: <Widget>[
+                          // "Comment Word"
+                          Text('تعليق',
+                              style: mytextStyle.reactCounterTextStyle),
 
-                    // Number of comments
-                    Text(commentsCount.toString(),
-                        style: mytextStyle.reactCounterTextStyle),
-                  ],
-                ),
-              )),
+                          // Number of comments
+                          Text(commentsCount.toString(),
+                              style: mytextStyle.reactCounterTextStyle),
+                        ],
+                      ),
+                    ));
+              }
+              return Container();
+            }
+          ),
 
           // Container of Numbers and Reactions Icons
-          Visibility(
-            maintainSize: true,
-            maintainAnimation: true,
-            maintainState: true,
-            visible: ameenCount >= 1 ? true : false,
-            child: Container(
-              margin: EdgeInsets.only(right: 5, left: 5),
-              child: Row(
-                children: <Widget>[
-                  // Counter of Reaction (Numbers)
-                  Container(
-                    margin: EdgeInsets.only(right: 2, left: 2),
-                    child: Text(
-                      //Check if the Total Reactions = 0 or not
-                      ameenCount >= 1 ? ameenCount.toString() : '',
-                      style: mytextStyle.reactCounterTextStyle,
-                    ),
-                  ),
-
-                  // Counter of Reaction (Icons)
-                  Container(
+          StreamBuilder(
+            stream: postsRef.document(widget.authorId).collection('userPosts').document(postId)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if(!snapshot.hasData) {return Container(); }
+              if(snapshot.connectionState == ConnectionState.active) {
+                dynamic amenReactSnapshot = snapshot.data['ameen'];
+                print('This is an ameen $amenReactSnapshot');
+                int ameenCount = postModel.getAmeenCount(amenReactSnapshot);
+                print('This is a counter $ameenCount');
+                return Visibility(
+                  maintainSize: true,
+                  maintainAnimation: true,
+                  maintainState: true,
+                  visible: ameenCount >= 1 ? true : false,
+                  child: Container(
+                    margin: EdgeInsets.only(right: 5, left: 5),
                     child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        // Ameen React
-                        Visibility(
-                          maintainSize: true,
-                          maintainAnimation: true,
-                          maintainState: true,
-                          visible: ameenCount >= 1 ? true : false,
-                          child: myImages.ameenIconReactCounter,
+                        // Counter of Reaction (Numbers)
+                        Container(
+                          margin: EdgeInsets.only(right: 2, left: 2),
+                          child: Text(
+                            //Check if the Total Reactions = 0 or not
+                            ameenCount >= 1 ? ameenCount.toString() : '',
+                            style: mytextStyle.reactCounterTextStyle,
+                          ),
                         ),
 
-                        // Recommend React
-                        Visibility(
-                          visible: false,
-                          child: myImages.recommendIconReactCounter,
-                        ),
+                        // Counter of Reaction (Icons)
+                        Container(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              // Ameen React
+                              Visibility(
+                                maintainSize: true,
+                                maintainAnimation: true,
+                                maintainState: true,
+                                visible: ameenCount >= 1 ? true : false,
+                                child: myImages.ameenIconReactCounter,
+                              ),
 
-                        // Forbidden React
-                        Visibility(
-                          visible: false,
-                          child: myImages.forbiddenIconReactCounter,
+                              // Recommend React
+                              Visibility(
+                                visible: false,
+                                child: myImages.recommendIconReactCounter,
+                              ),
+
+                              // Forbidden React
+                              Visibility(
+                                visible: false,
+                                child: myImages.forbiddenIconReactCounter,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-            ),
+                );
+              }
+              return Container();
+            }
           ),
         ],
       ),

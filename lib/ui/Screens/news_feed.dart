@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/services/connection_check.dart';
@@ -51,6 +52,7 @@ class _NewsFeedState extends State<NewsFeed>  with AutomaticKeepAliveClientMixin
 
     posts =
     snapshot.documents.map((doc) => PostWidget.fromDocument(doc)).toList();
+
     setState(() => _isLoading = false);
 
   }
@@ -67,6 +69,11 @@ class _NewsFeedState extends State<NewsFeed>  with AutomaticKeepAliveClientMixin
 
   configurePushNotification() {
     if(Platform.isIOS)  getIOSPermission();
+    _firebaseMessaging.requestNotificationPermissions();
+
+//    Platform.isAndroid
+////        ? showNotification(message['notification'])
+////        : showNotification(message['aps']['alert']);
     _firebaseMessaging.getToken().then((token) {
       print('Firebase Messaging token $token');
       usersRef
@@ -76,14 +83,22 @@ class _NewsFeedState extends State<NewsFeed>  with AutomaticKeepAliveClientMixin
     });
 
     _firebaseMessaging.configure(
+      onLaunch: (Map<String, dynamic> message) async {
+        print('on Launch $message');
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print('on Resume $message');
+
+      },
       onMessage: (Map<String, dynamic> message) async {
         print('This is a message $message');
         final recipientId = message['data']['recipient'];
+        print('This is a recripientID');
         final body = message['notification']['body'];
 
-        if(recipientId != widget.currentUser.uid) {
-          SnackBar snackBar = SnackBar(content: Text(body, overflow: TextOverflow.ellipsis));
-              _scaffoldKey.currentState.showSnackBar(snackBar);
+        if(recipientId == widget.currentUser.uid) {
+          print('Notification shown');
+
         }
         print('Notification NOT shown');
 

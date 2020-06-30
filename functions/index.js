@@ -189,7 +189,7 @@ exports.onCreateActivityFeedItem = functions.firestore
       switch (activityFeedItem.type) {
         case "comment":
           body = `${activityFeedItem.username} replied: ${
-            activityFeedItem.commentData
+            activityFeedItem.comment
           }`;
           break;
         case "amen":
@@ -207,7 +207,6 @@ exports.onCreateActivityFeedItem = functions.firestore
         notification: { body },
         token: androidNotificationToken,
         data: { recipient: userId }
-        title: { title: 'Amen' }
       };
 
       // 5) Send message with admin.messaging()
