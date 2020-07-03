@@ -1,3 +1,4 @@
+import 'package:ameen/ui/Screens/chat_page.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/ui/Screens/create_post.dart';
@@ -143,7 +144,7 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
     });
   }
 
-   _showButton() {
+   _showDoaaButton() {
     bool isProfileOwner = widget.currentUser.uid == widget.profileId;
     if(isProfileOwner) {
       return _addDoaaButton(context);
@@ -164,6 +165,15 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
     }
   }
 
+  _showSendMessageBtn() {
+      bool isProfileOwner = widget.currentUser.uid == widget.profileId;
+      if(isProfileOwner) {
+        return Container();
+      }
+      else if (isFollowing || !isFollowing) {
+        return _sendMessageButton(context);
+      }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -186,7 +196,7 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
                 CircleAvatar(
                   radius: 30,
                   backgroundColor: Colors.grey,
-                  backgroundImage:  user.profilePicture == null ? AssetImage(AppIcons.AnonymousPerson): CachedNetworkImageProvider(user.profilePicture),
+                  backgroundImage:  user.profilePicture == null ? AssetImage(AppImages.AnonymousPerson): CachedNetworkImageProvider(user.profilePicture),
                 ),
                 Container(
                   child: Text(
@@ -202,7 +212,14 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
                 ),
 
                 _followersAndFollowingRow(),
-                _showButton(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    _showSendMessageBtn(),
+                    _showDoaaButton(),
+                  ],
+                ),
                 SizedBox(
                   height: 8,
                 ),
@@ -215,21 +232,47 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
   }
 
   Widget _addDoaaButton(BuildContext context) {
-    return FlatButton(
-      onPressed: () => pushPage(context, CreatePost(currentUser: widget.currentUser)),
-      color: AppColors.green[900],
-      padding: EdgeInsets.all(5),
-      hoverColor: Colors.white,
-      textColor: Colors.white,
-      disabledColor: AppColors.green,
-      splashColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: new BorderRadius.circular(18.0),
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8),
+      child: FlatButton(
+        onPressed: () => pushPage(context, CreatePost(currentUser: widget.currentUser)),
+        color: AppColors.green[900],
+        padding: EdgeInsets.all(5),
+        hoverColor: Colors.white,
+        textColor: Colors.white,
+        disabledColor: AppColors.green,
+        splashColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: new BorderRadius.circular(18.0),
+        ),
+        child: Text(
+          "إضافة دعاء +",
+          style:
+              TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'Dubai'),
+        ),
       ),
-      child: Text(
-        "إضافة دعاء +",
-        style:
-            TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'Dubai'),
+    );
+  }
+
+  Widget _sendMessageButton(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8),
+      child: FlatButton(
+        color: AppColors.green[900],
+        padding: EdgeInsets.all(5),
+        hoverColor: Colors.white,
+        textColor: Colors.white,
+        disabledColor: AppColors.green,
+        splashColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: new BorderRadius.circular(18.0),
+        ),
+        onPressed: () { pushPage(context, ChatScreen(peerId: widget.profileId, peerAvatar: user.profilePicture, )); },
+        child: Text(
+          "إرسال رسالة",
+          style:
+          TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'Dubai'),
+        ),
       ),
     );
   }

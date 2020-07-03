@@ -339,7 +339,7 @@ class _PostWidgetState extends State<PostWidget> {
                 backgroundColor: Colors.transparent,
                 radius: 22.0,
                 backgroundImage: authorPhoto == null
-                    ? AssetImage(AppIcons.AnonymousPerson)
+                    ? AssetImage(AppImages.AnonymousPerson)
                     : CachedNetworkImageProvider(authorPhoto),
               ),
             ),
@@ -372,10 +372,13 @@ class _PostWidgetState extends State<PostWidget> {
   // React counter
   Widget _reactAndCommentCounter() {
     return Container(
-      height: 20,
+      height: 30,
+      width: double.maxFinite,
       margin: EdgeInsets.all(8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           // Counter of Comments (Numbers)
           StreamBuilder(

@@ -88,17 +88,14 @@ class _NewsFeedState extends State<NewsFeed>  with AutomaticKeepAliveClientMixin
       },
       onResume: (Map<String, dynamic> message) async {
         print('on Resume $message');
-
       },
       onMessage: (Map<String, dynamic> message) async {
         print('This is a message $message');
         final recipientId = message['data']['recipient'];
         print('This is a recripientID');
         final body = message['notification']['body'];
-
         if(recipientId == widget.currentUser.uid) {
           print('Notification shown');
-
         }
         print('Notification NOT shown');
 

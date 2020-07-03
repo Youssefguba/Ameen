@@ -137,7 +137,7 @@ class _UserProfileState extends State<UserProfile> with AutomaticKeepAliveClient
       actions: <Widget>[
         IconButton(
             icon: ImageIcon(
-              AssetImage(AppIcons.settings),
+              AssetImage(AppImages.settings),
               size: 20,
               color: Colors.grey[800],
             ),

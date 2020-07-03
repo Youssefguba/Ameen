@@ -142,7 +142,7 @@ class UserResult extends StatelessWidget {
                 leading: CircleAvatar(
                   radius: 20,
                   backgroundColor: Colors.white,
-                  backgroundImage: user.profilePicture == null ? AssetImage(AppIcons.AnonymousPerson) : CachedNetworkImageProvider(user.profilePicture),
+                  backgroundImage: user.profilePicture == null ? AssetImage(AppImages.AnonymousPerson) : CachedNetworkImageProvider(user.profilePicture),
                 ),
                 title: Text(
                   user.username,

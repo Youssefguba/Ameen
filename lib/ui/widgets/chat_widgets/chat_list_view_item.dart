@@ -1,5 +1,8 @@
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/ui/Screens/chat_page.dart';
+import 'package:ameencommon/utils/functions.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 /*
@@ -8,22 +11,11 @@ import 'package:flutter/material.dart';
 * Y.G
 *  */
 class ChatListViewItem extends StatelessWidget {
-  final AssetImage image;
-  final String name;
-  final String lastMessage;
-  final String time;
-  final bool hasUnreadMessage;
-  final int newMesssageCount;
+  final BuildContext context;
+  final DocumentSnapshot document;
 
   const ChatListViewItem(
-      {Key key,
-      this.image,
-      this.name,
-      this.lastMessage,
-      this.time,
-      this.hasUnreadMessage,
-      this.newMesssageCount})
-      : super(key: key);
+      {Key key, this.context, this.document}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,51 +29,46 @@ class ChatListViewItem extends StatelessWidget {
                 flex: 10,
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: image,
-                    radius: 30,
+                    backgroundImage: document['profilePicture'] == null
+                        ? AssetImage(AppImages.AnonymousPerson)
+                        : CachedNetworkImageProvider(document['profilePicture']),
+                    radius: 23,
                     backgroundColor: Colors.transparent,
                   ),
-                  title: Text(name,
+                  title: Text(document['username'],
                       style: TextStyle(
                           fontFamily: 'Dubai', fontWeight: FontWeight.bold)),
-                  subtitle: Text(lastMessage,
+                  subtitle: Text(document['lastMessage'],
                       maxLines: 1, style: TextStyle(fontFamily: 'Dubai')),
                   trailing: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        time,
+                        '12:00',
                         style: TextStyle(fontSize: 12),
                       ),
-                      hasUnreadMessage
-                          ? Container(
-                              margin: const EdgeInsets.only(top: 5.0),
-                              height: 20,
-                              width: 20,
-                              decoration: BoxDecoration(
-                                  color: AppColors.cGreen,
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(25.0),
-                                  )),
-                              child: Center(
-                                  child: Text(
-                                newMesssageCount.toString(),
-                                style: TextStyle(
-                                    fontSize: 11, color: Colors.white),
-                              )),
-                            )
-                          : SizedBox(),
+//                      hasUnreadMessage
+//                          ? Container(
+//                              margin: const EdgeInsets.only(top: 5.0),
+//                              height: 20,
+//                              width: 20,
+//                              decoration: BoxDecoration(
+//                                  color: AppColors.cGreen,
+//                                  borderRadius: BorderRadius.all(
+//                                    Radius.circular(25.0),
+//                                  )),
+//                              child: Center(
+//                                  child: Text(
+//                                newMesssageCount.toString(),
+//                                style: TextStyle(
+//                                    fontSize: 11, color: Colors.white),
+//                              )),
+//                            )
+//                          : SizedBox(),
                     ],
                   ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChatPage(),
-                      ),
-                    );
-                  },
+                  onTap: () { pushPage(context, ChatScreen(peerId: document['peerId'], peerAvatar: document['profilePicture'])); },
                 ),
               ),
             ],

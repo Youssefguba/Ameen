@@ -116,7 +116,7 @@ class _PostPageState extends State<PostPage> {
                     fontWeight: FontWeight.w700,
                     color: AppColors.cBackground)),
         leading: IconButton(
-          icon: ImageIcon(AssetImage(AppIcons.arrowBack)), iconSize: 18,
+          icon: ImageIcon(AssetImage(AppImages.arrowBack)), iconSize: 18,
           onPressed: () {
             Navigator.of(context).pop(NewsFeed);
           },
@@ -296,7 +296,7 @@ class _PostPageState extends State<PostPage> {
                 backgroundColor: Colors.transparent,
                 radius: 30.0,
                 backgroundImage: postModel.authorPhoto == null
-                    ? AssetImage(AppIcons.AnonymousPerson)
+                    ? AssetImage(AppImages.AnonymousPerson)
                     : CachedNetworkImageProvider(postModel.authorPhoto),
               ),
             ),
@@ -463,7 +463,7 @@ class _PostPageState extends State<PostPage> {
             IconButton(
                 iconSize: 24,
                 disabledColor: AppColors.cGreen,
-                icon: ImageIcon(AssetImage(AppIcons.sendBtn),
+                icon: ImageIcon(AssetImage(AppImages.sendBtn),
                     color: AppColors.cGreen, size: 20),
                 onPressed: () async {
                   // Check if Text Field is Empty or not..

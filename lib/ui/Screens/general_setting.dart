@@ -19,7 +19,7 @@ class GeneralSettingPage extends StatelessWidget {
             textDirection: TextDirection.rtl,
             style: TextStyle(fontFamily: 'Dubai')),
         leading: IconButton(
-          icon: ImageIcon(AssetImage(AppIcons.arrowBack)),
+          icon: ImageIcon(AssetImage(AppImages.arrowBack)),
           onPressed: () {
             Navigator.of(context).pop();
           },

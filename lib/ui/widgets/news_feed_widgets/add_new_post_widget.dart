@@ -90,7 +90,7 @@ class _AddNewPostWidgetState extends State<AddNewPostWidget> {
               child: CircleAvatar(
                 radius: 20,
                 backgroundImage: userPhoto == null
-                    ? AssetImage(AppIcons.AnonymousPerson)
+                    ? AssetImage(AppImages.AnonymousPerson)
                     : CachedNetworkImageProvider(userPhoto),
                 backgroundColor: Colors.transparent,
               ),

@@ -1,3 +1,5 @@
+import 'package:ameen/ui/Screens/ways_page.dart';
+import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/ui/widgets/chat_widgets/chat_list_view_item.dart';
 import 'package:flutter/material.dart';
@@ -36,61 +38,31 @@ class ContactList extends StatelessWidget {
                   topLeft: Radius.circular(15.0),
                   topRight: Radius.circular(15.0),
                 )),
-            child: ListView(
-              children: <Widget>[
-                ChatListViewItem(
-                  hasUnreadMessage: true,
-                  image: AssetImage('assets/images/person_test.png'),
-                  lastMessage:
-                  "السلام عليكم ورحمة الله وبركاته ",
-                  name: "محمد أحمد ",
-                  newMesssageCount: 8,
-                  time: "19:27 PM",),
-                ChatListViewItem(
-                  hasUnreadMessage: true,
-                  image: AssetImage('assets/images/person_test.png'),
-                  lastMessage:
-                  "السلام عليكم ورحمة الله وبركاته ",
-                  name: "محمد أحمد ",
-                  newMesssageCount: 8,
-                  time: "19:27 PM",),
-                ChatListViewItem(
-                  hasUnreadMessage: true,
-                  image: AssetImage('assets/images/person_test.png'),
-                  lastMessage:
-                  "السلام عليكم ورحمة الله وبركاته ",
-                  name: "محمد أحمد ",
-                  newMesssageCount: 8,
-                  time: "19:27 PM",),
-                ChatListViewItem(
-                  hasUnreadMessage: true,
-                  image: AssetImage('assets/images/person_test.png'),
-                  lastMessage:
-                  "السلام عليكم ورحمة الله وبركاته ",
-                  name: "محمد أحمد ",
-                  newMesssageCount: 8,
-                  time: "19:27 PM",),
-                ChatListViewItem(
-                  hasUnreadMessage: true,
-                  image: AssetImage('assets/images/person_test.png'),
-                  lastMessage:
-                  "السلام عليكم ورحمة الله وبركاته ",
-                  name: "محمد أحمد ",
-                  newMesssageCount: 8,
-                  time: "19:27 PM",),
-                ChatListViewItem(
-                  hasUnreadMessage: true,
-                  image: AssetImage('assets/images/person_test.png'),
-                  lastMessage:
-                  "السلام عليكم ورحمة الله وبركاته ",
-                  name: "محمد أحمد ",
-                  newMesssageCount: 8,
-                  time: "19:27 PM",),
+            child: StreamBuilder(
+              stream: DbRefs.chatsListRef
+                  .document(currentUser.uid)
+                  .collection(currentUser.uid)
+                  .snapshots(),
 
-              ],
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(child: RefreshProgress());
+                }
+                else {
+                  return ListView.builder(
+                    itemCount: snapshot.data.documents.length,
+                    itemBuilder: (context, index) {
+                      return ChatListViewItem(context: context,
+                          document: snapshot.data.documents[index]);
+                    }
+
+                  );
+                }
+              }
             ),
         ),
       ),
     );
   }
 }
+
