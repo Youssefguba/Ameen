@@ -1,3 +1,4 @@
+import 'package:ameencommon/localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +56,7 @@ class _CreatePostState extends State<CreatePost> {
         elevation: 1.0,
         centerTitle: true,
         title: Text(
-          "أكتب دعاء ",
+          AppLocalizations.of(context).writeADoaa,
           textDirection: TextDirection.rtl,
           textAlign: TextAlign.left,
           style: TextStyle(
@@ -64,18 +65,16 @@ class _CreatePostState extends State<CreatePost> {
             fontWeight: FontWeight.w700,
           ),
         ),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: ImageIcon(
-              AssetImage("assets/images/back.png"),
-              size: 20,
-              color: Colors.black,
+            leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: ImageIcon(
+                AssetImage("assets/images/arrow_back.png"),
+                size: 18,
+                color: Colors.black,
+              ),
             ),
-          ),
-        ],
       ),
       body: isUploading ? LinearProgressIndicator (
         backgroundColor: AppColors.cBackground,
@@ -90,7 +89,6 @@ class _CreatePostState extends State<CreatePost> {
             // TextField of Post
             TextField(
               controller: _postBodyController,
-              textAlign: TextAlign.right,
               maxLength: 220,
               maxLines: 9,
               textInputAction: TextInputAction.newline,
@@ -106,7 +104,7 @@ class _CreatePostState extends State<CreatePost> {
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.all(15.0),
                 border: InputBorder.none,
-                hintText: " ... أكتب الدعاء الذي يجول بخاطرك ",
+                hintText: AppLocalizations.of(context).postADoaaYouWant,
                 hintStyle: TextStyle(
                   fontFamily: 'Dubai',
                 ),
@@ -127,17 +125,17 @@ class _CreatePostState extends State<CreatePost> {
                       showToast(context, 'لقد تم نشر الدعاء الخاص بك 🤲🏻', AppColors.cBlack);
                       popPage(context);
                     } ,
-                    padding: EdgeInsets.symmetric(vertical: 10),
+                    padding: EdgeInsets.symmetric(vertical: 13,horizontal: 5),
                     color: _postBodyController.text.isEmpty ? AppColors.cBackground : AppColors.cGreen,
                     disabledColor:  _postBodyController.text.isEmpty ? AppColors.cBackground : AppColors.cGreen,
                     child: Text(
-                      "نشر الدعاء",
+                      AppLocalizations.of(context).shareADoaa,
                       textDirection: TextDirection.rtl,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'Dubai',
                         color: Colors.white,
-                        fontSize: 19,
+                        fontSize: 17,
                         fontWeight: FontWeight.w500,
                       ),
                     ),

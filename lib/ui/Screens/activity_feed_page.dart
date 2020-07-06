@@ -1,6 +1,8 @@
 import 'package:ameen/ui/Screens/post_page.dart';
 import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
+import 'package:ameencommon/common_widget/shimmer_widget.dart';
+import 'package:ameencommon/localizations.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameencommon/utils/functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -31,13 +33,13 @@ class ActivityFeed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar( title: Text ("الإشعارات", style: TextStyle(fontFamily: 'Dubai'),)),
+      appBar: AppBar( title: Text (AppLocalizations.of(context).notification, style: TextStyle(fontFamily: 'Dubai'),)),
       body: Container(
           child: FutureBuilder(
             future: _getActivityFeed(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return RefreshProgress();
+                return ShimmerWidget();
               }
               return ListView(
                 children: snapshot.data,
@@ -128,7 +130,8 @@ class ActivityFeedItem extends StatelessWidget {
             ),
           ),
           leading: CircleAvatar(
-            backgroundImage: CachedNetworkImageProvider(profilePicture),
+            backgroundColor: Colors.white,
+            backgroundImage: profilePicture == null ? AssetImage(AppImages.AnonymousPerson): CachedNetworkImageProvider(profilePicture),
           ),
           subtitle: Text(
             timeago.format(timestamp),

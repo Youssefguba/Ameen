@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
+import 'package:ameencommon/common_widget/shimmer_widget.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/services/connection_check.dart';
 import 'package:ameen/ui/widgets/custom_app_bar.dart';
@@ -59,7 +60,7 @@ class _NewsFeedState extends State<NewsFeed>  with AutomaticKeepAliveClientMixin
 
   buildTimeline() {
     if (posts == null) {
-      return RefreshProgress();
+      return ShimmerWidget();
     } else if (posts.isEmpty) {
       return Center(child: Text('لا يوجد أدعية قم بمشاركة دعاءك الذي تتمنه أن يتحقق'),);
     } else {
@@ -124,11 +125,11 @@ class _NewsFeedState extends State<NewsFeed>  with AutomaticKeepAliveClientMixin
           color:  AppColors.cGreen,
           backgroundColor: Colors.white,
           onRefresh: () async => getTimeline(),
-           child:  _isLoading ? RefreshProgress() : Container(
+           child:  _isLoading ? ShimmerWidget() : Container(
             child: Column(
               children: <Widget>[
                 AddNewPostWidget(currentUser: widget.currentUser),
-                Expanded(child:  _isLoading ? RefreshProgress() : buildTimeline(),),
+                Expanded(child:  _isLoading ? ShimmerWidget() : buildTimeline(),),
               ],
             ),
           ),

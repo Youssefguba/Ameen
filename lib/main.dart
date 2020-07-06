@@ -30,16 +30,16 @@ class MyApp extends StatelessWidget {
           GlobalWidgetsLocalizations.delegate,
         ],
         supportedLocales: [
-          const Locale('en', ''),
-          const Locale('ar', ''),
+          Locale('ar'),
+          Locale('en', 'US'),
         ],
-            builder: (context, child) {
+        builder: (context, child) {
               return ScrollConfiguration(
                 behavior: RemoveGlowEffect(),
                 child: child,
               );
             },
-            title: 'Ameen آميين',
+            title: 'آمين',
             theme: ThemeData(
               primaryColor: Color.fromRGBO(62, 146, 42, 1),
             ),

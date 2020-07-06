@@ -1,5 +1,6 @@
 import 'package:ameen/ui/Screens/post_page.dart';
 import 'package:ameen/ui/Screens/ways_page.dart';
+import 'package:ameencommon/localizations.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameencommon/utils/functions.dart';
@@ -162,20 +163,20 @@ class ReactionsButtonsState extends State<ReactionsButtons>
       // Reactions Buttons => [Ameen - Comment - Share]
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        textDirection: TextDirection.rtl,
         children: <Widget>[
+
           //Ameen Button
           InkWell(
               child: ReactionsButtonRow(
                 image: Transform.scale(
                   scale: (isPressed)
                       ? handleOutputRangeZoomInIconAmeen(
-                          zoomIconAmeenInBtn2.value)
+                      zoomIconAmeenInBtn2.value)
                       : zoomIconAmeenInBtn2.value,
                   child: Transform.rotate(
                     angle: (isPressed)
                         ? handleOutputRangeTiltIconAmeen(
-                            tiltIconAmeenInBtn2.value)
+                        tiltIconAmeenInBtn2.value)
                         : tiltIconAmeenInBtn2.value,
                     child: Image.asset(ameenImage,
                         color: (isPressed)
@@ -189,7 +190,7 @@ class ReactionsButtonsState extends State<ReactionsButtons>
                 label: Transform.scale(
                   scale: handleOutputRangeZoomInIconAmeen(
                       zoomIconAmeenInBtn2.value),
-                  child: Text("آمين",
+                  child: Text(AppLocalizations.of(context).amen,
                       style: TextStyle(
                         fontFamily: 'Dubai',
                         fontSize: 13,
@@ -197,7 +198,7 @@ class ReactionsButtonsState extends State<ReactionsButtons>
                             ? AppColors.cGreen
                             : AppColors.cTextColor,
                         fontWeight:
-                            (isPressed) ? FontWeight.w600 : FontWeight.normal,
+                        (isPressed) ? FontWeight.w600 : FontWeight.normal,
                       )),
                 ),
               ),
@@ -208,7 +209,7 @@ class ReactionsButtonsState extends State<ReactionsButtons>
             onTap: () => pushPage(context, PostPage(postId: postId, authorId: authorId, authorName: user.username)),
             child: ReactionsButtonRow(
               image: Image.asset(commentImage, width: 20, height: 20),
-              label: Text("تعليق",
+              label: Text(AppLocalizations.of(context).comment,
                   style: TextStyle(
                     fontFamily: 'Dubai',
                     fontSize: 13,
@@ -223,14 +224,14 @@ class ReactionsButtonsState extends State<ReactionsButtons>
               final RenderBox box = context.findRenderObject();
               Share.share(""" ${widget.postBody} 
               
-             تم نقل هذا المنشور بواسطة تطبيق آمين """,
+             ${AppLocalizations.of(context).pastedbyAmen} """,
                   sharePositionOrigin:
                   box.localToGlobal(Offset.zero) &
                   box.size);
             },
             child: ReactionsButtonRow(
               image: Image.asset(shareImage, width: 20, height: 20),
-              label: Text("مشاركة",
+              label: Text(AppLocalizations.of(context).share,
                   style: TextStyle(
                     fontFamily: 'Dubai',
                     fontSize: 13,
@@ -238,6 +239,7 @@ class ReactionsButtonsState extends State<ReactionsButtons>
                   )),
             ),
           ),
+
         ],
       ),
     );

@@ -1,5 +1,7 @@
 import 'package:ameen/ui/Screens/general_setting.dart';
 import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
+import 'package:ameencommon/common_widget/shimmer_widget.dart';
+import 'package:ameencommon/localizations.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:ameen/services/user_service.dart';
 import 'package:ameen/ui/widgets/profile_app_bar.dart';
@@ -15,15 +17,19 @@ import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
 class UserProfile extends StatefulWidget {
   String profileId;
   FirebaseUser currentUser;
-  UserProfile({Key key, @required this.profileId, @required this.currentUser}) : super(key: key);
+  UserProfile({Key key, @required this.profileId, @required this.currentUser})
+      : super(key: key);
 
   @override
   _UserProfileState createState() => _UserProfileState();
 }
 
-class _UserProfileState extends State<UserProfile> with AutomaticKeepAliveClientMixin<UserProfile> {
-  CollectionReference usersRef = Firestore.instance.collection(DatabaseTable.users);
-  CollectionReference postsRef = Firestore.instance.collection(DatabaseTable.posts);
+class _UserProfileState extends State<UserProfile>
+    with AutomaticKeepAliveClientMixin<UserProfile> {
+  CollectionReference usersRef =
+      Firestore.instance.collection(DatabaseTable.users);
+  CollectionReference postsRef =
+      Firestore.instance.collection(DatabaseTable.posts);
   List<PostWidget> posts = [];
 
   String userId;
@@ -35,7 +41,7 @@ class _UserProfileState extends State<UserProfile> with AutomaticKeepAliveClient
 
   final List<Tab> myTabs = <Tab>[
     Tab(
-      text: "المنشورات",
+      text:'المنشورات',
     )
   ];
 
@@ -65,9 +71,7 @@ class _UserProfileState extends State<UserProfile> with AutomaticKeepAliveClient
           .map((doc) => PostWidget.fromDocument(doc))
           .toList();
       _isLoading = false;
-
     });
-
   }
 
   @override
@@ -76,26 +80,31 @@ class _UserProfileState extends State<UserProfile> with AutomaticKeepAliveClient
     return Scaffold(
       backgroundColor: AppColors.cBackground,
       body: DefaultTabController(
-        length: myTabs.length,
+        length: 1,
         child: (_isLoading)
             ? RefreshProgress()
-            : NestedScrollView(
-                headerSliverBuilder: (context, value) {
-                  return [
-                    _sliverAppBar(),
-                  ];
-                },
-                body: (_isLoading)
-                    ? RefreshProgress()
-                    : (posts.length >= 1)
-                        ? SingleChildScrollView(
-                            child: Container(child: Column(children: posts)))
-                        : Center(
-                            child: Text(AppTexts.NotFoundPosts,
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontFamily: 'Dubai',
-                                    color: AppColors.cBlack)))),
+            : RefreshIndicator(
+            color:  AppColors.cGreen,
+            backgroundColor: Colors.white,
+            onRefresh: () async => _fetchUserPosts(),
+              child: NestedScrollView(
+                  headerSliverBuilder: (context, value) {
+                    return [
+                      _sliverAppBar(),
+                    ];
+                  },
+                  body: (_isLoading)
+                      ? ShimmerWidget()
+                      : (posts.length >= 1)
+                          ? SingleChildScrollView(
+                              child: Container(child: Column(children: posts)))
+                          : Center(
+                              child: Text(AppTexts.NotFoundPosts,
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontFamily: 'Dubai',
+                                      color: AppColors.cBlack)))),
+            ),
       ),
     );
   }
@@ -117,15 +126,22 @@ class _UserProfileState extends State<UserProfile> with AutomaticKeepAliveClient
           fontFamily: 'Dubai',
           fontWeight: FontWeight.bold,
         ),
-        tabs: myTabs,
+        tabs: [
+          Tab(
+            text: AppLocalizations.of(context).posts,
+          ),
+        ],
       ),
       flexibleSpace: FlexibleSpaceBar(
-        background: ProfileAppBar(profileId: widget.profileId, currentUser: widget.currentUser,),
+        background: ProfileAppBar(
+          profileId: widget.profileId,
+          currentUser: widget.currentUser,
+        ),
         collapseMode: CollapseMode.pin,
         centerTitle: true,
       ),
       title: Text(
-        "الصفحة الشخصية",
+        AppLocalizations.of(context).profile,
         textDirection: TextDirection.rtl,
         style: TextStyle(
           fontSize: 16.0,
@@ -142,8 +158,8 @@ class _UserProfileState extends State<UserProfile> with AutomaticKeepAliveClient
               color: Colors.grey[800],
             ),
             onPressed: () {
-              pushPage(context,
-                  GeneralSettingPage(currentUser: widget.currentUser));
+              pushPage(
+                  context, GeneralSettingPage(currentUser: widget.currentUser));
             }),
       ],
     );

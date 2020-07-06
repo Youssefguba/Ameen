@@ -1,4 +1,5 @@
 import 'package:ameen/ui/Screens/activity_feed_page.dart';
+import 'package:ameencommon/localizations.dart';
 import 'package:ameencommon/utils/functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ Widget customAppBar(BuildContext context, FirebaseUser currentUser) {
     flexibleSpace: FlexibleSpaceBar(
       centerTitle: true,
       title: Text(
-        "الصفحة الرئيسية",
+        AppLocalizations.of(context).home,
         textDirection: TextDirection.rtl,
         style: TextStyle(
           fontSize: 16.0,
@@ -29,7 +30,7 @@ Widget customAppBar(BuildContext context, FirebaseUser currentUser) {
       IconButton(
         color: Colors.black,
         icon: Icon(Icons.notifications_none),
-        tooltip: "الآشعارات",
+        tooltip: AppLocalizations.of(context).notification,
         onPressed: () => pushPage(context, ActivityFeed(currentUser: currentUser)),
 
       )

@@ -1,5 +1,7 @@
 import 'package:ameen/ui/Screens/user_profile.dart';
 import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
+import 'package:ameencommon/common_widget/shimmer_widget.dart';
+import 'package:ameencommon/localizations.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameencommon/utils/functions.dart';
@@ -62,7 +64,7 @@ class _SearchState extends State<SearchPage> {
       future: searchResultsFuture,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return RefreshProgress();
+          return ShimmerWidget(shimmerCount: 2,);
         }
         List<UserResult> searchResults = [];
         snapshot.data.documents.forEach((doc) {
@@ -85,13 +87,13 @@ class _SearchState extends State<SearchPage> {
           padding: EdgeInsets.only(right: 5, bottom: 2, top: 2, left: 5),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            color: Colors.grey.withOpacity(0.2),
+            color: Colors.grey.withOpacity(0.1),
           ),
           child: TextFormField(
             controller: searchController,
             autofocus: true,
             decoration: InputDecoration(
-              hintText: AppTexts.searchForFriends,
+              hintText: AppLocalizations.of(context).findYourFriends,
               border: InputBorder.none,
               prefixIcon: Icon(
                 Icons.person,
@@ -131,9 +133,8 @@ class UserResult extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 3.0, top: 10),
+      padding: const EdgeInsets.only(bottom: 1.0, top: 6),
       child: Container(
-        color: Colors.grey.withOpacity(0.1),
         child: Column(
           children: <Widget>[
             GestureDetector(

@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:ameen/ui/widgets/entry_field.dart';
 import 'package:ameen/ui/widgets/submit_button.dart';
 import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
+import 'package:ameencommon/localizations.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -69,7 +70,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
       key: _scaffoldKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(AppTexts.ProfileSettings,
+        title: Text(AppLocalizations.of(context).editYourProfile,
             textDirection: TextDirection.rtl,
             style: TextStyle(fontFamily: 'Dubai')),
         leading: IconButton(
@@ -112,8 +113,8 @@ class _ProfileSettingState extends State<ProfileSetting> {
                 Form(
                   key: _formKey,
                   child: EntryField(
-                      "الإسم",
-                    labelText:'الإسم',
+                    AppLocalizations.of(context).username,
+                    labelText:AppLocalizations.of(context).username,
                     editingController: _usernameController,
                     maxLengthLetters: 25,
                     validator: (val) => val.trim().length < 2 || val.isEmpty ? 'لا تترك خانة الإسم فارغة' : null,
@@ -122,7 +123,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                 SizedBox(height: 30),
 
                 // Update data button
-                SubmitButton(color: AppColors.cGreen, title: "تحديث البيانات", onTap: () => _updateUserData() ),
+                SubmitButton(color: AppColors.cGreen, title: AppLocalizations.of(context).updateData, onTap: () => _updateUserData() ),
                 SizedBox(height: 30),
 
                 // Logout Button

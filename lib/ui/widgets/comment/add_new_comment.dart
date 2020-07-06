@@ -1,3 +1,4 @@
+import 'package:ameencommon/localizations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ameencommon/utils/constants.dart';
@@ -36,10 +37,8 @@ class AddNewCommentWidget extends StatelessWidget {
                   border: Border.all(color: Colors.black12)
               ),
               child: Text(
-                hintText,
+                AppLocalizations.of(context).writeAComment,
                 style: TextStyle(fontFamily: 'Dubai', fontSize: 12, height: 1.0, color: Colors.black38),
-                textAlign: TextAlign.right,
-                textDirection: TextDirection.rtl,
               ),
             ),
           ),

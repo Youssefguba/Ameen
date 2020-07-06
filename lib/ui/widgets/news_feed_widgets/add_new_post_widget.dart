@@ -1,3 +1,4 @@
+import 'package:ameencommon/localizations.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/ui/Screens/create_post.dart';
@@ -65,26 +66,6 @@ class _AddNewPostWidgetState extends State<AddNewPostWidget> {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.all(18),
-                height: 50,
-                decoration: BoxDecoration(
-                    color: AppColors.cBackground,
-                    borderRadius:  BorderRadius.circular(20.0),
-                    border: Border.all(color: Colors.black12)),
-                child: Text(
-                  AppTexts.hintText,
-                  style: TextStyle(
-                      fontFamily: 'Dubai',
-                      fontSize: 12,
-                      height: 1.0,
-                      color: Colors.black38),
-                  textAlign: TextAlign.right,
-                  textDirection: TextDirection.rtl,
-                ),
-              ),
-            ),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 5.0),
               child: CircleAvatar(
@@ -95,6 +76,25 @@ class _AddNewPostWidgetState extends State<AddNewPostWidget> {
                 backgroundColor: Colors.transparent,
               ),
             ),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(18),
+                height: 50,
+                decoration: BoxDecoration(
+                    color: AppColors.cBackground,
+                    borderRadius:  BorderRadius.circular(20.0),
+                    border: Border.all(color: Colors.black12)),
+                child: Text(
+                  AppLocalizations.of(context).postADoaaYouWant,
+                  style: TextStyle(
+                      fontFamily: 'Dubai',
+                      fontSize: 12,
+                      height: 1.0,
+                      color: Colors.black38),
+                ),
+              ),
+            ),
+
           ],
         ),
       ),

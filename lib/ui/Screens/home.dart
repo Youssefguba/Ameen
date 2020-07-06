@@ -2,6 +2,7 @@ import 'package:ameen/ui/Screens/contacts_list.dart';
 import 'package:ameen/ui/Screens/news_feed.dart';
 import 'package:ameen/ui/Screens/search_page.dart';
 import 'package:ameen/ui/Screens/user_profile.dart';
+import 'package:ameencommon/localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -54,7 +55,7 @@ class _HomeState extends State<Home> {
               size: 22,
             ),
             title: new Text(
-              'الرسائل',
+              AppLocalizations.of(context).messages,
               style: TextStyle(
                 fontFamily: 'Dubai',
                 fontSize: 11.0,
@@ -68,7 +69,7 @@ class _HomeState extends State<Home> {
               size: 22,
             ),
             title: new Text(
-              'الصفحة الرئيسية',
+            AppLocalizations.of(context).home,
               style: TextStyle(
                 fontFamily: 'Dubai',
                 fontSize: 11.0,
@@ -82,7 +83,7 @@ class _HomeState extends State<Home> {
               size: 22,
             ),
             title: Text(
-              'الصفحة الشخصية',
+              AppLocalizations.of(context).profilePage,
               style: TextStyle(
                 fontFamily: 'Dubai',
                 fontSize: 11.0,
@@ -93,7 +94,7 @@ class _HomeState extends State<Home> {
           BottomNavigationBarItem(
             icon: Icon(Icons.search, size: 22),
             title: Text(
-              'بحث',
+              AppLocalizations.of(context).search,
               style: TextStyle(
                 fontFamily: 'Dubai',
                 fontSize: 11.0,

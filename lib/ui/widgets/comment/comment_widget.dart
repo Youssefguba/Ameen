@@ -69,6 +69,15 @@ class CommentWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
 
+          // User Image
+          Container(
+            alignment: Alignment.topRight,
+            child: CircleAvatar (
+              backgroundImage: authorPhoto == null ? AssetImage('assets/images/icon_person.png') : CachedNetworkImageProvider(authorPhoto),
+              radius: 20,
+              backgroundColor: Colors.white,
+            ),
+          ),
           // User comment
           Expanded(
             child: Container(
@@ -95,24 +104,13 @@ class CommentWidget extends StatelessWidget {
             ),
           ),
 
-          // User Image
-          Container(
-            alignment: Alignment.topRight,
-            child: CircleAvatar (
-              backgroundImage: authorPhoto == null ? AssetImage('assets/images/icon_person.png') : CachedNetworkImageProvider(authorPhoto),
-              radius: 20,
-              backgroundColor: Colors.white,
-            ),
-          ),
-
-
         ],
       ),
     );
   }
 
   Widget _headerOfComment() {
-    initializeDateFormatting('ar');
+//    initializeDateFormatting('ar');
 
     var timestamp = createdAt.toDate();
     var date = DateFormat.yMMMd('ar').add_jm().format(timestamp);
@@ -122,7 +120,7 @@ class CommentWidget extends StatelessWidget {
         children: <Widget>[
           // Name of Comment's User
           Container(
-            alignment: Alignment.topRight,
+            alignment: Alignment.topLeft,
             child: Text(
               authorName ?? '',
               style: TextStyle(
@@ -132,7 +130,7 @@ class CommentWidget extends StatelessWidget {
 
           // Time of the Comment
           Container(
-            alignment: Alignment.topRight,
+            alignment: Alignment.topLeft,
             child: Text(
               timeago.format(timestamp, locale: 'ar'),
               style: TextStyle(

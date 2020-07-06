@@ -1,3 +1,4 @@
+import 'package:ameencommon/localizations.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +15,7 @@ class ConnectivityCheck extends StatelessWidget {
           if (!snapshot.hasData ||
               snapshot.data == ConnectivityResult.none) {
             return Center(
-              child: Text("لا يوجد اتصال بالانترنت"),
+              child: Text(AppLocalizations.of(context).noInternet),
             );
           } else {
             return child;

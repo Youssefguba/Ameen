@@ -1,4 +1,5 @@
 import 'package:ameen/ui/Screens/chat_page.dart';
+import 'package:ameencommon/localizations.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/ui/Screens/create_post.dart';
@@ -152,14 +153,14 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
     else if (isFollowing) {
       return _followButton(
         context,
-        text: AppTexts.unfollow,
+        text: AppLocalizations.of(context).unfollow,
         function: _handleUnfollowUser,
       );
     }
     else if (!isFollowing) {
       return _followButton(
         context,
-        text: AppTexts.follow,
+        text: AppLocalizations.of(context).follow,
         function: _handleFollowUser,
       );
     }
@@ -246,7 +247,7 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
           borderRadius: new BorderRadius.circular(18.0),
         ),
         child: Text(
-          "إضافة دعاء +",
+          AppLocalizations.of(context).addADoaa,
           style:
               TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'Dubai'),
         ),
@@ -267,9 +268,9 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
         shape: RoundedRectangleBorder(
           borderRadius: new BorderRadius.circular(18.0),
         ),
-        onPressed: () { pushPage(context, ChatScreen(peerId: widget.profileId, peerAvatar: user.profilePicture, )); },
+        onPressed: () { pushPage(context, ChatScreen(peerId: widget.profileId, peerAvatar: user.profilePicture, peerUsername: user.username, )); },
         child: Text(
-          "إرسال رسالة",
+          AppLocalizations.of(context).sendMessage,
           style:
           TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'Dubai'),
         ),
@@ -307,8 +308,7 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
           Flexible(
             // Followers Text
             child: Text(
-              "${followerCount} متابعاً ",
-              textDirection: TextDirection.rtl,
+              "${AppLocalizations.of(context).followers} ${followerCount}  ",
               style: TextStyle(
                   fontSize: 14,
                   color: Colors.black,
