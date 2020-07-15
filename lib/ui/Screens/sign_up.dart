@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:ameen/blocs/global/global.dart';
+import 'package:ameencommon/localizations.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:ameen/services/authentication.dart';
 import 'package:ameen/ui/Screens/second_registeration.dart';
@@ -71,7 +72,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
             width: 8.0,
           ),
           Text(
-            'هل لديك حساب بالفعل ؟',
+            AppLocalizations.of(context).doYouHaveAnAccount,
             style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -104,14 +105,14 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
       child: Column(
         children: <Widget>[
           // Username
-          EntryField("إسم المستخدم", inputIcon: Icon(Icons.person),
+          EntryField(AppLocalizations.of(context).username, inputIcon: Icon(Icons.person),
               editingController: userNameController,
               onValueChanged: (value) => { username = value},
               validator: (val) => val.trim().length < 3 || val.isEmpty ? 'لا تترك خانة الإسم فارغة' : null,
           ),
           // Email Address
           EntryField(
-            "البريد الإلكتروني",
+            AppLocalizations.of(context).yourEmail,
             inputIcon: Icon(Icons.email),
               textInputType: TextInputType.emailAddress,
               editingController: emailController,
@@ -120,7 +121,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
           ),
           // Create a Password
           EntryField(
-            "إنشاء كلمة سر",
+            AppLocalizations.of(context).createANewPassword,
             inputIcon: Icon(Icons.lock),
             isPassword: _obscureText,
             visibleIcon: IconButton(
@@ -165,7 +166,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                           SizedBox(height: 10),
                           _emailPasswordWidget(),
                           SizedBox(height: 10),
-                          SubmitButton(color: AppColors.cGreen, title: "إنشاء حساب", onTap: createAccount),
+                          SubmitButton(color: AppColors.cGreen, title: AppLocalizations.of(context).signup, onTap: createAccount),
                           SizedBox(height: 10),
                           _loginAccountLabel(),
                           SizedBox(height: 10),
@@ -195,7 +196,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
       setState(() => _isLoading = false );
       if(user == null) {
         SnackBar snackBar = SnackBar(
-          content: Text('هذا البريد الإلكتروني موجود بالفعل يرجى التأكد من البريد الإلكتروني مرة أخرى', style: TextStyle(fontFamily: 'Dubai')),
+          content: Text(AppLocalizations.of(context).emailAlreadyExisted, style: TextStyle(fontFamily: 'Dubai')),
           backgroundColor: Colors.red.shade700,
           duration: Duration(seconds: 3),
         );
@@ -224,7 +225,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
       SnackBar snackbar = SnackBar(content: Text("حدث خطأ في عملية التسجيل يرجى المحاولة مرة أخرى"));
       _scaffoldKey.currentState.showSnackBar(snackbar);
     } else {
-      SnackBar snackbar = SnackBar(content: Text("❤ 🤲🏻  مرحبا بك في تطبيق آمين"));
+      SnackBar snackbar = SnackBar(content: Text(AppLocalizations.of(context).welcomeToAmen));
       _scaffoldKey.currentState.showSnackBar(snackbar);
     }
   }

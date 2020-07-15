@@ -1,3 +1,4 @@
+import 'package:ameen/ui/Screens/user_profile.dart';
 import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameencommon/common_widget/shimmer_widget.dart';
 import 'package:ameencommon/localizations.dart';
@@ -323,14 +324,17 @@ class _PostPageState extends State<PostPage> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
 
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              child: CircleAvatar(
-                backgroundColor: Colors.transparent,
-                radius: 22.0,
-                backgroundImage: postModel.authorPhoto == null
-                    ? AssetImage(AppImages.AnonymousPerson)
-                    : CachedNetworkImageProvider(postModel.authorPhoto),
+            InkWell(
+              onTap: () {pushPage(context, UserProfile(profileId: postModel.authorId, currentUser: currentUser));},
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                child: CircleAvatar(
+                  backgroundColor: Colors.transparent,
+                  radius: 22.0,
+                  backgroundImage: postModel.authorPhoto == null
+                      ? AssetImage(AppImages.AnonymousPerson)
+                      : CachedNetworkImageProvider(postModel.authorPhoto),
+                ),
               ),
             ),
             Column(

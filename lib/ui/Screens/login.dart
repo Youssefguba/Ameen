@@ -5,6 +5,7 @@ import 'package:ameen/ui/Screens/sign_up.dart';
 import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameen/ui/widgets/entry_field.dart';
 import 'package:ameen/ui/widgets/submit_button.dart';
+import 'package:ameencommon/localizations.dart';
 import 'package:ameencommon/utils/functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ class _LoginState extends State<Login> {
       print('This is a result of login ${user.toString()}');
       if(user == null) {
         SnackBar snackBar = SnackBar(
-          content: Text('حدث خطأ في تسجيل الدخول برجاء التأكد من البريد الالكتروني وكلمة السر', style: TextStyle(fontFamily: 'Dubai')),
+          content: Text(AppLocalizations.of(context).emailAlreadyExisted, style: TextStyle(fontFamily: 'Dubai')),
           backgroundColor: Colors.red.shade700,
           duration: Duration(seconds: 3),
         );
@@ -57,7 +58,7 @@ class _LoginState extends State<Login> {
          context: context,
          builder: (context) {
            return SimpleDialog(
-             title: Text("إسترجاع كلمة السر"),
+             title: Text(AppLocalizations.of(context).resetYourPassword),
              children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.all(10.0),
@@ -65,11 +66,11 @@ class _LoginState extends State<Login> {
                     key: _resetEmailFormKey,
                     child: Column(
                       children: <Widget>[
-                        EntryField('اكتب الإيميل الالكتروني الخاص بك',
+                        EntryField(AppLocalizations.of(context).yourEmail,
                           inputIcon: Icon(Icons.email),
                           textInputType: TextInputType.emailAddress,
                           editingController: resetEmailController,
-                          validator: (val) => val.isEmpty ? 'لا يمكن ترك الإيميل الالكتروني فارغا' : null ),
+                          validator: (val) => val.isEmpty ? AppLocalizations.of(context).emailCannotBeEmpty : null ),
                       ],
                     ),
                   ),
@@ -77,7 +78,7 @@ class _LoginState extends State<Login> {
                Row(
                  children: <Widget>[
                    SimpleDialogOption(
-                     child: Text('إسترجاع كلمة السر', style: TextStyle(fontFamily: 'Dubai', color:AppColors.cGreen)),
+                     child: Text(AppLocalizations.of(context).resetYourPassword, style: TextStyle(fontFamily: 'Dubai', color:AppColors.cGreen)),
                      onPressed: () {
                        if(_resetEmailFormKey.currentState.validate()){
                          _resetPassword();
@@ -99,7 +100,7 @@ class _LoginState extends State<Login> {
     dynamic userEmail = firebaseAuth.sendPasswordResetEmail(email: resetEmailController.text);
     if(userEmail == null) {
       SnackBar snackBar = SnackBar(
-        content: Text('هذا الإيميل غير موجود',
+        content: Text(AppLocalizations.of(context).emailIsNotExist,
           style: TextStyle(fontFamily: 'Dubai', color: Colors.white)),
         backgroundColor: Colors.red.shade500,
         duration: Duration(seconds: 3));
@@ -146,7 +147,7 @@ class _LoginState extends State<Login> {
                       _emailPasswordWidget(),
                       _forgetPassword(),
                       SubmitButton(color: Color.fromRGBO(0, 153, 51, 1),
-                          title: "تسجيل الدخول", onTap: signIn),
+                          title: AppLocalizations.of(context).login, onTap: signIn),
                       SizedBox(
                         height: 10,
                       ),
@@ -176,7 +177,7 @@ class _LoginState extends State<Login> {
         children: <Widget>[
           InkWell(
               child: Text(
-                'إنشاء حساب',
+                AppLocalizations.of(context).createAccount,
                 style: TextStyle(
                     color: Color.fromRGBO(0, 153, 51, 1),
                     fontSize: 13,
@@ -190,7 +191,7 @@ class _LoginState extends State<Login> {
             width: 8.0,
           ),
           Text(
-            " ليس لديك حساب على آمين ؟",
+            AppLocalizations.of(context).donotHaveAnAccount,
             style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -212,7 +213,7 @@ class _LoginState extends State<Login> {
             onTap: () {_resetPasswordDialog(context);},
             child:
             Text(
-              'إسترجاع كلمة السر',
+              AppLocalizations.of(context).resetYourPassword,
               style: TextStyle(
                   color: Color.fromRGBO(0, 153, 51, 1),
                   fontSize: 13,
@@ -224,7 +225,7 @@ class _LoginState extends State<Login> {
             width: 8.0,
           ),
           Text(
-            'هل نسيت كلمة السر ؟',
+            AppLocalizations.of(context).forgetPassword,
             style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -240,7 +241,7 @@ class _LoginState extends State<Login> {
     return RichText(
       textAlign: TextAlign.right,
       text: TextSpan(
-        text: 'تسجيل الدخول',
+        text: AppLocalizations.of(context).login,
         style: TextStyle(
           fontSize: 25,
           fontFamily: 'Dubai',
@@ -257,15 +258,15 @@ class _LoginState extends State<Login> {
       child: Column(
         children: <Widget>[
           EntryField(
-            "البريد الإلكتروني",
+            AppLocalizations.of(context).yourEmail,
             inputIcon: Icon(Icons.email),
             textInputType: TextInputType.emailAddress,
             editingController: emailController,
             onValueChanged: (val) => email = val,
-            validator: (val) => val.isEmpty ? 'لا يمكن ترك البريد اللألكتروني فارغا' : null,
+            validator: (val) => val.isEmpty ? AppLocalizations.of(context).emailCannotBeEmpty : null,
           ),
           EntryField(
-            " كلمة سر",
+            AppLocalizations.of(context).password,
             inputIcon: Icon(Icons.lock),
             isPassword: _obscureText,
             visibleIcon: IconButton(
@@ -278,7 +279,7 @@ class _LoginState extends State<Login> {
             editingController: passwordController,
             onValueChanged: (val) => password = val,
             validator: (val) =>
-            val.length < 6 ? 'لا يمكن إدخال أقل من 6 ارقام أو حروف' : null,
+            val.length < 6 ? AppLocalizations.of(context).cannotPasswordSmallerThan : null,
           ),
         ],
       ),

@@ -224,7 +224,7 @@ class ReactionsButtonsState extends State<ReactionsButtons>
               final RenderBox box = context.findRenderObject();
               Share.share(""" ${widget.postBody} 
               
-             ${AppLocalizations.of(context).pastedbyAmen} """,
+             تم نقل هذا المنشور بواسطة تطبيق آمين """,
                   sharePositionOrigin:
                   box.localToGlobal(Offset.zero) &
                   box.size);

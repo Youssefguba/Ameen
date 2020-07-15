@@ -1,4 +1,5 @@
 import 'package:ameen/ui/Screens/post_page.dart';
+import 'package:ameen/ui/Screens/user_profile.dart';
 import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameencommon/localizations.dart';
 import 'package:ameencommon/models/user_data.dart';
@@ -310,14 +311,17 @@ class _PostWidgetState extends State<PostWidget> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
 
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              child: CircleAvatar(
-                backgroundColor: Colors.transparent,
-                radius: 22.0,
-                backgroundImage: authorPhoto == null
-                    ? AssetImage(AppImages.AnonymousPerson)
-                    : CachedNetworkImageProvider(authorPhoto),
+            InkWell(
+              onTap:() { pushPage(context, UserProfile(profileId: authorId, currentUser: currentUser));},
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                child: CircleAvatar(
+                  backgroundColor: Colors.transparent,
+                  radius: 22.0,
+                  backgroundImage: authorPhoto == null
+                      ? AssetImage(AppImages.AnonymousPerson)
+                      : CachedNetworkImageProvider(authorPhoto),
+                ),
               ),
             ),
             Column(

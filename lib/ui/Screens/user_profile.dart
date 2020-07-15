@@ -151,16 +151,20 @@ class _UserProfileState extends State<UserProfile>
         ),
       ),
       actions: <Widget>[
-        IconButton(
-            icon: ImageIcon(
-              AssetImage(AppImages.settings),
-              size: 20,
-              color: Colors.grey[800],
-            ),
-            onPressed: () {
-              pushPage(
-                  context, GeneralSettingPage(currentUser: widget.currentUser));
-            }),
+        Visibility(
+          // Check if the current user is the owner of profile?
+          visible: widget.currentUser.uid == widget.profileId ? true : false,
+          child: IconButton(
+              icon: ImageIcon(
+                AssetImage(AppImages.settings),
+                size: 20,
+                color: Colors.grey[800],
+              ),
+              onPressed: () {
+                pushPage(
+                    context, GeneralSettingPage(currentUser: widget.currentUser));
+              }),
+        ),
       ],
     );
   }

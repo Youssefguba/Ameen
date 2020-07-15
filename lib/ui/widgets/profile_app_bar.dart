@@ -196,7 +196,7 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
               children: <Widget>[
                 CircleAvatar(
                   radius: 30,
-                  backgroundColor: Colors.grey,
+                  backgroundColor: Colors.white,
                   backgroundImage:  user.profilePicture == null ? AssetImage(AppImages.AnonymousPerson): CachedNetworkImageProvider(user.profilePicture),
                 ),
                 Container(
