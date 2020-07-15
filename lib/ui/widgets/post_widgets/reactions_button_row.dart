@@ -222,12 +222,11 @@ class ReactionsButtonsState extends State<ReactionsButtons>
           InkWell(
             onTap: () {
               final RenderBox box = context.findRenderObject();
-              Share.share(""" ${widget.postBody} 
-              
-             تم نقل هذا المنشور بواسطة تطبيق آمين """,
+              Share.share("${widget.postBody} \n ${'تم نقل هذا المنشور بواسطة تطبيق آمين'}",
                   sharePositionOrigin:
                   box.localToGlobal(Offset.zero) &
-                  box.size);
+                  box.size
+              );
             },
             child: ReactionsButtonRow(
               image: Image.asset(shareImage, width: 20, height: 20),
