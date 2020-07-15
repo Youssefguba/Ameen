@@ -52,6 +52,8 @@ class _PostPageState extends State<PostPage> {
   bool _isLoading = false;
   var logger = Logger();
 
+  String currentLang = Intl.getCurrentLocale();
+
   @override
   void initState() {
     super.initState();
@@ -340,7 +342,7 @@ class _PostPageState extends State<PostPage> {
             Column(
 //              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               textBaseline: TextBaseline.alphabetic,
-              crossAxisAlignment: CrossAxisAlignment.baseline,
+              crossAxisAlignment: currentLang == 'ar' ? CrossAxisAlignment.start : CrossAxisAlignment.baseline,
               children: <Widget>[
                 // Name of the user
                 Container(

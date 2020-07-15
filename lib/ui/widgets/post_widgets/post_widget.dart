@@ -122,6 +122,8 @@ class _PostWidgetState extends State<PostWidget> {
   Map ameenReaction;
   int counterOfComments;
 
+  String currentLang = Intl.getCurrentLocale();
+
   @override
   void initState() {
 //    _getTotalOfComments();
@@ -271,12 +273,11 @@ class _PostWidgetState extends State<PostWidget> {
 
   Widget _postBody() {
     return Container(
-      alignment: Locale('ar') != null ? Alignment.topRight: Alignment.topLeft,
+      alignment: currentLang == 'ar' ? Alignment.topRight: Alignment.topLeft,
       margin: EdgeInsets.only(top: 5, left: 5, right: 5, bottom: 0),
       padding: EdgeInsets.symmetric(horizontal: 15),
       child: Text(
         postBody,
-        locale: Locale('ar'),
         style: TextStyle(
           textBaseline: TextBaseline.alphabetic,
           fontFamily: 'Dubai',
@@ -325,9 +326,8 @@ class _PostWidgetState extends State<PostWidget> {
               ),
             ),
             Column(
-//              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            textBaseline: TextBaseline.alphabetic,
-              crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.ideographic,
+              crossAxisAlignment: currentLang == 'ar' ? CrossAxisAlignment.start : CrossAxisAlignment.baseline,
               children: <Widget>[
                 // Name of the user
                 Container(

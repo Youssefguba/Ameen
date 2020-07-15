@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
 import 'package:ameencommon/common_widget/shimmer_widget.dart';
+import 'package:ameencommon/localizations.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/services/connection_check.dart';
 import 'package:ameen/ui/widgets/custom_app_bar.dart';
@@ -15,6 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/intl_standalone.dart';
 
 // ** This page to display the General Timeline of posts
 class NewsFeed extends StatefulWidget {
@@ -31,7 +34,7 @@ class _NewsFeedState extends State<NewsFeed>  with AutomaticKeepAliveClientMixin
   List<PostWidget> posts = [];
   bool _isLoading = false;
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-
+  Locale locale;
   @override
   void initState() {
     getTimeline();
