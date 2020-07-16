@@ -92,8 +92,7 @@ class PostWidget extends StatefulWidget {
 }
 
 class _PostWidgetState extends State<PostWidget> {
-  _PostWidgetState(
-      {Key key,
+  _PostWidgetState({Key key,
       this.postId,
       this.postBody,
       this.authorId,
@@ -129,19 +128,6 @@ class _PostWidgetState extends State<PostWidget> {
 //    _getTotalOfComments();
     super.initState();
   }
-
-  // Get the number of total Comments
-//  _getTotalOfComments() {
-//    commentsRef
-//        .document(widget.postId)
-//        .collection(DatabaseTable.comments)
-//        .getDocuments()
-//        .then((data) {
-//      setState(() {
-//        commentsCount = data.documents.length;
-//      });
-//    });
-//  }
 
   // Note: To delete post, ownerId and currentUserId must be equal, so they can be used interchangeably
   _deletePost() async {
@@ -191,11 +177,6 @@ class _PostWidgetState extends State<PostWidget> {
     });
 
   }
-
-  // Stream of Counter of Ameen
-//  Stream<int> _getAmeenCount() async* {
-//    yield ameenCount;
-//  }
 
   @override
   void dispose() {
@@ -287,7 +268,7 @@ class _PostWidgetState extends State<PostWidget> {
     );
   }
 
-//   The top Section of Post (Photo, Time, Settings, Name)
+  // The top Section of Post (Photo, Time, Settings, Name)
   Widget _headOfPost() {
     bool isPostOwner = currentUser.uid == authorId;
 

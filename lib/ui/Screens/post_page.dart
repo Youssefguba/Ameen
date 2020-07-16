@@ -31,7 +31,13 @@ class PostPage extends StatefulWidget {
   String authorId;
   String authorName;
   int ameenCount;
-  PostPage({this.postId, this.authorId, this.authorName, this.ameenCount});
+
+  PostPage({
+      this.postId,
+      this.authorId,
+      this.authorName,
+      this.ameenCount,
+  });
 
   @override
   _PostPageState createState() => _PostPageState();
@@ -39,10 +45,13 @@ class PostPage extends StatefulWidget {
 
 class _PostPageState extends State<PostPage> {
   final GlobalKey<AnimatedListState> listOfComment = GlobalKey();
+  String authorId;
+  String authorName;
   CommentModel commentModel;
   PostData postModel;
   UserModel user;
   int ameenCount;
+
   int commentsCount;
   String postId;
 
@@ -57,11 +66,9 @@ class _PostPageState extends State<PostPage> {
   @override
   void initState() {
     super.initState();
-      postId = widget.postId;
+    postId = widget.postId;
     _getPostData();
     _getUserData();
-//    _getTotalOfComments();
-
   }
 
   @override
@@ -70,26 +77,13 @@ class _PostPageState extends State<PostPage> {
     _isLoading = false;
   }
 
-  // Get the number of total Comments
-//  _getTotalOfComments() {
-//    DbRefs.commentsRef
-//        .document(postId)
-//        .collection(DatabaseTable.comments)
-//        .getDocuments()
-//        .then((data) {
-//      setState(() {
-//        commentsCount = data.documents.length;
-//      });
-//    });
-//  }
-
   // Get user data
   _getUserData() {
     userData = getCurrentUserData(userId: currentUser.uid);
     userData.then((doc) => setState(() {
-      user = UserModel.fromDocument(doc);
-      print(user.uid);
-    } ));
+          user = UserModel.fromDocument(doc);
+          print(user.uid);
+        }));
   }
 
   _deletePost() async {
@@ -106,10 +100,7 @@ class _PostPageState extends State<PostPage> {
     });
 
     // delete post itself
-    DbRefs.timelineRef
-        .document(postId)
-        .get()
-        .then((doc) {
+    DbRefs.timelineRef.document(postId).get().then((doc) {
       if (doc.exists) {
         doc.reference.delete();
       }
@@ -137,16 +128,12 @@ class _PostPageState extends State<PostPage> {
         doc.reference.delete();
       }
     });
-
   }
-
 
   // Get Post Data
   _getPostData() {
     data = getPostData(
-        postsRef: DbRefs.postsRef,
-        postId: postId,
-        userId: widget.authorId);
+        postsRef: DbRefs.postsRef, postId: postId, userId: widget.authorId);
     data.then((doc) {
       setState(() {
         postModel = PostData.fromDocument(doc);
@@ -195,7 +182,8 @@ class _PostPageState extends State<PostPage> {
                     fontWeight: FontWeight.w700,
                     color: AppColors.cBackground)),
         leading: IconButton(
-          icon: ImageIcon(AssetImage(AppImages.arrowBack)), iconSize: 18,
+          icon: ImageIcon(AssetImage(AppImages.arrowBack)),
+          iconSize: 18,
           onPressed: () {
             Navigator.of(context).pop(NewsFeed);
           },
@@ -209,7 +197,9 @@ class _PostPageState extends State<PostPage> {
               userId: widget.authorId),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return ShimmerWidget(shimmerCount: 1,);
+              return ShimmerWidget(
+                shimmerCount: 1,
+              );
             }
             postModel = PostData.fromDocument(snapshot.data);
             if (_isLoading) {
@@ -222,7 +212,9 @@ class _PostPageState extends State<PostPage> {
             return RefreshIndicator(
               color: AppColors.cGreen,
               backgroundColor: Colors.white,
-              onRefresh: () async { _getPostData(); },
+              onRefresh: () async {
+                _getPostData();
+              },
               child: Container(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -287,7 +279,7 @@ class _PostPageState extends State<PostPage> {
   // The  Body of the Post
   Widget _postBody() {
     return Container(
-      alignment: Locale('ar') != null ? Alignment.topRight: Alignment.topLeft,
+      alignment: Locale('ar') != null ? Alignment.topRight : Alignment.topLeft,
       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
       padding: EdgeInsets.symmetric(horizontal: 13),
       child: Text(
@@ -309,8 +301,7 @@ class _PostPageState extends State<PostPage> {
     void choiceAction(String option) async {
       if (option == AppLocalizations.of(context).deletePost) {
         _handleDeletePost(context);
-      }
-      else if (option == AppLocalizations.of(context).savePost) {
+      } else if (option == AppLocalizations.of(context).savePost) {
         //TODO => Handle it Later to Save Post.
         print('Button Clicked');
       }
@@ -325,9 +316,14 @@ class _PostPageState extends State<PostPage> {
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-
             InkWell(
-              onTap: () {pushPage(context, UserProfile(profileId: postModel.authorId, currentUser: currentUser));},
+              onTap: () {
+                pushPage(
+                    context,
+                    UserProfile(
+                        profileId: postModel.authorId,
+                        currentUser: currentUser));
+              },
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 child: CircleAvatar(
@@ -342,7 +338,9 @@ class _PostPageState extends State<PostPage> {
             Column(
 //              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               textBaseline: TextBaseline.alphabetic,
-              crossAxisAlignment: currentLang == 'ar' ? CrossAxisAlignment.start : CrossAxisAlignment.baseline,
+              crossAxisAlignment: currentLang == 'ar'
+                  ? CrossAxisAlignment.start
+                  : CrossAxisAlignment.baseline,
               children: <Widget>[
                 // Name of the user
                 Container(
@@ -395,8 +393,6 @@ class _PostPageState extends State<PostPage> {
             ],
           ),
         ),
-
-
       ],
     );
   }
@@ -427,45 +423,6 @@ class _PostPageState extends State<PostPage> {
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          // Counter of Comments (Numbers)
-          StreamBuilder(
-              stream: commentsRef
-                  .document(widget.postId)
-                  .collection(DatabaseTable.comments)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Container(width: 0, height: 0);
-                }
-                if (snapshot.connectionState == ConnectionState.active) {
-                  final counterOfComments = snapshot.data.documents.length;
-                  return Visibility(
-                      visible:
-                      counterOfComments != null && counterOfComments >= 1
-                          ? true
-                          : false,
-                      child: Container(
-                        child: Row(
-                          children: <Widget>[
-                            // Number of comments
-                            Text(
-                                counterOfComments == null
-                                    ? ''
-                                    : counterOfComments.toString(),
-                                style: mytextStyle.reactCounterTextStyle),
-                            Padding(padding: EdgeInsets.only(right: 2, left: 3)),
-                            // "Comment Word"
-                            Text(AppLocalizations.of(context).comment,
-                                style: mytextStyle.reactCounterTextStyle),
-
-
-                          ],
-                        ),
-                      ));
-                }
-                return Container(width: 0, height: 0);
-              }),
-
           // Container of Numbers and Reactions Icons
           StreamBuilder(
               stream: postsRef
@@ -480,6 +437,7 @@ class _PostPageState extends State<PostPage> {
                 if (snapshot.connectionState == ConnectionState.active) {
                   dynamic amenSnapshot = snapshot.data['ameen'];
                   int counterOfAmeen = postModel.getAmeenCount(amenSnapshot);
+                  print("This is a Counter of Ameen : $counterOfAmeen");
                   return Visibility(
                     maintainSize: true,
                     maintainAnimation: true,
@@ -536,6 +494,44 @@ class _PostPageState extends State<PostPage> {
                   );
                 }
                 return Container();
+              }),
+
+          // Counter of Comments (Numbers)
+          StreamBuilder(
+              stream: commentsRef
+                  .document(widget.postId)
+                  .collection(DatabaseTable.comments)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Container(width: 0, height: 0);
+                }
+                if (snapshot.connectionState == ConnectionState.active) {
+                  final counterOfComments = snapshot.data.documents.length;
+                  return Visibility(
+                      visible:
+                          counterOfComments != null && counterOfComments >= 1
+                              ? true
+                              : false,
+                      child: Container(
+                        child: Row(
+                          children: <Widget>[
+                            // Number of comments
+                            Text(
+                                counterOfComments == null
+                                    ? ''
+                                    : counterOfComments.toString(),
+                                style: mytextStyle.reactCounterTextStyle),
+                            Padding(
+                                padding: EdgeInsets.only(right: 2, left: 3)),
+                            // "Comment Word"
+                            Text(AppLocalizations.of(context).comment,
+                                style: mytextStyle.reactCounterTextStyle),
+                          ],
+                        ),
+                      ));
+                }
+                return Container(width: 0, height: 0);
               }),
         ],
       ),
@@ -603,8 +599,10 @@ class _PostPageState extends State<PostPage> {
                     });
 
                     bool isNotPostOwner = postId != currentUser.uid;
-                    if  (isNotPostOwner) {
-                      DbRefs.activityFeedRef.document(postModel.authorId).collection('feedItems')
+                    if (isNotPostOwner) {
+                      DbRefs.activityFeedRef
+                          .document(postModel.authorId)
+                          .collection('feedItems')
                           .add({
                         'type': 'comment',
                         'commentBody': _text.text,
@@ -672,4 +670,3 @@ class _PostPageState extends State<PostPage> {
         });
   }
 }
-

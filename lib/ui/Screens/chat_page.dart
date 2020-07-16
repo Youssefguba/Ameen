@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:ameen/ui/Screens/ways_page.dart';
+import 'package:ameen/ui/widgets/full_photo.dart';
 import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:ameencommon/utils/constants.dart';
@@ -438,10 +439,10 @@ class _ChatScreenState extends State<ChatScreen> {
                       borderRadius: BorderRadius.all(Radius.circular(8.0)),
                       clipBehavior: Clip.hardEdge,
                     ),
-//              onPressed: () {
-//                Navigator.push(
-//                    context, MaterialPageRoute(builder: (context) => FullPhoto(url: document['content'])));
-//              },
+              onPressed: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => FullPhoto(url: document['content'])));
+              },
                     padding: EdgeInsets.all(0),
                   ),
                   margin: EdgeInsets.only(
@@ -512,10 +513,10 @@ class _ChatScreenState extends State<ChatScreen> {
                                 BorderRadius.all(Radius.circular(8.0)),
                             clipBehavior: Clip.hardEdge,
                           ),
-//                    onPressed: () {
-//                      Navigator.push(context,
-//                          MaterialPageRoute(builder: (context) => FullPhoto(url: document['content'])));
-//                    },
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => FullPhoto(url: document['content'])));
+                    },
                           padding: EdgeInsets.all(0),
                         ),
                         margin: EdgeInsets.only(left: 10.0),
