@@ -336,7 +336,6 @@ class _PostPageState extends State<PostPage> {
               ),
             ),
             Column(
-//              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               textBaseline: TextBaseline.alphabetic,
               crossAxisAlignment: currentLang == 'ar'
                   ? CrossAxisAlignment.start
