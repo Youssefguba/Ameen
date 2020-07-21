@@ -43,7 +43,7 @@ class _CreatePostState extends State<CreatePost> {
     super.dispose();
     isUploading = false;
     _postBodyController.dispose();
-
+    _postBodyController.clear();
   }
 
   @override

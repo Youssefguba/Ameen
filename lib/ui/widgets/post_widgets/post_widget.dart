@@ -26,6 +26,8 @@ class PostWidget extends StatefulWidget {
   int ameenCount;
   Timestamp postTime;
   dynamic ameenReaction;
+  dynamic recommendReaction;
+  dynamic forbiddenReaction;
 
   PostWidget(
       {Key key,
@@ -37,7 +39,9 @@ class PostWidget extends StatefulWidget {
       this.ameenReaction,
       this.authorName,
       this.authorPhoto,
-      this.postTime})
+      this.postTime,
+      this.recommendReaction,
+      this.forbiddenReaction})
       : super(key: key);
 
   factory PostWidget.fromDocument(DocumentSnapshot doc) {
@@ -47,6 +51,8 @@ class PostWidget extends StatefulWidget {
       authorName: doc['username'],
       authorId: doc['userId'],
       ameenReaction: doc['ameen'],
+      recommendReaction: doc['recommend'],
+      forbiddenReaction: doc['forbidden'],
       postTime: doc['created_at'],
       authorPhoto: doc['profilePicture'],
     );
@@ -59,6 +65,8 @@ class PostWidget extends StatefulWidget {
       authorName: 'username',
       authorId: 'userId',
       ameenReaction: 'ameen',
+      recommendReaction: 'recommend',
+      forbiddenReaction: 'forbidden',
       postTime: Timestamp.now(),
       authorPhoto: 'profilePicture',
     );
@@ -66,11 +74,53 @@ class PostWidget extends StatefulWidget {
 
   int getAmeenCount(ameen) {
     // if no likes, return 0
-    if (ameenReaction == null) {
+    if (ameenReaction == null &&
+        recommendReaction == null &&
+        forbiddenReaction == null) {
       return 0;
     }
     int count = 0;
     ameenReaction.values.forEach((val) {
+      if (val == true) {
+        count += 1;
+      }
+    });
+    return count;
+  }
+
+  int getTotalCount(ameen, recommend) {
+    // if no likes, return 0
+    if (ameenReaction == null &&
+        recommendReaction == null &&
+        forbiddenReaction == null) {
+      return 0;
+    }
+    int count = 0;
+    ameenReaction.values.forEach((val) {
+      if (val == true) {
+        count += 1;
+      }
+    });
+    forbiddenReaction.values.forEach((val) {
+      if (val == true) {
+        count += 1;
+      }
+    });
+    recommendReaction.values.forEach((val) {
+      if (val == true) {
+        count += 1;
+      }
+    });
+    return count;
+  }
+
+  int getRecommendCount(recommend) {
+    // if no likes, return 0
+    if (recommendReaction == null) {
+      return 0;
+    }
+    int count = 0;
+    recommendReaction.values.forEach((val) {
       if (val == true) {
         count += 1;
       }
@@ -87,20 +137,29 @@ class PostWidget extends StatefulWidget {
         postBody: this.postBody,
         postTime: this.postTime,
         ameenReaction: this.ameenReaction,
+        recommendReaction: this.recommendReaction,
+        forbiddenReaction: this.forbiddenReaction,
         ameenCount: getAmeenCount(this.ameenReaction),
+        recommendCount: getRecommendCount(this.recommendReaction),
       );
 }
 
 class _PostWidgetState extends State<PostWidget> {
-  _PostWidgetState({Key key,
-      this.postId,
-      this.postBody,
-      this.authorId,
-      this.ameenCount,
-      this.ameenReaction,
-      this.authorName,
-      this.authorPhoto,
-      this.postTime});
+  _PostWidgetState({
+    Key key,
+    this.postId,
+    this.postBody,
+    this.authorId,
+    this.ameenCount,
+    this.ameenReaction,
+    this.authorName,
+    this.authorPhoto,
+    this.postTime,
+    this.recommendReaction,
+    this.recommendCount,
+    this.forbiddenReaction,
+    this.forbiddenCount,
+  });
 
   CollectionReference usersRef =
       Firestore.instance.collection(DatabaseTable.users);
@@ -117,8 +176,12 @@ class _PostWidgetState extends State<PostWidget> {
   Timestamp postTime;
 
   int ameenCount;
+  int recommendCount;
+  int forbiddenCount;
   int commentsCount;
   Map ameenReaction;
+  Map recommendReaction;
+  Map forbiddenReaction;
   int counterOfComments;
 
   String currentLang = Intl.getCurrentLocale();
@@ -144,10 +207,7 @@ class _PostWidgetState extends State<PostWidget> {
     });
 
     // delete post itself
-    DbRefs.timelineRef
-        .document(postId)
-        .get()
-        .then((doc) {
+    DbRefs.timelineRef.document(postId).get().then((doc) {
       if (doc.exists) {
         doc.reference.delete();
       }
@@ -175,7 +235,6 @@ class _PostWidgetState extends State<PostWidget> {
         doc.reference.delete();
       }
     });
-
   }
 
   @override
@@ -233,6 +292,10 @@ class _PostWidgetState extends State<PostWidget> {
                 authorId: authorId,
                 postId: postId,
                 postBody: postBody,
+                recommendReaction: recommendReaction,
+                forbiddenReaction: forbiddenReaction,
+                forbiddenCount: forbiddenCount,
+                recommendCount: recommendCount,
               ),
               InkWell(
                   onTap: () => pushPage(
@@ -254,7 +317,7 @@ class _PostWidgetState extends State<PostWidget> {
 
   Widget _postBody() {
     return Container(
-      alignment: currentLang == 'ar' ? Alignment.topRight: Alignment.topLeft,
+      alignment: currentLang == 'ar' ? Alignment.topRight : Alignment.topLeft,
       margin: EdgeInsets.only(top: 5, left: 5, right: 5, bottom: 0),
       padding: EdgeInsets.symmetric(horizontal: 15),
       child: Text(
@@ -276,8 +339,7 @@ class _PostWidgetState extends State<PostWidget> {
     void choiceAction(String option) async {
       if (option == AppLocalizations.of(context).deletePost) {
         _handleDeletePost(context);
-      }
-      else if (option == AppLocalizations.of(context).savePost) {
+      } else if (option == AppLocalizations.of(context).savePost) {
         //TODO => Handle it Later to Save Post.
         print('Button Clicked');
       }
@@ -292,9 +354,11 @@ class _PostWidgetState extends State<PostWidget> {
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-
             InkWell(
-              onTap:() { pushPage(context, UserProfile(profileId: authorId, currentUser: currentUser));},
+              onTap: () {
+                pushPage(context,
+                    UserProfile(profileId: authorId, currentUser: currentUser));
+              },
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 child: CircleAvatar(
@@ -307,8 +371,10 @@ class _PostWidgetState extends State<PostWidget> {
               ),
             ),
             Column(
-            textBaseline: TextBaseline.ideographic,
-              crossAxisAlignment: currentLang == 'ar' ? CrossAxisAlignment.start : CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.ideographic,
+              crossAxisAlignment: currentLang == 'ar'
+                  ? CrossAxisAlignment.start
+                  : CrossAxisAlignment.baseline,
               children: <Widget>[
                 // Name of the user
                 Container(
@@ -361,8 +427,6 @@ class _PostWidgetState extends State<PostWidget> {
             ],
           ),
         ),
-
-
       ],
     );
   }
@@ -378,7 +442,7 @@ class _PostWidgetState extends State<PostWidget> {
 
 //    initializeDateFormatting('ar');
     return Container(
-      margin: EdgeInsets.symmetric( vertical: 1),
+      margin: EdgeInsets.symmetric(vertical: 1),
       child: Text(
         date.toString(),
         style: timeTheme,
@@ -411,12 +475,21 @@ class _PostWidgetState extends State<PostWidget> {
                 }
                 if (snapshot.connectionState == ConnectionState.active) {
                   dynamic amenSnapshot = snapshot.data['ameen'];
+                  dynamic recommendSnapshot = snapshot.data['recommend'];
+                  dynamic forbiddenSnapshot = snapshot.data['forbidden'];
+
                   int counterOfAmeen = widget.getAmeenCount(amenSnapshot);
+                  int counterOfRecommend =
+                      widget.getRecommendCount(recommendSnapshot);
+
+                  int totalReactions = counterOfAmeen + counterOfRecommend;
                   return Visibility(
                     maintainSize: true,
                     maintainAnimation: true,
                     maintainState: true,
-                    visible: counterOfAmeen >= 1 ? true : false,
+                    visible: (counterOfAmeen >= 1 || counterOfRecommend >= 1)
+                        ? true
+                        : false,
                     child: Container(
                       margin: EdgeInsets.only(right: 5, left: 5),
                       child: Row(
@@ -426,8 +499,8 @@ class _PostWidgetState extends State<PostWidget> {
                             margin: EdgeInsets.only(right: 2, left: 2),
                             child: Text(
                               //Check if the Total Reactions = 0 or not
-                              counterOfAmeen >= 1
-                                  ? counterOfAmeen.toString()
+                              totalReactions >= 1
+                                  ? totalReactions.toString()
                                   : '',
                               style: mytextStyle.reactCounterTextStyle,
                             ),
@@ -441,16 +514,14 @@ class _PostWidgetState extends State<PostWidget> {
                               children: <Widget>[
                                 // Ameen React
                                 Visibility(
-                                  maintainSize: true,
-                                  maintainAnimation: true,
-                                  maintainState: true,
                                   visible: counterOfAmeen >= 1 ? true : false,
                                   child: myImages.ameenIconReactCounter,
                                 ),
 
                                 // Recommend React
                                 Visibility(
-                                  visible: false,
+                                  visible:
+                                      counterOfRecommend >= 1 ? true : false,
                                   child: myImages.recommendIconReactCounter,
                                 ),
 
@@ -496,20 +567,17 @@ class _PostWidgetState extends State<PostWidget> {
                                     ? ''
                                     : counterOfComments.toString(),
                                 style: mytextStyle.reactCounterTextStyle),
-                            Padding(padding: EdgeInsets.only(right: 2, left: 3)),
+                            Padding(
+                                padding: EdgeInsets.only(right: 2, left: 3)),
                             // "Comment Word"
                             Text(AppLocalizations.of(context).comment,
                                 style: mytextStyle.reactCounterTextStyle),
-
-
                           ],
                         ),
                       ));
                 }
                 return Container(width: 0, height: 0);
               }),
-
-
         ],
       ),
     );
