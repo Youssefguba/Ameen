@@ -30,13 +30,11 @@ class PostPage extends StatefulWidget {
   String postId;
   String authorId;
   String authorName;
-  int ameenCount;
 
   PostPage({
       this.postId,
       this.authorId,
       this.authorName,
-      this.ameenCount,
   });
 
   @override
@@ -45,15 +43,13 @@ class PostPage extends StatefulWidget {
 
 class _PostPageState extends State<PostPage> {
   final GlobalKey<AnimatedListState> listOfComment = GlobalKey();
-  String authorId;
-  String authorName;
   CommentModel commentModel;
   PostData postModel;
   UserModel user;
   int ameenCount;
-
+  int recommendCount;
+  int forbiddenCount;
   int commentsCount;
-  String postId;
 
   String errorMessage;
   dynamic data, userData;
@@ -66,7 +62,6 @@ class _PostPageState extends State<PostPage> {
   @override
   void initState() {
     super.initState();
-    postId = widget.postId;
     _getPostData();
     _getUserData();
   }
@@ -91,7 +86,7 @@ class _PostPageState extends State<PostPage> {
     postsRef
         .document(widget.authorId)
         .collection('userPosts')
-        .document(postId)
+        .document(widget.postId)
         .get()
         .then((doc) {
       if (doc.exists) {
@@ -100,7 +95,7 @@ class _PostPageState extends State<PostPage> {
     });
 
     // delete post itself
-    DbRefs.timelineRef.document(postId).get().then((doc) {
+    DbRefs.timelineRef.document(widget.postId).get().then((doc) {
       if (doc.exists) {
         doc.reference.delete();
       }
@@ -110,7 +105,7 @@ class _PostPageState extends State<PostPage> {
     QuerySnapshot activityFeedSnapshot = await DbRefs.activityFeedRef
         .document(widget.authorId)
         .collection("feedItems")
-        .where('postId', isEqualTo: postId)
+        .where('postId', isEqualTo: widget.postId)
         .getDocuments();
     activityFeedSnapshot.documents.forEach((doc) {
       if (doc.exists) {
@@ -120,7 +115,7 @@ class _PostPageState extends State<PostPage> {
 
     // then delete all comments
     QuerySnapshot commentsSnapshot = await commentsRef
-        .document(postId)
+        .document(widget.postId)
         .collection('comments')
         .getDocuments();
     commentsSnapshot.documents.forEach((doc) {
@@ -133,11 +128,10 @@ class _PostPageState extends State<PostPage> {
   // Get Post Data
   _getPostData() {
     data = getPostData(
-        postsRef: DbRefs.postsRef, postId: postId, userId: widget.authorId);
+        postsRef: DbRefs.postsRef, postId: widget.postId, userId: widget.authorId);
     data.then((doc) {
       setState(() {
         postModel = PostData.fromDocument(doc);
-        ameenCount = postModel.getAmeenCount(postModel.ameenReaction);
       });
     });
   }
@@ -251,11 +245,15 @@ class _PostPageState extends State<PostPage> {
                           SizedBox(height: 12),
 
                           ReactionsButtons(
-                            postId: postModel.postId,
                             ameenReaction: postModel.ameenReaction,
-                            authorId: postModel.authorId,
                             ameenCount: ameenCount,
+                            authorId: widget.authorId,
+                            postId: widget.postId,
                             postBody: postModel.body,
+                            recommendReaction: postModel.recommendReaction,
+                            forbiddenReaction: postModel.forbiddenReaction,
+                            forbiddenCount: forbiddenCount,
+                            recommendCount: recommendCount,
                           ),
                         ],
                       ),
@@ -276,16 +274,15 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
-  // The  Body of the Post
   Widget _postBody() {
     return Container(
-      alignment: Locale('ar') != null ? Alignment.topRight : Alignment.topLeft,
-      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-      padding: EdgeInsets.symmetric(horizontal: 13),
+      alignment: currentLang == 'ar' ? Alignment.topRight : Alignment.topLeft,
+      margin: EdgeInsets.only(top: 5, left: 5, right: 5, bottom: 0),
+      padding: EdgeInsets.symmetric(horizontal: 15),
       child: Text(
         postModel.body,
-        locale: Locale('ar'),
         style: TextStyle(
+          textBaseline: TextBaseline.alphabetic,
           fontFamily: 'Dubai',
           fontSize: 15,
         ),
@@ -318,11 +315,8 @@ class _PostPageState extends State<PostPage> {
           children: <Widget>[
             InkWell(
               onTap: () {
-                pushPage(
-                    context,
-                    UserProfile(
-                        profileId: postModel.authorId,
-                        currentUser: currentUser));
+                pushPage(context,
+                    UserProfile(profileId: widget.authorId, currentUser: currentUser));
               },
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -336,7 +330,7 @@ class _PostPageState extends State<PostPage> {
               ),
             ),
             Column(
-              textBaseline: TextBaseline.alphabetic,
+              textBaseline: TextBaseline.ideographic,
               crossAxisAlignment: currentLang == 'ar'
                   ? CrossAxisAlignment.start
                   : CrossAxisAlignment.baseline,
@@ -346,7 +340,7 @@ class _PostPageState extends State<PostPage> {
                   alignment: AlignmentDirectional.topStart,
                   margin: EdgeInsets.fromLTRB(5, 10, 5, 1),
                   child: Text(
-                    postModel.authorName.toString(),
+                    widget.authorName.toString(),
                     textAlign: TextAlign.start,
                     style: TextStyle(
                       fontFamily: 'Dubai',
@@ -398,16 +392,21 @@ class _PostPageState extends State<PostPage> {
 
   // Time of post created..
   Widget _postTimeStamp() {
-    initializeDateFormatting('ar');
+    initializeDateFormatting();
     var timestamp = postModel.postTime.toDate();
-    var date = DateFormat.yMMMd('ar').add_jm().format(timestamp);
+    var date = DateFormat.yMMMd().add_jm().format(timestamp);
 
     var timeTheme = new TextStyle(
         fontFamily: 'Dubai', fontSize: 13, color: Colors.grey.shade500);
 
+//    initializeDateFormatting('ar');
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-      child: Text(timeago.format(timestamp, locale: 'ar'), style: timeTheme),
+      margin: EdgeInsets.symmetric(vertical: 1),
+      child: Text(
+        date.toString(),
+        style: timeTheme,
+        textAlign: TextAlign.end,
+      ),
     );
   }
 
@@ -427,21 +426,32 @@ class _PostPageState extends State<PostPage> {
               stream: postsRef
                   .document(widget.authorId)
                   .collection('userPosts')
-                  .document(postId)
+                  .document(widget.postId)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return Container();
                 }
                 if (snapshot.connectionState == ConnectionState.active) {
-                  dynamic amenSnapshot = snapshot.data['ameen'];
+                  dynamic amenSnapshot = snapshot?.data['ameen'];
+                  dynamic recommendSnapshot = snapshot?.data['recommend'];
+                  dynamic forbiddenSnapshot = snapshot?.data['forbidden'];
+
                   int counterOfAmeen = postModel.getAmeenCount(amenSnapshot);
-                  print("This is a Counter of Ameen : $counterOfAmeen");
+                  int counterOfForbidden =
+                  postModel.getForbiddenCount(forbiddenSnapshot);
+                  int counterOfRecommend =
+                  postModel.getRecommendCount(recommendSnapshot);
+
+                  int totalReactions =
+                      counterOfAmeen + counterOfForbidden + counterOfRecommend;
                   return Visibility(
                     maintainSize: true,
                     maintainAnimation: true,
                     maintainState: true,
-                    visible: counterOfAmeen >= 1 ? true : false,
+                    visible: (counterOfAmeen >= 1 || counterOfForbidden >= 1 || counterOfRecommend >= 1)
+                        ? true
+                        : false,
                     child: Container(
                       margin: EdgeInsets.only(right: 5, left: 5),
                       child: Row(
@@ -451,8 +461,8 @@ class _PostPageState extends State<PostPage> {
                             margin: EdgeInsets.only(right: 2, left: 2),
                             child: Text(
                               //Check if the Total Reactions = 0 or not
-                              counterOfAmeen >= 1
-                                  ? counterOfAmeen.toString()
+                              totalReactions >= 1
+                                  ? totalReactions.toString()
                                   : '',
                               style: mytextStyle.reactCounterTextStyle,
                             ),
@@ -466,22 +476,21 @@ class _PostPageState extends State<PostPage> {
                               children: <Widget>[
                                 // Ameen React
                                 Visibility(
-                                  maintainSize: true,
-                                  maintainAnimation: true,
-                                  maintainState: true,
                                   visible: counterOfAmeen >= 1 ? true : false,
                                   child: myImages.ameenIconReactCounter,
                                 ),
 
                                 // Recommend React
                                 Visibility(
-                                  visible: false,
+                                  visible:
+                                  counterOfRecommend >= 1 ? true : false,
                                   child: myImages.recommendIconReactCounter,
                                 ),
 
                                 // Forbidden React
                                 Visibility(
-                                  visible: false,
+                                  visible:
+                                  counterOfForbidden >= 1 ? true : false,
                                   child: myImages.forbiddenIconReactCounter,
                                 ),
                               ],
@@ -509,9 +518,9 @@ class _PostPageState extends State<PostPage> {
                   final counterOfComments = snapshot.data.documents.length;
                   return Visibility(
                       visible:
-                          counterOfComments != null && counterOfComments >= 1
-                              ? true
-                              : false,
+                      counterOfComments != null && counterOfComments >= 1
+                          ? true
+                          : false,
                       child: Container(
                         child: Row(
                           children: <Widget>[
@@ -536,6 +545,7 @@ class _PostPageState extends State<PostPage> {
       ),
     );
   }
+
 
   // Add a Comment Widget
   Widget _writeAComment() {
@@ -597,7 +607,7 @@ class _PostPageState extends State<PostPage> {
                       "userId": currentUser.uid,
                     });
 
-                    bool isNotPostOwner = postId != currentUser.uid;
+                    bool isNotPostOwner = widget.postId != currentUser.uid;
                     if (isNotPostOwner) {
                       DbRefs.activityFeedRef
                           .document(postModel.authorId)
@@ -608,7 +618,7 @@ class _PostPageState extends State<PostPage> {
                         'username': user.username,
                         'userId': currentUser.uid,
                         'profilePicture': user.profilePicture,
-                        'postId': postId,
+                        'postId': widget.postId,
                         'created_at': DateTime.now()
                       });
                     }

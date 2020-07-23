@@ -15,14 +15,14 @@ final recommendIconReactCounter = Image.asset(
   AppImages.coloredRecommendIcon,
   width: 12,
   height: 12,
-  semanticLabel: 'Ameen',
+  semanticLabel: 'recommend',
 );
 
 final forbiddenIconReactCounter = Image.asset(
   AppImages.coloredForbiddenIcon,
   width: 12,
   height: 12,
-  semanticLabel: 'Ameen',
+  semanticLabel: 'forbidden',
 );
 /*
 * Icons React Counter - End

@@ -24,6 +24,8 @@ class PostWidget extends StatefulWidget {
   String authorId;
   String authorPhoto;
   int ameenCount;
+  int forbiddenCount;
+  int recommendCount;
   Timestamp postTime;
   dynamic ameenReaction;
   dynamic recommendReaction;
@@ -36,6 +38,8 @@ class PostWidget extends StatefulWidget {
       this.postBody,
       this.authorId,
       this.ameenCount,
+      this.forbiddenCount,
+      this.recommendCount,
       this.ameenReaction,
       this.authorName,
       this.authorPhoto,
@@ -88,7 +92,24 @@ class PostWidget extends StatefulWidget {
     return count;
   }
 
-  int getTotalCount(ameen, recommend) {
+  int getForbiddenCount(forbidden) {
+    // if no likes, return 0
+    if (ameenReaction == null &&
+        recommendReaction == null &&
+        forbiddenReaction == null) {
+      return 0;
+    }
+
+    int count = 0;
+    forbiddenReaction.values.forEach((val) {
+      if (val == true) {
+        count += 1;
+      }
+    });
+    return count;
+  }
+
+  int getTotalCount(ameen, recommend, forbidden) {
     // if no likes, return 0
     if (ameenReaction == null &&
         recommendReaction == null &&
@@ -141,6 +162,7 @@ class PostWidget extends StatefulWidget {
         forbiddenReaction: this.forbiddenReaction,
         ameenCount: getAmeenCount(this.ameenReaction),
         recommendCount: getRecommendCount(this.recommendReaction),
+        forbiddenCount: getForbiddenCount(this.forbiddenReaction),
       );
 }
 
@@ -149,16 +171,16 @@ class _PostWidgetState extends State<PostWidget> {
     Key key,
     this.postId,
     this.postBody,
-    this.authorId,
+    this.postTime,
     this.ameenCount,
-    this.ameenReaction,
+    this.recommendCount,
+    this.forbiddenCount,
+    this.authorId,
     this.authorName,
     this.authorPhoto,
-    this.postTime,
+    this.ameenReaction,
     this.recommendReaction,
-    this.recommendCount,
     this.forbiddenReaction,
-    this.forbiddenCount,
   });
 
   CollectionReference usersRef =
@@ -269,21 +291,28 @@ class _PostWidgetState extends State<PostWidget> {
               ),
               _headOfPost(),
               Container(
-                child: InkWell(
-                  onTap: () => pushPage(
-                      context,
-                      PostPage(
-                        postId: postId,
-                        authorId: authorId,
-                        authorName: authorName,
-                      )),
-                  child: Column(
-                    children: [
-                      _postBody(),
-                      _reactAndCommentCounter(),
-                      SizedBox(height: 8),
-                    ],
-                  ),
+                child: Column(
+                  children: [
+                    InkWell(
+                        onTap: () => pushPage(
+                            context,
+                            PostPage(
+                              postId: postId,
+                              authorId: authorId,
+                              authorName: authorName,
+                            )),
+                        child: _postBody()),
+                    InkWell(
+                        onTap: () => pushPage(
+                            context,
+                            PostPage(
+                              postId: postId,
+                              authorId: authorId,
+                              authorName: authorName,
+                            )),
+                        child: _reactAndCommentCounter()),
+                    SizedBox(height: 8),
+                  ],
                 ),
               ),
               ReactionsButtons(
@@ -316,16 +345,25 @@ class _PostWidgetState extends State<PostWidget> {
   }
 
   Widget _postBody() {
-    return Container(
-      alignment: currentLang == 'ar' ? Alignment.topRight : Alignment.topLeft,
-      margin: EdgeInsets.only(top: 5, left: 5, right: 5, bottom: 0),
-      padding: EdgeInsets.symmetric(horizontal: 15),
-      child: Text(
-        postBody,
-        style: TextStyle(
-          textBaseline: TextBaseline.alphabetic,
-          fontFamily: 'Dubai',
-          fontSize: 15,
+    return InkWell(
+      onTap: () => pushPage(
+          context,
+          PostPage(
+            postId: postId,
+            authorId: authorId,
+            authorName: authorName,
+          )),
+      child: Container(
+        alignment: currentLang == 'ar' ? Alignment.topRight : Alignment.topLeft,
+        margin: EdgeInsets.only(top: 5, left: 5, right: 5, bottom: 0),
+        padding: EdgeInsets.symmetric(horizontal: 15),
+        child: Text(
+          postBody,
+          style: TextStyle(
+            textBaseline: TextBaseline.alphabetic,
+            fontFamily: 'Dubai',
+            fontSize: 15,
+          ),
         ),
       ),
     );
@@ -479,15 +517,18 @@ class _PostWidgetState extends State<PostWidget> {
                   dynamic forbiddenSnapshot = snapshot.data['forbidden'];
 
                   int counterOfAmeen = widget.getAmeenCount(amenSnapshot);
+                  int counterOfForbidden =
+                      widget.getForbiddenCount(forbiddenSnapshot);
                   int counterOfRecommend =
                       widget.getRecommendCount(recommendSnapshot);
 
-                  int totalReactions = counterOfAmeen + counterOfRecommend;
+                  int totalReactions =
+                      counterOfAmeen + counterOfRecommend + counterOfForbidden;
                   return Visibility(
                     maintainSize: true,
                     maintainAnimation: true,
                     maintainState: true,
-                    visible: (counterOfAmeen >= 1 || counterOfRecommend >= 1)
+                    visible: (counterOfAmeen >= 1 || counterOfRecommend >= 1 || counterOfForbidden >= 1)
                         ? true
                         : false,
                     child: Container(
@@ -527,7 +568,8 @@ class _PostWidgetState extends State<PostWidget> {
 
                                 // Forbidden React
                                 Visibility(
-                                  visible: false,
+                                  visible:
+                                      counterOfForbidden >= 1 ? true : false,
                                   child: myImages.forbiddenIconReactCounter,
                                 ),
                               ],

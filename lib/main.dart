@@ -9,6 +9,7 @@ import 'package:ameencommon/localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
+
   runApp(MyApp());
 }
 
@@ -29,8 +30,8 @@ class MyApp extends StatelessWidget {
           GlobalWidgetsLocalizations.delegate,
         ],
         supportedLocales: [
-          Locale('ar'),
-          Locale('en'),
+          const Locale('ar', ''),
+          const Locale('en', ''),
         ],
         builder: (context, child) {
               return ScrollConfiguration(

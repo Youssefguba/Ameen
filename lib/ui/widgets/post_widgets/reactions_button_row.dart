@@ -19,54 +19,23 @@ class ReactionsButtonRow extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 5),
       padding: const EdgeInsets.symmetric(horizontal: 7.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(1.0),
-          ),
-          Container(width: 20, height: 20, child: image),
-          Container(
-              margin:
-                  const EdgeInsets.symmetric(horizontal: 13.0, vertical: 8.0),
-              child: label),
-          VerticalDivider(width: 5.0, color: Colors.transparent, indent: 1.0),
-        ],
-      ),
-    );
-  }
-}
-
-class OverlayReactions extends StatelessWidget {
-  final Widget image;
-  final String label;
-  OverlayReactions({this.image, this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 5),
-      padding: const EdgeInsets.symmetric(horizontal: 7.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(1.0),
-          ),
-          Container(width: 20, height: 20, child: image),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 8.0),
-            child: Text(label,
-                style: TextStyle(
-                  fontFamily: 'Dubai',
-                  fontSize: 13,
-                  color: AppColors.cTextColor,
-                )),
-          ),
-          VerticalDivider(width: 5.0, color: Colors.transparent, indent: 1.0),
-        ],
+      child: LimitedBox(
+        maxWidth: double.maxFinite,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(1.0),
+            ),
+            Container(width: 20, height: 20, child: image),
+            Container(
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 13.0, vertical: 8.0),
+                child: label),
+            VerticalDivider(width: 5.0, color: Colors.transparent, indent: 1.0),
+          ],
+        ),
       ),
     );
   }
@@ -178,11 +147,12 @@ class ReactionsButtonsState extends State<ReactionsButtons>
     isPressed = ameenReaction[userId] == true ||
         recommendReaction[userId] == true ||
         forbiddenReaction[userId] == true;
-    userIsReaction();
+
+    isUserReact();
     initAmeenBtn();
   }
 
-  userIsReaction() {
+  isUserReact() {
     setState(() {
       if (ameenReaction[userId] == true) {
         return icons = AppImages.coloredPrayIcon;
@@ -284,6 +254,7 @@ class ReactionsButtonsState extends State<ReactionsButtons>
     isPressed = ameenReaction[userId] == true ||
         recommendReaction[userId] == true ||
         forbiddenReaction[userId] == true;
+
     if (!isPressed) {
       // Update data in user profile
       DbRefs.postsRef
@@ -295,7 +266,15 @@ class ReactionsButtonsState extends State<ReactionsButtons>
       // Update data in timeline
       DbRefs.timelineRef.document(postId).updateData({'ameen.$userId': true});
 
-      addAmenReactionToActivityFeed();
+      // Add Reaction To Activity Feed of other user.
+      addReactionToActivityFeed(
+          currentUserId: currentUser.uid,
+          authorId: authorId,
+          postId: postId,
+          username: user.username,
+          userId: userId,
+          profilePicture: user.profilePicture,
+          typeOfReaction: 'ameen');
 
       setState(() {
         isPressed = ameenReaction[userId] == true;
@@ -314,46 +293,14 @@ class ReactionsButtonsState extends State<ReactionsButtons>
       // Update data in timeline
       DbRefs.timelineRef.document(postId).updateData({'ameen.$userId': false});
 
-      deleteAmenReactionToActivityFeed();
+      // delete Reaction To Activity Feed of other user.
+      deleteReactionToActivityFeed(
+          currentUserId: currentUser.uid, authorId: authorId, postId: postId);
       setState(() {
         isPressed = ameenReaction[userId] == false;
         ameenCount -= 1;
         ameenReaction[userId] = false;
         animControlBtnShortPress.reverse();
-      });
-    }
-  }
-
-  void addAmenReactionToActivityFeed() {
-    bool isNotPostOwner = currentUser.uid != authorId;
-    if (isNotPostOwner) {
-      DbRefs.activityFeedRef
-          .document(authorId)
-          .collection('feedItems')
-          .document(postId)
-          .setData({
-        'type': 'amen',
-        'username': user.username,
-        'userId': userId,
-        'profilePicture': user.profilePicture,
-        'postId': postId,
-        'created_at': DateTime.now()
-      });
-    }
-  }
-
-  void deleteAmenReactionToActivityFeed() {
-    bool isNotPostOwner = currentUser.uid != authorId;
-    if (isNotPostOwner) {
-      DbRefs.activityFeedRef
-          .document(authorId)
-          .collection('feedItems')
-          .document(postId)
-          .get()
-          .then((doc) {
-        if (doc.exists) {
-          doc.reference.delete();
-        }
       });
     }
   }
@@ -376,7 +323,15 @@ class ReactionsButtonsState extends State<ReactionsButtons>
           .document(postId)
           .updateData({'recommend.$userId': true});
 
-      addAmenReactionToActivityFeed();
+      // Add Reaction To Activity Feed of other user.
+      addReactionToActivityFeed(
+          currentUserId: currentUser.uid,
+          authorId: authorId,
+          postId: postId,
+          username: user.username,
+          userId: userId,
+          profilePicture: user.profilePicture,
+          typeOfReaction: 'recommend');
 
       setState(() {
         isPressed = recommendReaction[userId] == true;
@@ -397,7 +352,10 @@ class ReactionsButtonsState extends State<ReactionsButtons>
           .document(postId)
           .updateData({'recommend.$userId': false});
 
-      deleteAmenReactionToActivityFeed();
+      // delete Reaction To Activity Feed of other user.
+      deleteReactionToActivityFeed(
+          currentUserId: currentUser.uid, authorId: authorId, postId: postId);
+
       setState(() {
         isPressed = recommendReaction[userId] == false;
         recommendCount -= 1;
@@ -407,115 +365,115 @@ class ReactionsButtonsState extends State<ReactionsButtons>
     }
   }
 
-//  void addReactionToActivityFeed() {
-//    bool isNotPostOwner = currentUser.uid != authorId;
-//    if (isNotPostOwner) {
-//      DbRefs.activityFeedRef
-//          .document(authorId)
-//          .collection('feedItems')
-//          .document(postId)
-//          .setData({
-//        'type': 'amen',
-//        'username': user.username,
-//        'userId': userId,
-//        'profilePicture': user.profilePicture,
-//        'postId': postId,
-//        'created_at': DateTime.now()
-//      });
-//    }
-//  }
-//
-//  void deleteReactionToActivityFeed() {
-//    bool isNotPostOwner = currentUser.uid != authorId;
-//    if (isNotPostOwner) {
-//      DbRefs.activityFeedRef
-//          .document(authorId)
-//          .collection('feedItems')
-//          .document(postId)
-//          .get()
-//          .then((doc) {
-//        if (doc.exists) {
-//          doc.reference.delete();
-//        }
-//      });
-//    }
-//  }
+  void handleForbiddenReact() {
+    isPressed = ameenReaction[userId] == true ||
+        recommendReaction[userId] == true ||
+        forbiddenReaction[userId] == true;
 
-//  void handleAmeenReact() {
-//    isPressed = ameenReaction[userId] == true;
-//    if (!isPressed) {
-//      // Update data in user profile
-//      DbRefs.postsRef
-//          .document(authorId)
-//          .collection(DatabaseTable.userPosts)
-//          .document(postId)
-//          .updateData({'ameen.$userId': true});
-//
-//      // Update data in timeline
-//      DbRefs.timelineRef.document(postId).updateData({'ameen.$userId': true});
-//
-//      addReactionToActivityFeed();
-//
-//      setState(() {
-//        isPressed = true;
-//        ameenCount += 1;
-//        ameenReaction[userId] = true;
-//        animControlBtnShortPress.forward();
-//      });
-//    } else if (isPressed) {
-//      // Update data in user profile
-//      DbRefs.postsRef
-//          .document(authorId)
-//          .collection(DatabaseTable.userPosts)
-//          .document(postId)
-//          .updateData({'ameen.$userId': false});
-//
-//      // Update data in timeline
-//      DbRefs.timelineRef.document(postId).updateData({'ameen.$userId': false});
-//
-//      deleteReactionToActivityFeed();
-//      setState(() {
-//        isPressed = false;
-//        ameenCount -= 1;
-//        ameenReaction[userId] = false;
-//        animControlBtnShortPress.reverse();
-//      });
-//    }
-//  }
-//
-//  void addReactionToActivityFeed() {
-//    bool isNotPostOwner = currentUser.uid != authorId;
-//    if (isNotPostOwner) {
-//      DbRefs.activityFeedRef
-//          .document(authorId)
-//          .collection('feedItems')
-//          .document(postId)
-//          .setData({
-//        'type': 'amen',
-//        'username': user.username,
-//        'userId': userId,
-//        'profilePicture': user.profilePicture,
-//        'postId': postId,
-//        'created_at': DateTime.now()
-//      });
-//    }
-//  }
-//
-//  void deleteReactionToActivityFeed() {
-//    bool isNotPostOwner = currentUser.uid != authorId;
-//    if (isNotPostOwner) {
-//      DbRefs.activityFeedRef
-//          .document(authorId)
-//          .collection('feedItems')
-//          .document(postId)
-//          .get()
-//          .then((doc) {
-//        if (doc.exists) {
-//          doc.reference.delete();
-//        }
-//      });
-//    }
-//  }
+    if (!isPressed) {
+      // Update data in user profile
+      DbRefs.postsRef
+          .document(authorId)
+          .collection(DatabaseTable.userPosts)
+          .document(postId)
+          .updateData({'forbidden.$userId': true});
+
+      // Update data in timeline
+      DbRefs.timelineRef
+          .document(postId)
+          .updateData({'forbidden.$userId': true});
+
+      // Add Reaction To Activity Feed of other user.
+      addReactionToActivityFeed(
+          currentUserId: currentUser.uid,
+          authorId: authorId,
+          postId: postId,
+          username: user.username,
+          userId: userId,
+          profilePicture: user.profilePicture,
+          typeOfReaction: 'forbidden');
+
+      setState(() {
+        isPressed = true;
+        forbiddenCount += 1;
+        forbiddenReaction[userId] = true;
+        animControlBtnShortPress.forward();
+      });
+    } else if (isPressed) {
+      // Update data in user profile
+      DbRefs.postsRef
+          .document(authorId)
+          .collection(DatabaseTable.userPosts)
+          .document(postId)
+          .updateData({'forbidden.$userId': false});
+
+      // Update data in timeline
+      DbRefs.timelineRef
+          .document(postId)
+          .updateData({'forbidden.$userId': false});
+
+      // delete Reaction To Activity Feed of other user.
+      deleteReactionToActivityFeed(
+          currentUserId: currentUser.uid, authorId: authorId, postId: postId);
+
+      setState(() {
+        isPressed = false;
+        forbiddenCount -= 1;
+        forbiddenReaction[userId] = false;
+        animControlBtnShortPress.reverse();
+      });
+    }
+  }
+
+  void deleteAllReactions() {
+    isPressed = ameenReaction[userId] == true ||
+        recommendReaction[userId] == true ||
+        forbiddenReaction[userId] == true;
+
+    // Update data in user profile
+    DbRefs.postsRef
+        .document(authorId)
+        .collection(DatabaseTable.userPosts)
+        .document(postId)
+        .updateData({'forbidden.$userId': false});
+
+    // Update data in user profile
+    DbRefs.postsRef
+        .document(authorId)
+        .collection(DatabaseTable.userPosts)
+        .document(postId)
+        .updateData({'ameen.$userId': false});
+
+    // Update data in user profile
+    DbRefs.postsRef
+        .document(authorId)
+        .collection(DatabaseTable.userPosts)
+        .document(postId)
+        .updateData({'recommend.$userId': false});
+
+    // Update data in timeline
+    DbRefs.timelineRef.document(postId).updateData({'ameen.$userId': false});
+    DbRefs.timelineRef
+        .document(postId)
+        .updateData({'recommend.$userId': false});
+    DbRefs.timelineRef
+        .document(postId)
+        .updateData({'forbidden.$userId': false});
+
+    // delete Reaction To Activity Feed of other user.
+    deleteReactionToActivityFeed(
+        currentUserId: currentUser.uid, authorId: authorId, postId: postId);
+
+    setState(() {
+      isPressed = false;
+      forbiddenCount -= 1;
+      ameenCount -= 1;
+      recommendCount -= 1;
+      forbiddenReaction[userId] = false;
+      ameenReaction[userId] = false;
+      recommendReaction[userId] = false;
+    });
+  }
 
   double handleOutputRangeTiltIconAmeen(double value) {
     if (value <= 0.2) {
@@ -537,75 +495,6 @@ class ReactionsButtonsState extends State<ReactionsButtons>
     }
   }
 
-//  Widget _overlayReactionButtons() {
-//    return FlutterReactionButtonCheck(
-//      boxColor: Colors.white,
-//      boxRadius: 20,
-//      boxDuration: Duration(milliseconds: 300),
-//      boxElevation: 5.0,
-//      boxPosition: Position.BOTTOM,
-//      highlightColor: Colors.black,
-//
-//      onReactionChanged: (reaction, isChecked) {
-//        if(reaction.id == 1 ){
-//          handleAmeenReact();
-//        }
-//        else if (reaction.id == 2 ) {
-//          handleRecommendReact();
-//        }
-//      },
-//      reactions: <Reaction>[
-//        Reaction(
-//            id: 1,
-//            previewIcon: OverlayReactions(
-//              image: Image.asset(AppImages.coloredPrayIcon),
-//              label: AppLocalizations.of(context).amen,
-//            ),
-//            icon:  ReactionsButtonRow(
-//              image: Image.asset(AppImages.coloredPrayIcon),
-//              label: AppLocalizations.of(context).amen,
-//            )),
-//        Reaction(
-//            id: 2,
-//            previewIcon: OverlayReactions(
-//              image: Image.asset(AppImages.coloredRecommendIcon),
-//              label: AppLocalizations.of(context).amen,
-//            ),
-//            icon: ReactionsButtonRow(
-//              image: Image.asset(AppImages.coloredRecommendIcon),
-//              label: AppLocalizations.of(context).amen,
-//            )),
-//        Reaction(
-//            id: 3,
-//            previewIcon: OverlayReactions(
-//              image: Image.asset(AppImages.coloredForbiddenIcon),
-//              label: AppLocalizations.of(context).amen,
-//            ),
-//            icon: ReactionsButtonRow(
-//              image: Image.asset(AppImages.coloredForbiddenIcon),
-//              label: AppLocalizations.of(context).amen,
-//            )),
-//      ],
-//
-//      initialReaction:
-//          Reaction(
-//            id: 0, icon: ReactionsButtonRow(
-//            image: (() {
-//              if (ameenReaction[userId] == true) {
-//                return Image.asset(AppImages.coloredPrayIcon);
-//              } else if (recommendReaction[userId] == true) {
-//                return Image.asset(AppImages.coloredRecommendIcon);
-//              } else if (forbiddenReaction[userId] == true) {
-//                return Image.asset(AppImages.coloredForbiddenIcon);
-//              }
-//              return Image.asset(AppImages.blackPrayIcon);
-//            }()),
-//            label: AppLocalizations.of(context).amen,
-//          )),
-//      selectedReaction: Reaction(id: 0, icon: Image.asset(AppImages.blackPrayIcon, width: 20, height: 20)),
-//    );
-//  }
-
   Widget _overlayReactionButtons() {
     List<ReactiveIconDefinition> _reactionsList = <ReactiveIconDefinition>[
       ReactiveIconDefinition(
@@ -622,9 +511,9 @@ class ReactionsButtonsState extends State<ReactionsButtons>
     ];
 
     return ReactiveButton(
-      roundIcons: true,
       containerAbove: true,
-      iconWidth: 32.0,
+      iconWidth: 35.0,
+      containerPadding: 0,
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(15),
@@ -632,7 +521,7 @@ class ReactionsButtonsState extends State<ReactionsButtons>
             BoxShadow(
                 color: Colors.black.withOpacity(0.5),
                 blurRadius: 0.2,
-                spreadRadius: -0.2,
+                spreadRadius: 0.2,
                 offset: Offset(1, 1))
           ]),
       child: Container(
@@ -649,66 +538,65 @@ class ReactionsButtonsState extends State<ReactionsButtons>
                     height: 20.0,
                   ),
             label: (() {
-              if(icons == AppImages.blackPrayIcon) {
+              if (icons == AppImages.blackPrayIcon) {
                 return Text(AppLocalizations.of(context).amen, style: btnStyle);
               } else if (icons == AppImages.coloredPrayIcon) {
                 return Text(AppLocalizations.of(context).amen, style: btnStyle);
               } else if (icons == AppImages.coloredRecommendIcon) {
-                return Text('أرشحه للجميع', style: btnStyle);
-              }
-              else {
+                return Text(AppLocalizations.of(context).recommend,
+                    style: btnStyle);
+              } else if (icons == AppImages.coloredForbiddenIcon) {
+                return LimitedBox(
+                    maxWidth: MediaQuery.of(context).size.width * 0.2,
+                    child: Text(AppLocalizations.of(context).beware,
+                        style: btnStyle, overflow: TextOverflow.fade));
+              } else {
                 return Text(AppLocalizations.of(context).amen, style: btnStyle);
               }
-            } ()),
+            }()),
           ),
         ),
       ),
       icons: _reactionsList, //_flags,
       onTap: () {
-        print('TAP');
-        setState(() {
-          // If Recommend = True and others false..
-          if (recommendReaction[userId] == true &&
-              ameenReaction[userId] == false &&
-              icons == AppImages.coloredRecommendIcon) {
-            icons = AppImages.blackPrayIcon;
-            handleRecommendReact();
-            print('TAP 1 ');
+        bool ameenPressed = ameenReaction[userId] == true;
+        bool forbiddenPressed = forbiddenReaction[userId] == true;
+        bool recommendPressed = recommendReaction[userId] == true;
 
-            // If Amen = True and others false ..
-          } else if (ameenReaction[userId] == true &&
-              icons == AppImages.coloredPrayIcon &&
-              recommendReaction[userId] == false) {
+        setState(() {
+          if (ameenPressed || forbiddenPressed || recommendPressed) {
+            deleteAllReactions();
             icons = AppImages.blackPrayIcon;
+          } else if (!ameenPressed && !forbiddenPressed && !recommendPressed) {
             handleAmeenReact();
-            print('TAP 2 ');
-          } else if (recommendReaction[userId] == false &&
-              ameenReaction[userId] == false) {
             icons = AppImages.coloredPrayIcon;
-            handleAmeenReact();
-            print('TAP 4');
           }
         });
       },
       onSelected: (ReactiveIconDefinition button) {
         setState(() {
           icons = button.code;
-          if (ameenReaction[userId] == false &&
-              icons == AppImages.coloredPrayIcon) {
+
+          // If Ameen Clicked!
+          if (icons == AppImages.coloredPrayIcon) {
+            deleteAllReactions();
             handleAmeenReact();
             icons = AppImages.coloredPrayIcon;
-          } else if (recommendReaction[userId] == false &&
-              icons == AppImages.coloredRecommendIcon) {
+          }
+
+          // If Recommend Clicked!
+          else if (icons == AppImages.coloredRecommendIcon) {
+            deleteAllReactions();
             handleRecommendReact();
+
             icons = AppImages.coloredRecommendIcon;
-          } else if (recommendReaction[userId] == true &&
-              icons == AppImages.coloredRecommendIcon) {
-            handleRecommendReact();
-            icons = AppImages.blackPrayIcon;
-          } else if (ameenReaction[userId] == true &&
-              icons == AppImages.coloredPrayIcon) {
-            handleAmeenReact();
-            icons = AppImages.blackPrayIcon;
+          }
+
+          // If Forbidden Clicked!
+          else if (icons == AppImages.coloredForbiddenIcon) {
+            deleteAllReactions();
+            handleForbiddenReact();
+            icons = AppImages.coloredForbiddenIcon;
           }
         });
       },
