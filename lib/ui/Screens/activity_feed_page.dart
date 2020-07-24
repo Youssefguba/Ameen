@@ -83,13 +83,17 @@ class ActivityFeedItem extends StatelessWidget {
     );
   }
 
-  configureMediaPreview() {
+  configureMediaPreview(BuildContext context) {
     if (type == 'amen') {
-      activityItemText = "قال آمين على دعوتك";
-    } else if (type == 'follow') {
-      activityItemText = "قام بمتابعتك";
+      activityItemText = AppLocalizations.of(context).reactAsAmen;
+    } else if (type == 'recommend') {
+      activityItemText = AppLocalizations.of(context).reactAsRecommend;
+    }else if (type == 'forbidden') {
+      activityItemText = AppLocalizations.of(context).reactAsForbidden;
+    }else if (type == 'follow') {
+      activityItemText = AppLocalizations.of(context).followsYou;
     } else if (type == 'comment') {
-      activityItemText = 'قام بالتعليق:  $commentBody';
+      activityItemText = '${AppLocalizations.of(context).commentOnYourPost} $commentBody';
     } else {
       activityItemText = "Error: Unknown type '$type'";
     }
@@ -98,7 +102,7 @@ class ActivityFeedItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var timestamp = created_at.toDate();
-    configureMediaPreview();
+    configureMediaPreview(context);
 
     return Padding(
       padding: EdgeInsets.only(bottom: 2.0),

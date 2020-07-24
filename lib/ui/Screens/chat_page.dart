@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameen/ui/widgets/full_photo.dart';
 import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
+import 'package:ameencommon/localizations.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameencommon/utils/functions.dart';
@@ -614,7 +615,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 style: TextStyle(color: AppColors.cBlack, fontSize: 15.0),
                 controller: _textEditingController,
                 decoration: InputDecoration.collapsed(
-                  hintText: 'Type your message...',
+                  hintText: AppLocalizations.of(context).typeYourMessage,
                   hintStyle: TextStyle(color: Colors.grey),
                 ),
                 focusNode: focusNode,

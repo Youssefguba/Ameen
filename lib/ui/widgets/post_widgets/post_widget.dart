@@ -9,6 +9,7 @@ import 'package:ameencommon/utils/constants.dart';
 import 'package:ameencommon/utils/functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart'; //for date locale
 import 'package:ameen/helpers/ui/images.dart' as myImages;
@@ -205,6 +206,7 @@ class _PostWidgetState extends State<PostWidget> {
   Map recommendReaction;
   Map forbiddenReaction;
   int counterOfComments;
+  int totalReactions;
 
   String currentLang = Intl.getCurrentLocale();
 
@@ -293,7 +295,7 @@ class _PostWidgetState extends State<PostWidget> {
               Container(
                 child: Column(
                   children: [
-                    InkWell(
+                    GestureDetector(
                         onTap: () => pushPage(
                             context,
                             PostPage(
@@ -491,138 +493,151 @@ class _PostWidgetState extends State<PostWidget> {
 
   // React counter
   Widget _reactAndCommentCounter() {
-    return Container(
-      height: 30,
-      width: double.maxFinite,
-      margin: EdgeInsets.all(8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          // Container of Numbers and Reactions Icons
-          StreamBuilder(
-              stream: postsRef
-                  .document(authorId)
-                  .collection('userPosts')
-                  .document(postId)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Container();
-                }
-                if (snapshot.connectionState == ConnectionState.active) {
-                  dynamic amenSnapshot = snapshot.data['ameen'];
-                  dynamic recommendSnapshot = snapshot.data['recommend'];
-                  dynamic forbiddenSnapshot = snapshot.data['forbidden'];
+    return Visibility(
+      child: Container(
+        height: 30,
+        width: double.maxFinite,
+        margin: EdgeInsets.all(8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            // Container of Numbers and Reactions Icons
+            _counterOfReactions(),
 
-                  int counterOfAmeen = widget.getAmeenCount(amenSnapshot);
-                  int counterOfForbidden =
-                      widget.getForbiddenCount(forbiddenSnapshot);
-                  int counterOfRecommend =
-                      widget.getRecommendCount(recommendSnapshot);
+            // Counter of Comments (Numbers)
+            _counterOfComment(),
+          ],
+        ),
+      ),
+    );
+  }
 
-                  int totalReactions =
-                      counterOfAmeen + counterOfRecommend + counterOfForbidden;
-                  return Visibility(
-                    maintainSize: true,
-                    maintainAnimation: true,
-                    maintainState: true,
-                    visible: (counterOfAmeen >= 1 || counterOfRecommend >= 1 || counterOfForbidden >= 1)
-                        ? true
-                        : false,
-                    child: Container(
-                      margin: EdgeInsets.only(right: 5, left: 5),
+  // Counter of Comments (Numbers)
+  _counterOfComment() {
+    return StreamBuilder(
+        stream: commentsRef
+            .document(widget.postId)
+            .collection(DatabaseTable.comments)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Container(width: 0, height: 0);
+          }
+          if (snapshot.connectionState == ConnectionState.active) {
+            final counterOfComments = snapshot.data.documents.length;
+            return Visibility(
+                visible:
+                counterOfComments != null && counterOfComments >= 1
+                    ? true
+                    : false,
+                child: Container(
+                  child: Row(
+                    children: <Widget>[
+                      // Number of comments
+                      Text(
+                          counterOfComments == null
+                              ? ''
+                              : counterOfComments.toString(),
+                          style: mytextStyle.reactCounterTextStyle),
+                      Padding(
+                          padding: EdgeInsets.only(right: 2, left: 3)),
+                      // "Comment Word"
+                      Text(AppLocalizations.of(context).comment,
+                          style: mytextStyle.reactCounterTextStyle),
+                    ],
+                  ),
+                ));
+          }
+          return Container(width: 0, height: 0);
+        });
+  }
+
+  // Container of Numbers and Reactions Icons
+  _counterOfReactions() {
+    // Container of Numbers and Reactions Icons
+    return StreamBuilder(
+        stream: postsRef
+            .document(authorId)
+            .collection('userPosts')
+            .document(postId)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Container();
+          }
+          if (snapshot.connectionState == ConnectionState.active) {
+            dynamic amenSnapshot = snapshot.data['ameen'];
+            dynamic recommendSnapshot = snapshot.data['recommend'];
+            dynamic forbiddenSnapshot = snapshot.data['forbidden'];
+
+            int counterOfAmeen = widget.getAmeenCount(amenSnapshot);
+            int counterOfForbidden =
+            widget.getForbiddenCount(forbiddenSnapshot);
+            int counterOfRecommend =
+            widget.getRecommendCount(recommendSnapshot);
+
+            totalReactions =
+                counterOfAmeen + counterOfRecommend + counterOfForbidden;
+            return Visibility(
+              maintainSize: true,
+              maintainAnimation: true,
+              maintainState: true,
+              visible: (counterOfAmeen >= 1 || counterOfRecommend >= 1 || counterOfForbidden >= 1)
+                  ? true
+                  : false,
+              child: Container(
+                margin: EdgeInsets.only(right: 5, left: 5),
+                child: Row(
+                  children: <Widget>[
+                    // Counter of Reaction (Numbers)
+                    Container(
+                      margin: EdgeInsets.only(right: 2, left: 2),
+                      child: Text(
+                        //Check if the Total Reactions = 0 or not
+                        totalReactions >= 1
+                            ? totalReactions.toString()
+                            : '',
+                        style: mytextStyle.reactCounterTextStyle,
+                      ),
+                    ),
+
+                    // Counter of Reaction (Icons)
+                    Container(
                       child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          // Counter of Reaction (Numbers)
-                          Container(
-                            margin: EdgeInsets.only(right: 2, left: 2),
-                            child: Text(
-                              //Check if the Total Reactions = 0 or not
-                              totalReactions >= 1
-                                  ? totalReactions.toString()
-                                  : '',
-                              style: mytextStyle.reactCounterTextStyle,
-                            ),
+                          // Ameen React
+                          Visibility(
+                            visible: counterOfAmeen >= 1 ? true : false,
+                            child: myImages.ameenIconReactCounter,
                           ),
 
-                          // Counter of Reaction (Icons)
-                          Container(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                // Ameen React
-                                Visibility(
-                                  visible: counterOfAmeen >= 1 ? true : false,
-                                  child: myImages.ameenIconReactCounter,
-                                ),
+                          // Recommend React
+                          Visibility(
+                            visible:
+                            counterOfRecommend >= 1 ? true : false,
+                            child: myImages.recommendIconReactCounter,
+                          ),
 
-                                // Recommend React
-                                Visibility(
-                                  visible:
-                                      counterOfRecommend >= 1 ? true : false,
-                                  child: myImages.recommendIconReactCounter,
-                                ),
-
-                                // Forbidden React
-                                Visibility(
-                                  visible:
-                                      counterOfForbidden >= 1 ? true : false,
-                                  child: myImages.forbiddenIconReactCounter,
-                                ),
-                              ],
-                            ),
+                          // Forbidden React
+                          Visibility(
+                            visible:
+                            counterOfForbidden >= 1 ? true : false,
+                            child: myImages.forbiddenIconReactCounter,
                           ),
                         ],
                       ),
                     ),
-                  );
-                }
-                return Container();
-              }),
-
-          // Counter of Comments (Numbers)
-          StreamBuilder(
-              stream: commentsRef
-                  .document(widget.postId)
-                  .collection(DatabaseTable.comments)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Container(width: 0, height: 0);
-                }
-                if (snapshot.connectionState == ConnectionState.active) {
-                  final counterOfComments = snapshot.data.documents.length;
-                  return Visibility(
-                      visible:
-                          counterOfComments != null && counterOfComments >= 1
-                              ? true
-                              : false,
-                      child: Container(
-                        child: Row(
-                          children: <Widget>[
-                            // Number of comments
-                            Text(
-                                counterOfComments == null
-                                    ? ''
-                                    : counterOfComments.toString(),
-                                style: mytextStyle.reactCounterTextStyle),
-                            Padding(
-                                padding: EdgeInsets.only(right: 2, left: 3)),
-                            // "Comment Word"
-                            Text(AppLocalizations.of(context).comment,
-                                style: mytextStyle.reactCounterTextStyle),
-                          ],
-                        ),
-                      ));
-                }
-                return Container(width: 0, height: 0);
-              }),
-        ],
-      ),
-    );
+                  ],
+                ),
+              ),
+            );
+          }
+          return Container();
+        });
   }
 
   _handleDeletePost(BuildContext parentContext) {
