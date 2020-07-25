@@ -2,6 +2,7 @@ import 'package:ameen/ui/Screens/post_page.dart';
 import 'package:ameen/ui/Screens/user_profile.dart';
 import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameencommon/localizations.dart';
+import 'package:ameencommon/models/post_data.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:ameen/ui/widgets/comment/add_new_comment.dart';
 import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
@@ -18,7 +19,7 @@ import 'package:intl/intl.dart';
 
 // This class represent the UI of Post and every thing related with it..
 class PostWidget extends StatefulWidget {
-  UserModel userModel;
+  PostData postModel;
   String postId;
   String postBody;
   String authorName;
@@ -34,7 +35,6 @@ class PostWidget extends StatefulWidget {
 
   PostWidget(
       {Key key,
-      this.userModel,
       this.postId,
       this.postBody,
       this.authorId,
@@ -46,7 +46,9 @@ class PostWidget extends StatefulWidget {
       this.authorPhoto,
       this.postTime,
       this.recommendReaction,
-      this.forbiddenReaction})
+      this.forbiddenReaction,
+
+      })
       : super(key: key);
 
   factory PostWidget.fromDocument(DocumentSnapshot doc) {
@@ -152,6 +154,7 @@ class PostWidget extends StatefulWidget {
 
   @override
   _PostWidgetState createState() => _PostWidgetState(
+        postModel: this.postModel,
         postId: this.postId,
         authorId: this.authorId,
         authorName: this.authorName,
@@ -182,6 +185,7 @@ class _PostWidgetState extends State<PostWidget> {
     this.ameenReaction,
     this.recommendReaction,
     this.forbiddenReaction,
+    this.postModel
   });
 
   CollectionReference usersRef =
@@ -207,13 +211,28 @@ class _PostWidgetState extends State<PostWidget> {
   Map forbiddenReaction;
   int counterOfComments;
   int totalReactions;
+  PostData postModel;
 
+  dynamic _postData;
   String currentLang = Intl.getCurrentLocale();
 
   @override
   void initState() {
-//    _getTotalOfComments();
     super.initState();
+    _getPostData();
+  }
+
+  // Get Post Data
+  _getPostData() {
+    _postData = getPostData(
+        postsRef: DbRefs.postsRef,
+        postId: widget.postId,
+        userId: widget.authorId);
+    _postData.then((doc) {
+      setState(() {
+        postModel = PostData.fromDocument(doc);
+      });
+    });
   }
 
   // Note: To delete post, ownerId and currentUserId must be equal, so they can be used interchangeably
@@ -302,6 +321,8 @@ class _PostWidgetState extends State<PostWidget> {
                               postId: postId,
                               authorId: authorId,
                               authorName: authorName,
+                              postModel: postModel,
+
                             )),
                         child: _postBody()),
                     InkWell(
@@ -311,6 +332,7 @@ class _PostWidgetState extends State<PostWidget> {
                               postId: postId,
                               authorId: authorId,
                               authorName: authorName,
+                              postModel: postModel,
                             )),
                         child: _reactAndCommentCounter()),
                     SizedBox(height: 8),
@@ -318,13 +340,13 @@ class _PostWidgetState extends State<PostWidget> {
                 ),
               ),
               ReactionsButtons(
-                ameenReaction: ameenReaction,
-                ameenCount: ameenCount,
                 authorId: authorId,
                 postId: postId,
                 postBody: postBody,
-                recommendReaction: recommendReaction,
+                ameenCount: ameenCount,
+                ameenReaction: ameenReaction,
                 forbiddenReaction: forbiddenReaction,
+                recommendReaction: recommendReaction,
                 forbiddenCount: forbiddenCount,
                 recommendCount: recommendCount,
               ),
@@ -335,6 +357,8 @@ class _PostWidgetState extends State<PostWidget> {
                         postId: postId,
                         authorId: authorId,
                         authorName: authorName,
+                        postModel: postModel,
+
                       )),
                   child: AddNewCommentWidget(
                     authorPhoto: authorPhoto,
@@ -354,6 +378,9 @@ class _PostWidgetState extends State<PostWidget> {
             postId: postId,
             authorId: authorId,
             authorName: authorName,
+            postModel: postModel,
+
+
           )),
       child: Container(
         alignment: currentLang == 'ar' ? Alignment.topRight : Alignment.topLeft,

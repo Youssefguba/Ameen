@@ -30,34 +30,54 @@ class PostPage extends StatefulWidget {
   String postId;
   String authorId;
   String authorName;
-
-  PostPage({
-      this.postId,
-      this.authorId,
-      this.authorName,
-  });
-
-  @override
-  _PostPageState createState() => _PostPageState();
-}
-
-class _PostPageState extends State<PostPage> {
-  final GlobalKey<AnimatedListState> listOfComment = GlobalKey();
-  CommentModel commentModel;
   PostData postModel;
-  UserModel user;
+  Map recommendReaction;
+  Map ameenReaction;
+  Map forbiddenReaction;
   int ameenCount;
   int recommendCount;
   int forbiddenCount;
-  int commentsCount;
 
+  PostPage({
+    this.postId,
+    this.authorId,
+    this.authorName,
+    this.postModel,
+  });
+
+
+  @override
+  _PostPageState createState() => _PostPageState(
+        postModel: this.postModel,
+        ameenReaction: postModel.ameenReaction,
+        recommendReaction: postModel.recommendReaction,
+        forbiddenReaction: postModel.forbiddenReaction,
+        ameenCount: postModel.getAmeenCount(this.postModel.ameenReaction),
+        recommendCount: postModel.getRecommendCount(this.postModel.recommendReaction),
+        forbiddenCount: postModel.getForbiddenCount(this.postModel.forbiddenReaction),
+      );
+}
+
+class _PostPageState extends State<PostPage> {
+  _PostPageState({this.postModel, this.recommendReaction, this.ameenReaction, this.ameenCount, this.recommendCount, this.forbiddenReaction, this.forbiddenCount});
+  final GlobalKey<AnimatedListState> listOfComment = GlobalKey();
+  CommentModel commentModel;
+  PostData postModel;
+  Map recommendReaction;
+  Map ameenReaction;
+  Map forbiddenReaction;
+
+  int ameenCount;
+  int recommendCount;
+  int forbiddenCount;
+
+  UserModel user;
   String errorMessage;
-  dynamic data, userData;
-
   bool _isLoading = false;
-  var logger = Logger();
-
   String currentLang = Intl.getCurrentLocale();
+
+  dynamic data, userData;
+  var logger = Logger();
 
   @override
   void initState() {
@@ -128,7 +148,10 @@ class _PostPageState extends State<PostPage> {
   // Get Post Data
   _getPostData() {
     data = getPostData(
-        postsRef: DbRefs.postsRef, postId: widget.postId, userId: widget.authorId);
+        postsRef: DbRefs.postsRef,
+        postId: widget.postId,
+        userId: widget.authorId,
+    );
     data.then((doc) {
       setState(() {
         postModel = PostData.fromDocument(doc);
@@ -245,15 +268,16 @@ class _PostPageState extends State<PostPage> {
                           SizedBox(height: 12),
 
                           ReactionsButtons(
-                            ameenReaction: postModel.ameenReaction,
-                            ameenCount: ameenCount,
                             authorId: widget.authorId,
                             postId: widget.postId,
                             postBody: postModel.body,
-                            recommendReaction: postModel.recommendReaction,
+                            ameenReaction: ameenReaction,
+                            recommendReaction: recommendReaction,
                             forbiddenReaction: postModel.forbiddenReaction,
-                            forbiddenCount: forbiddenCount,
-                            recommendCount: recommendCount,
+                            ameenCount: postModel.getAmeenCount(ameenReaction),
+                            recommendCount: postModel.getRecommendCount(recommendReaction),
+                            forbiddenCount: postModel
+                                .getForbiddenCount(postModel.forbiddenReaction),
                           ),
                         ],
                       ),
@@ -315,8 +339,10 @@ class _PostPageState extends State<PostPage> {
           children: <Widget>[
             InkWell(
               onTap: () {
-                pushPage(context,
-                    UserProfile(profileId: widget.authorId, currentUser: currentUser));
+                pushPage(
+                    context,
+                    UserProfile(
+                        profileId: widget.authorId, currentUser: currentUser));
               },
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -437,11 +463,12 @@ class _PostPageState extends State<PostPage> {
                   dynamic recommendSnapshot = snapshot?.data['recommend'];
                   dynamic forbiddenSnapshot = snapshot?.data['forbidden'];
 
-                  int counterOfAmeen = postModel.getAmeenCount(amenSnapshot);
+                  int counterOfAmeen =
+                      postModel.getAmeenCount(amenSnapshot);
                   int counterOfForbidden =
-                  postModel.getForbiddenCount(forbiddenSnapshot);
+                      postModel.getForbiddenCount(recommendSnapshot);
                   int counterOfRecommend =
-                  postModel.getRecommendCount(recommendSnapshot);
+                      postModel.getRecommendCount(forbiddenSnapshot);
 
                   int totalReactions =
                       counterOfAmeen + counterOfForbidden + counterOfRecommend;
@@ -449,7 +476,9 @@ class _PostPageState extends State<PostPage> {
                     maintainSize: true,
                     maintainAnimation: true,
                     maintainState: true,
-                    visible: (counterOfAmeen >= 1 || counterOfForbidden >= 1 || counterOfRecommend >= 1)
+                    visible: (counterOfAmeen >= 1 ||
+                              counterOfForbidden >= 1 ||
+                              counterOfRecommend >= 1)
                         ? true
                         : false,
                     child: Container(
@@ -490,7 +519,7 @@ class _PostPageState extends State<PostPage> {
                                 // Forbidden React
                                 Visibility(
                                   visible:
-                                  counterOfForbidden >= 1 ? true : false,
+                                      counterOfForbidden >= 1 ? true : false,
                                   child: myImages.forbiddenIconReactCounter,
                                 ),
                               ],
@@ -518,9 +547,9 @@ class _PostPageState extends State<PostPage> {
                   final counterOfComments = snapshot.data.documents.length;
                   return Visibility(
                       visible:
-                      counterOfComments != null && counterOfComments >= 1
-                          ? true
-                          : false,
+                          counterOfComments != null && counterOfComments >= 1
+                              ? true
+                              : false,
                       child: Container(
                         child: Row(
                           children: <Widget>[
@@ -545,7 +574,6 @@ class _PostPageState extends State<PostPage> {
       ),
     );
   }
-
 
   // Add a Comment Widget
   Widget _writeAComment() {

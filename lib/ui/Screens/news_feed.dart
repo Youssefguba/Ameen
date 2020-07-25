@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:ameen/helpers/ad_manager.dart';
 import 'package:ameencommon/common_widget/shimmer_widget.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/services/connection_check.dart';
@@ -7,6 +8,7 @@ import 'package:ameen/ui/widgets/custom_app_bar.dart';
 import 'package:ameen/ui/widgets/news_feed_widgets/add_new_post_widget.dart';
 import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
 import 'package:ameencommon/utils/functions.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -24,23 +26,44 @@ class NewsFeed extends StatefulWidget {
   _NewsFeedState createState() => _NewsFeedState();
 }
 
-class _NewsFeedState extends State<NewsFeed>  with AutomaticKeepAliveClientMixin<NewsFeed> {
+class _NewsFeedState extends State<NewsFeed>
+    with AutomaticKeepAliveClientMixin<NewsFeed> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
   List<PostWidget> posts = [];
   bool _isLoading = false;
-  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   Locale locale;
+
+  BannerAd _bannerAd;
+
   @override
   void initState() {
+    super.initState();
+    FirebaseAdMob.instance.initialize(appId: AdManager.appId);
+
+    _bannerAd = BannerAd(
+      adUnitId: AdManager.bannerAdUnitId,
+      size: AdSize.banner,
+    );
+
+    _loadBannerAd();
+
     getTimeline();
     configurePushNotification();
-    super.initState();
+  }
+
+  void _loadBannerAd() {
+    _bannerAd
+      ..load()
+      ..show(anchorType: AnchorType.top);
   }
 
   @override
   void dispose() {
     super.dispose();
     _isLoading = false;
+    _bannerAd?.dispose();
   }
 
   getTimeline() async {
@@ -50,35 +73,36 @@ class _NewsFeedState extends State<NewsFeed>  with AutomaticKeepAliveClientMixin
         .getDocuments();
 
     posts =
-    snapshot.documents.map((doc) => PostWidget.fromDocument(doc)).toList();
+        snapshot.documents.map((doc) => PostWidget.fromDocument(doc)).toList();
 
     setState(() => _isLoading = false);
-
   }
 
   buildTimeline() {
     if (posts == null) {
       return ShimmerWidget();
     } else if (posts.isEmpty) {
-      return Center(child: Text('لا يوجد أدعية قم بمشاركة دعاءك الذي تتمنه أن يتحقق'),);
+      return Center(
+        child: Text('لا يوجد أدعية قم بمشاركة دعاءك الذي تتمنه أن يتحقق'),
+      );
     } else {
       return ListView(children: posts);
     }
   }
 
   configurePushNotification() {
-    if(Platform.isIOS)  getIOSPermission();
+    if (Platform.isIOS) getIOSPermission();
     _firebaseMessaging.requestNotificationPermissions();
 
 //    Platform.isAndroid
 ////        ? showNotification(message['notification'])
 ////        : showNotification(message['aps']['alert']);
+
     _firebaseMessaging.getToken().then((token) {
       print('Firebase Messaging token $token');
       usersRef
           .document(widget.currentUser.uid)
-          .updateData({ 'androidNotificationToken': token });
-
+          .updateData({'androidNotificationToken': token});
     });
 
     _firebaseMessaging.configure(
@@ -93,21 +117,20 @@ class _NewsFeedState extends State<NewsFeed>  with AutomaticKeepAliveClientMixin
         final recipientId = message['data']['recipient'];
         print('This is a recripientID');
         final body = message['notification']['body'];
-        if(recipientId == widget.currentUser.uid) {
+        if (recipientId == widget.currentUser.uid) {
           print('Notification shown');
         }
         print('Notification NOT shown');
-
       },
     );
   }
 
   void getIOSPermission() {
-      _firebaseMessaging.requestNotificationPermissions(
-          IosNotificationSettings(alert: true, badge: true, sound: true));
-      _firebaseMessaging.onIosSettingsRegistered.listen((settings) {
-        print("Settings registered: $settings");
-      });
+    _firebaseMessaging.requestNotificationPermissions(
+        IosNotificationSettings(alert: true, badge: true, sound: true));
+    _firebaseMessaging.onIosSettingsRegistered.listen((settings) {
+      print("Settings registered: $settings");
+    });
   }
 
   @override
@@ -120,17 +143,21 @@ class _NewsFeedState extends State<NewsFeed>  with AutomaticKeepAliveClientMixin
       // Refresh Indicator to Fetch Latest Data..
       body: ConnectivityCheck(
         child: RefreshIndicator(
-          color:  AppColors.cGreen,
+          color: AppColors.cGreen,
           backgroundColor: Colors.white,
           onRefresh: () async => getTimeline(),
-           child:  _isLoading ? ShimmerWidget() : Container(
-            child: Column(
-              children: <Widget>[
-                AddNewPostWidget(currentUser: widget.currentUser),
-                Expanded(child:  _isLoading ? ShimmerWidget() : buildTimeline(),),
-              ],
-            ),
-          ),
+          child: _isLoading
+              ? ShimmerWidget()
+              : Container(
+                  child: Column(
+                    children: <Widget>[
+                      AddNewPostWidget(currentUser: widget.currentUser),
+                      Expanded(
+                        child: _isLoading ? ShimmerWidget() : buildTimeline(),
+                      ),
+                    ],
+                  ),
+                ),
         ),
       ),
     );
@@ -138,6 +165,4 @@ class _NewsFeedState extends State<NewsFeed>  with AutomaticKeepAliveClientMixin
 
   @override
   bool get wantKeepAlive => true;
-
-
 }

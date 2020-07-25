@@ -49,38 +49,40 @@ class ReactionsButtons extends StatefulWidget {
   final String authorId;
   final String postId;
   final String postBody;
+  static int counter;
   Map ameenReaction;
   Map recommendReaction;
   Map forbiddenReaction;
   int ameenCount;
   int recommendCount;
   int forbiddenCount;
-  static int counter;
+
 
   ReactionsButtons(
       {Key key,
-      @required this.ameenReaction,
-      @required this.ameenCount,
-      @required this.recommendCount,
-      @required this.forbiddenCount,
       @required this.authorId,
       @required this.postId,
       @required this.postBody,
-      @required this.recommendReaction,
-      @required this.forbiddenReaction})
+      this.ameenReaction,
+      this.recommendReaction,
+      this.forbiddenReaction,
+      this.ameenCount,
+      this.recommendCount,
+      this.forbiddenCount})
       : super(key: key);
 
   @override
   ReactionsButtonsState createState() => ReactionsButtonsState(
-      ameenReaction: this.ameenReaction,
-      recommendReaction: this.recommendReaction,
-      forbiddenReaction: this.forbiddenReaction,
-      ameenCount: this.ameenCount,
-      recommendCount: this.recommendCount,
-      forbiddenCount: this.forbiddenCount,
       authorId: this.authorId,
       postBody: this.postBody,
-      postId: this.postId);
+      postId: this.postId,
+      ameenReaction: this.ameenReaction,
+      forbiddenReaction: this.forbiddenReaction,
+      recommendReaction: this.recommendReaction,
+      ameenCount: this.ameenCount,
+      recommendCount: this.recommendCount,
+      forbiddenCount: this.forbiddenCount
+  );
 }
 
 class ReactionsButtonsState extends State<ReactionsButtons>
@@ -98,15 +100,16 @@ class ReactionsButtonsState extends State<ReactionsButtons>
   int forbiddenCount;
 
   ReactionsButtonsState({
-    @required this.ameenReaction,
-    @required this.ameenCount,
     @required this.authorId,
     @required this.postId,
     @required this.postBody,
-    @required this.recommendReaction,
-    @required this.forbiddenReaction,
-    @required this.recommendCount,
-    @required this.forbiddenCount,
+    this.ameenReaction,
+    this.recommendReaction,
+    this.forbiddenReaction,
+    this.ameenCount,
+    this.recommendCount,
+    this.forbiddenCount,
+
   });
 
   UserModel user;
@@ -227,6 +230,7 @@ class ReactionsButtonsState extends State<ReactionsButtons>
               label: Text(
                 AppLocalizations.of(context).comment,
                 style: btnStyle,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ),
@@ -243,7 +247,7 @@ class ReactionsButtonsState extends State<ReactionsButtons>
             child: ReactionsButtonRow(
                 image: Image.asset(shareImage),
                 label:
-                    Text(AppLocalizations.of(context).share, style: btnStyle)),
+                    Text(AppLocalizations.of(context).share, style: btnStyle, overflow: TextOverflow.ellipsis)),
           ),
         ],
       ),
