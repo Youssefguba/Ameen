@@ -1,15 +1,16 @@
+import 'package:ameen/helpers/ad_manager.dart';
 import 'package:ameen/ui/Screens/post_page.dart';
 import 'package:ameen/ui/Screens/user_profile.dart';
 import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameencommon/localizations.dart';
 import 'package:ameencommon/models/post_data.dart';
-import 'package:ameencommon/models/user_data.dart';
 import 'package:ameen/ui/widgets/comment/add_new_comment.dart';
 import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameencommon/utils/functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart'; //for date locale
@@ -33,23 +34,21 @@ class PostWidget extends StatefulWidget {
   dynamic recommendReaction;
   dynamic forbiddenReaction;
 
-  PostWidget(
-      {Key key,
-      this.postId,
-      this.postBody,
-      this.authorId,
-      this.ameenCount,
-      this.forbiddenCount,
-      this.recommendCount,
-      this.ameenReaction,
-      this.authorName,
-      this.authorPhoto,
-      this.postTime,
-      this.recommendReaction,
-      this.forbiddenReaction,
-
-      })
-      : super(key: key);
+  PostWidget({
+    Key key,
+    this.postId,
+    this.postBody,
+    this.authorId,
+    this.ameenCount,
+    this.forbiddenCount,
+    this.recommendCount,
+    this.ameenReaction,
+    this.authorName,
+    this.authorPhoto,
+    this.postTime,
+    this.recommendReaction,
+    this.forbiddenReaction,
+  }) : super(key: key);
 
   factory PostWidget.fromDocument(DocumentSnapshot doc) {
     return PostWidget(
@@ -171,22 +170,21 @@ class PostWidget extends StatefulWidget {
 }
 
 class _PostWidgetState extends State<PostWidget> {
-  _PostWidgetState({
-    Key key,
-    this.postId,
-    this.postBody,
-    this.postTime,
-    this.ameenCount,
-    this.recommendCount,
-    this.forbiddenCount,
-    this.authorId,
-    this.authorName,
-    this.authorPhoto,
-    this.ameenReaction,
-    this.recommendReaction,
-    this.forbiddenReaction,
-    this.postModel
-  });
+  _PostWidgetState(
+      {Key key,
+      this.postId,
+      this.postBody,
+      this.postTime,
+      this.ameenCount,
+      this.recommendCount,
+      this.forbiddenCount,
+      this.authorId,
+      this.authorName,
+      this.authorPhoto,
+      this.ameenReaction,
+      this.recommendReaction,
+      this.forbiddenReaction,
+      this.postModel});
 
   CollectionReference usersRef =
       Firestore.instance.collection(DatabaseTable.users);
@@ -215,11 +213,54 @@ class _PostWidgetState extends State<PostWidget> {
 
   dynamic _postData;
   String currentLang = Intl.getCurrentLocale();
+  InterstitialAd _interstitialAd;
+  bool _isInterstitialAdReady;
 
   @override
   void initState() {
     super.initState();
+    FirebaseAdMob.instance.initialize(appId: AdManager.appId);
     _getPostData();
+    _isInterstitialAdReady = false;
+    _interstitialAd = createInterstitialAd();
+  }
+
+  InterstitialAd createInterstitialAd() {
+    return InterstitialAd(
+      adUnitId: AdManager.interstitialAdUnitId,
+      listener: _onInterstitialAdEvent,
+    );
+  }
+
+  void _onInterstitialAdEvent(MobileAdEvent event) {
+    switch (event) {
+      case MobileAdEvent.loaded:
+        _isInterstitialAdReady = true;
+        break;
+      case MobileAdEvent.failedToLoad:
+        _isInterstitialAdReady = false;
+        pushPage(
+            context,
+            PostPage(
+              postId: postId,
+              authorId: authorId,
+              authorName: authorName,
+              postModel: postModel,
+            ));
+        break;
+      case MobileAdEvent.closed:
+        pushPage(
+            context,
+            PostPage(
+              postId: postId,
+              authorId: authorId,
+              authorName: authorName,
+              postModel: postModel,
+            ));
+        break;
+      default:
+      // do nothing
+    }
   }
 
   // Get Post Data
@@ -283,6 +324,7 @@ class _PostWidgetState extends State<PostWidget> {
   @override
   void dispose() {
     super.dispose();
+    _interstitialAd?.dispose();
   }
 
   @override
@@ -314,26 +356,19 @@ class _PostWidgetState extends State<PostWidget> {
               Container(
                 child: Column(
                   children: [
-                    GestureDetector(
-                        onTap: () => pushPage(
-                            context,
-                            PostPage(
-                              postId: postId,
-                              authorId: authorId,
-                              authorName: authorName,
-                              postModel: postModel,
-
-                            )),
+                    InkWell(
+                        onTap: () {
+                          createInterstitialAd()
+                            ..load()
+                            ..show();
+                        },
                         child: _postBody()),
                     InkWell(
-                        onTap: () => pushPage(
-                            context,
-                            PostPage(
-                              postId: postId,
-                              authorId: authorId,
-                              authorName: authorName,
-                              postModel: postModel,
-                            )),
+                        onTap: () {
+                          createInterstitialAd()
+                            ..load()
+                            ..show();
+                        },
                         child: _reactAndCommentCounter()),
                     SizedBox(height: 8),
                   ],
@@ -351,15 +386,11 @@ class _PostWidgetState extends State<PostWidget> {
                 recommendCount: recommendCount,
               ),
               InkWell(
-                  onTap: () => pushPage(
-                      context,
-                      PostPage(
-                        postId: postId,
-                        authorId: authorId,
-                        authorName: authorName,
-                        postModel: postModel,
-
-                      )),
+                  onTap: () {
+                    createInterstitialAd()
+                      ..load()
+                      ..show();
+                  },
                   child: AddNewCommentWidget(
                     authorPhoto: authorPhoto,
                   )),
@@ -379,8 +410,6 @@ class _PostWidgetState extends State<PostWidget> {
             authorId: authorId,
             authorName: authorName,
             postModel: postModel,
-
-
           )),
       child: Container(
         alignment: currentLang == 'ar' ? Alignment.topRight : Alignment.topLeft,
@@ -555,8 +584,7 @@ class _PostWidgetState extends State<PostWidget> {
           if (snapshot.connectionState == ConnectionState.active) {
             final counterOfComments = snapshot.data.documents.length;
             return Visibility(
-                visible:
-                counterOfComments != null && counterOfComments >= 1
+                visible: counterOfComments != null && counterOfComments >= 1
                     ? true
                     : false,
                 child: Container(
@@ -568,8 +596,7 @@ class _PostWidgetState extends State<PostWidget> {
                               ? ''
                               : counterOfComments.toString(),
                           style: mytextStyle.reactCounterTextStyle),
-                      Padding(
-                          padding: EdgeInsets.only(right: 2, left: 3)),
+                      Padding(padding: EdgeInsets.only(right: 2, left: 3)),
                       // "Comment Word"
                       Text(AppLocalizations.of(context).comment,
                           style: mytextStyle.reactCounterTextStyle),
@@ -601,9 +628,9 @@ class _PostWidgetState extends State<PostWidget> {
 
             int counterOfAmeen = widget.getAmeenCount(amenSnapshot);
             int counterOfForbidden =
-            widget.getForbiddenCount(forbiddenSnapshot);
+                widget.getForbiddenCount(forbiddenSnapshot);
             int counterOfRecommend =
-            widget.getRecommendCount(recommendSnapshot);
+                widget.getRecommendCount(recommendSnapshot);
 
             totalReactions =
                 counterOfAmeen + counterOfRecommend + counterOfForbidden;
@@ -611,7 +638,9 @@ class _PostWidgetState extends State<PostWidget> {
               maintainSize: true,
               maintainAnimation: true,
               maintainState: true,
-              visible: (counterOfAmeen >= 1 || counterOfRecommend >= 1 || counterOfForbidden >= 1)
+              visible: (counterOfAmeen >= 1 ||
+                      counterOfRecommend >= 1 ||
+                      counterOfForbidden >= 1)
                   ? true
                   : false,
               child: Container(
@@ -623,9 +652,7 @@ class _PostWidgetState extends State<PostWidget> {
                       margin: EdgeInsets.only(right: 2, left: 2),
                       child: Text(
                         //Check if the Total Reactions = 0 or not
-                        totalReactions >= 1
-                            ? totalReactions.toString()
-                            : '',
+                        totalReactions >= 1 ? totalReactions.toString() : '',
                         style: mytextStyle.reactCounterTextStyle,
                       ),
                     ),
@@ -644,15 +671,13 @@ class _PostWidgetState extends State<PostWidget> {
 
                           // Recommend React
                           Visibility(
-                            visible:
-                            counterOfRecommend >= 1 ? true : false,
+                            visible: counterOfRecommend >= 1 ? true : false,
                             child: myImages.recommendIconReactCounter,
                           ),
 
                           // Forbidden React
                           Visibility(
-                            visible:
-                            counterOfForbidden >= 1 ? true : false,
+                            visible: counterOfForbidden >= 1 ? true : false,
                             child: myImages.forbiddenIconReactCounter,
                           ),
                         ],

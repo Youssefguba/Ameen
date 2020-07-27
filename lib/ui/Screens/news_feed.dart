@@ -35,35 +35,18 @@ class _NewsFeedState extends State<NewsFeed>
   bool _isLoading = false;
   Locale locale;
 
-  BannerAd _bannerAd;
-
   @override
   void initState() {
     super.initState();
-    FirebaseAdMob.instance.initialize(appId: AdManager.appId);
-
-    _bannerAd = BannerAd(
-      adUnitId: AdManager.bannerAdUnitId,
-      size: AdSize.banner,
-    );
-
-    _loadBannerAd();
 
     getTimeline();
     configurePushNotification();
-  }
-
-  void _loadBannerAd() {
-    _bannerAd
-      ..load()
-      ..show(anchorType: AnchorType.top);
   }
 
   @override
   void dispose() {
     super.dispose();
     _isLoading = false;
-    _bannerAd?.dispose();
   }
 
   getTimeline() async {
