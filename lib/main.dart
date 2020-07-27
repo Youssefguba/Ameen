@@ -1,4 +1,5 @@
 import 'package:ameen/services/authentication.dart';
+import 'package:ameen/ui/Screens/splash_screen.dart';
 import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,6 @@ import 'package:ameencommon/localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
-
   runApp(MyApp());
 }
 
@@ -34,19 +34,19 @@ class MyApp extends StatelessWidget {
           const Locale('en', ''),
         ],
         builder: (context, child) {
-              return ScrollConfiguration(
-                behavior: RemoveGlowEffect(),
-                child: child,
-              );
-            },
-            title: 'آمين',
-            theme: ThemeData(
-              primaryColor: Color.fromRGBO(62, 146, 42, 1),
-            ),
-            debugShowCheckedModeBanner: false,
-            home: Wrapper(),
-          ),
-        );
+          return ScrollConfiguration(
+            behavior: RemoveGlowEffect(),
+            child: child,
+          );
+        },
+        title: 'آمين',
+        theme: ThemeData(
+          primaryColor: Color.fromRGBO(62, 146, 42, 1),
+        ),
+        debugShowCheckedModeBanner: false,
+        home: SplashScreen(),
+      ),
+    );
   }
 }
 
