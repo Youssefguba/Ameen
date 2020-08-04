@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:ameen/helpers/ad_manager.dart';
 import 'package:ameencommon/common_widget/shimmer_widget.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameen/services/connection_check.dart';
@@ -8,10 +7,11 @@ import 'package:ameen/ui/widgets/custom_app_bar.dart';
 import 'package:ameen/ui/widgets/news_feed_widgets/add_new_post_widget.dart';
 import 'package:ameen/ui/widgets/post_widgets/post_widget.dart';
 import 'package:ameencommon/utils/functions.dart';
-import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -28,9 +28,10 @@ class NewsFeed extends StatefulWidget {
 
 class _NewsFeedState extends State<NewsFeed>
     with AutomaticKeepAliveClientMixin<NewsFeed> {
+  static const TAG = 'News_feed';
+  ScrollController _scrollController = ScrollController();
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-
   List<PostWidget> posts = [];
   bool _isLoading = false;
   Locale locale;
@@ -38,7 +39,7 @@ class _NewsFeedState extends State<NewsFeed>
   @override
   void initState() {
     super.initState();
-
+    _loadMoreInTimeline();
     getTimeline();
     configurePushNotification();
   }
@@ -47,39 +48,39 @@ class _NewsFeedState extends State<NewsFeed>
   void dispose() {
     super.dispose();
     _isLoading = false;
+    _scrollController.dispose();
   }
 
-  getTimeline() async {
+  void _loadMoreInTimeline() {
+    _scrollController.addListener(() {
+      if (_scrollController.position.outOfRange) {
+        if (_scrollController.position.pixels == 0) {
+          print('$TAG, at the top');
+        } else {
+          print('$TAG, at the bottom');
+        }
+      }
+    });
+  }
+
+  void getTimeline() async {
     setState(() => _isLoading = true);
     QuerySnapshot snapshot = await DbRefs.timelineRef
         .orderBy('created_at', descending: true)
         .getDocuments();
 
-    posts =
-        snapshot.documents.map((doc) => PostWidget.fromDocument(doc)).toList();
+    setState(() {
+      posts = snapshot.documents
+          .map((doc) => PostWidget.fromDocument(doc))
+          .toList();
+    });
 
     setState(() => _isLoading = false);
   }
 
-  buildTimeline() {
-    if (posts == null) {
-      return ShimmerWidget();
-    } else if (posts.isEmpty) {
-      return Center(
-        child: Text('لا يوجد أدعية قم بمشاركة دعاءك الذي تتمنه أن يتحقق'),
-      );
-    } else {
-      return ListView(children: posts);
-    }
-  }
-
-  configurePushNotification() {
+  void configurePushNotification() {
     if (Platform.isIOS) getIOSPermission();
     _firebaseMessaging.requestNotificationPermissions();
-
-//    Platform.isAndroid
-////        ? showNotification(message['notification'])
-////        : showNotification(message['aps']['alert']);
 
     _firebaseMessaging.getToken().then((token) {
       print('Firebase Messaging token $token');
@@ -116,6 +117,24 @@ class _NewsFeedState extends State<NewsFeed>
     });
   }
 
+  buildTimeline() {
+    if (posts == null) {
+      return ShimmerWidget();
+    } else if (posts.isEmpty) {
+      return Center(
+        child: Text('لا يوجد أدعية قم بمشاركة دعاءك الذي تتمنه أن يتحقق'),
+      );
+    } else {
+      return ListView(
+        children: posts,
+        controller: _scrollController,
+        physics: BouncingScrollPhysics(),
+        semanticChildCount: posts.length % 2,
+        shrinkWrap: true,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -135,7 +154,7 @@ class _NewsFeedState extends State<NewsFeed>
                   child: Column(
                     children: <Widget>[
                       AddNewPostWidget(currentUser: widget.currentUser),
-                      Expanded(
+                      Flexible(
                         child: _isLoading ? ShimmerWidget() : buildTimeline(),
                       ),
                     ],

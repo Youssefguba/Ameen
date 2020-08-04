@@ -1,6 +1,5 @@
 import 'package:ameen/services/authentication.dart';
 import 'package:ameen/ui/Screens/splash_screen.dart';
-import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

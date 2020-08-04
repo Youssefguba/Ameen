@@ -174,9 +174,9 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                           SizedBox(height: 10),
                           SizedBox(height: 13),
 
-                          // SignIn Anonymously Button
-                          SubmitButton(color: Colors.grey.shade700,
-                              title: "الدخول كمستخدم خفي", onTap: anonymousLoginButton)
+//                          // SignIn Anonymously Button
+//                          SubmitButton(color: Colors.grey.shade700,
+//                              title: "الدخول كمستخدم خفي", onTap: anonymousLoginButton)
                         ],
                       ),
                     ),

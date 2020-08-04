@@ -236,27 +236,16 @@ class _PostWidgetState extends State<PostWidget> {
     switch (event) {
       case MobileAdEvent.loaded:
         _isInterstitialAdReady = true;
+        _pushToPostPage();
+
         break;
       case MobileAdEvent.failedToLoad:
         _isInterstitialAdReady = false;
-        pushPage(
-            context,
-            PostPage(
-              postId: postId,
-              authorId: authorId,
-              authorName: authorName,
-              postModel: postModel,
-            ));
+        _pushToPostPage();
+
         break;
       case MobileAdEvent.closed:
-        pushPage(
-            context,
-            PostPage(
-              postId: postId,
-              authorId: authorId,
-              authorName: authorName,
-              postModel: postModel,
-            ));
+        _pushToPostPage();
         break;
       default:
       // do nothing
@@ -403,14 +392,7 @@ class _PostWidgetState extends State<PostWidget> {
 
   Widget _postBody() {
     return InkWell(
-      onTap: () => pushPage(
-          context,
-          PostPage(
-            postId: postId,
-            authorId: authorId,
-            authorName: authorName,
-            postModel: postModel,
-          )),
+      onTap: () => _pushToPostPage(),
       child: Container(
         alignment: currentLang == 'ar' ? Alignment.topRight : Alignment.topLeft,
         margin: EdgeInsets.only(top: 5, left: 5, right: 5, bottom: 0),
@@ -714,5 +696,16 @@ class _PostWidgetState extends State<PostWidget> {
             ],
           );
         });
+  }
+
+  void _pushToPostPage() {
+    pushPage(
+        context,
+        PostPage(
+          postId: postId,
+          authorId: authorId,
+          authorName: authorName,
+          postModel: postModel,
+        ));
   }
 }

@@ -13,6 +13,7 @@ import 'package:ameen/ui/widgets/post_widgets/reactions_button_row.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:ameencommon/utils/functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -45,7 +46,6 @@ class PostPage extends StatefulWidget {
     this.postModel,
   });
 
-
   @override
   _PostPageState createState() => _PostPageState(
         postModel: this.postModel,
@@ -53,13 +53,22 @@ class PostPage extends StatefulWidget {
         recommendReaction: postModel.recommendReaction,
         forbiddenReaction: postModel.forbiddenReaction,
         ameenCount: postModel.getAmeenCount(this.postModel.ameenReaction),
-        recommendCount: postModel.getRecommendCount(this.postModel.recommendReaction),
-        forbiddenCount: postModel.getForbiddenCount(this.postModel.forbiddenReaction),
+        recommendCount:
+            postModel.getRecommendCount(this.postModel.recommendReaction),
+        forbiddenCount:
+            postModel.getForbiddenCount(this.postModel.forbiddenReaction),
       );
 }
 
 class _PostPageState extends State<PostPage> {
-  _PostPageState({this.postModel, this.recommendReaction, this.ameenReaction, this.ameenCount, this.recommendCount, this.forbiddenReaction, this.forbiddenCount});
+  _PostPageState(
+      {this.postModel,
+      this.recommendReaction,
+      this.ameenReaction,
+      this.ameenCount,
+      this.recommendCount,
+      this.forbiddenReaction,
+      this.forbiddenCount});
   final GlobalKey<AnimatedListState> listOfComment = GlobalKey();
   CommentModel commentModel;
   PostData postModel;
@@ -78,7 +87,6 @@ class _PostPageState extends State<PostPage> {
 
   dynamic data, userData;
   var logger = Logger();
-
   @override
   void initState() {
     super.initState();
@@ -148,9 +156,9 @@ class _PostPageState extends State<PostPage> {
   // Get Post Data
   _getPostData() {
     data = getPostData(
-        postsRef: DbRefs.postsRef,
-        postId: widget.postId,
-        userId: widget.authorId,
+      postsRef: DbRefs.postsRef,
+      postId: widget.postId,
+      userId: widget.authorId,
     );
     data.then((doc) {
       setState(() {
@@ -275,7 +283,8 @@ class _PostPageState extends State<PostPage> {
                             recommendReaction: recommendReaction,
                             forbiddenReaction: postModel.forbiddenReaction,
                             ameenCount: postModel.getAmeenCount(ameenReaction),
-                            recommendCount: postModel.getRecommendCount(recommendReaction),
+                            recommendCount:
+                                postModel.getRecommendCount(recommendReaction),
                             forbiddenCount: postModel
                                 .getForbiddenCount(postModel.forbiddenReaction),
                           ),
@@ -463,8 +472,7 @@ class _PostPageState extends State<PostPage> {
                   dynamic recommendSnapshot = snapshot?.data['recommend'];
                   dynamic forbiddenSnapshot = snapshot?.data['forbidden'];
 
-                  int counterOfAmeen =
-                      postModel.getAmeenCount(amenSnapshot);
+                  int counterOfAmeen = postModel.getAmeenCount(amenSnapshot);
                   int counterOfForbidden =
                       postModel.getForbiddenCount(recommendSnapshot);
                   int counterOfRecommend =
@@ -477,8 +485,8 @@ class _PostPageState extends State<PostPage> {
                     maintainAnimation: true,
                     maintainState: true,
                     visible: (counterOfAmeen >= 1 ||
-                              counterOfForbidden >= 1 ||
-                              counterOfRecommend >= 1)
+                            counterOfForbidden >= 1 ||
+                            counterOfRecommend >= 1)
                         ? true
                         : false,
                     child: Container(
@@ -512,7 +520,7 @@ class _PostPageState extends State<PostPage> {
                                 // Recommend React
                                 Visibility(
                                   visible:
-                                  counterOfRecommend >= 1 ? true : false,
+                                      counterOfRecommend >= 1 ? true : false,
                                   child: myImages.recommendIconReactCounter,
                                 ),
 

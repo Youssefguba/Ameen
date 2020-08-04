@@ -1,4 +1,5 @@
 import 'package:ameen/ui/Screens/chat_page.dart';
+import 'package:ameen/ui/widgets/full_photo.dart';
 import 'package:ameencommon/localizations.dart';
 import 'package:ameencommon/models/user_data.dart';
 import 'package:ameencommon/utils/constants.dart';
@@ -13,7 +14,8 @@ import 'package:flutter/material.dart';
 class ProfileAppBar extends StatefulWidget {
   String profileId;
   FirebaseUser currentUser;
-  ProfileAppBar({Key key, @required this.profileId, @required this.currentUser}): super(key: key);
+  ProfileAppBar({Key key, @required this.profileId, @required this.currentUser})
+      : super(key: key);
 
   @override
   _ProfileAppBarState createState() => _ProfileAppBarState();
@@ -145,19 +147,17 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
     });
   }
 
-   _showDoaaButton() {
+  _showDoaaButton() {
     bool isProfileOwner = widget.currentUser.uid == widget.profileId;
-    if(isProfileOwner) {
+    if (isProfileOwner) {
       return _addDoaaButton(context);
-    }
-    else if (isFollowing) {
+    } else if (isFollowing) {
       return _followButton(
         context,
         text: AppLocalizations.of(context).unfollow,
         function: _handleUnfollowUser,
       );
-    }
-    else if (!isFollowing) {
+    } else if (!isFollowing) {
       return _followButton(
         context,
         text: AppLocalizations.of(context).follow,
@@ -167,13 +167,12 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
   }
 
   _showSendMessageBtn() {
-      bool isProfileOwner = widget.currentUser.uid == widget.profileId;
-      if(isProfileOwner) {
-        return Container();
-      }
-      else if (isFollowing || !isFollowing) {
-        return _sendMessageButton(context);
-      }
+    bool isProfileOwner = widget.currentUser.uid == widget.profileId;
+    if (isProfileOwner) {
+      return Container();
+    } else if (isFollowing || !isFollowing) {
+      return _sendMessageButton(context);
+    }
   }
 
   @override
@@ -183,7 +182,7 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
     return FutureBuilder(
       future: DbRefs.usersRef.document(widget.profileId).get(),
       builder: (context, snapshot) {
-        if(!snapshot.hasData) {
+        if (!snapshot.hasData) {
           return Container();
         }
         user = UserModel.fromDocSnapshot(snapshot.data);
@@ -194,10 +193,20 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.white,
-                  backgroundImage:  user.profilePicture == null ? AssetImage(AppImages.AnonymousPerson): CachedNetworkImageProvider(user.profilePicture),
+                InkWell(
+                  onTap: () {
+                    user.profilePicture == null
+                        ? print('There is no Photo')
+                        : pushPage(
+                            context, FullPhoto(url: user.profilePicture));
+                  },
+                  child: CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.white,
+                    backgroundImage: user.profilePicture == null
+                        ? AssetImage(AppImages.AnonymousPerson)
+                        : CachedNetworkImageProvider(user.profilePicture),
+                  ),
                 ),
                 Container(
                   child: Text(
@@ -211,7 +220,6 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
                     ),
                   ),
                 ),
-
                 _followersAndFollowingRow(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -236,7 +244,8 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 8),
       child: FlatButton(
-        onPressed: () => pushPage(context, CreatePost(currentUser: widget.currentUser)),
+        onPressed: () =>
+            pushPage(context, CreatePost(currentUser: widget.currentUser)),
         color: AppColors.green[900],
         padding: EdgeInsets.all(5),
         hoverColor: Colors.white,
@@ -268,11 +277,19 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
         shape: RoundedRectangleBorder(
           borderRadius: new BorderRadius.circular(18.0),
         ),
-        onPressed: () { pushPage(context, ChatScreen(peerId: widget.profileId, peerAvatar: user.profilePicture, peerUsername: user.username, )); },
+        onPressed: () {
+          pushPage(
+              context,
+              ChatScreen(
+                peerId: widget.profileId,
+                peerAvatar: user.profilePicture,
+                peerUsername: user.username,
+              ));
+        },
         child: Text(
           AppLocalizations.of(context).sendMessage,
           style:
-          TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'Dubai'),
+              TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'Dubai'),
         ),
       ),
     );
@@ -293,7 +310,7 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
       child: Text(
         text,
         style:
-        TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'Dubai'),
+            TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'Dubai'),
       ),
     );
   }
@@ -316,7 +333,6 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
                   fontWeight: FontWeight.bold),
             ),
           ),
-
         ],
       ),
     );
