@@ -23,11 +23,11 @@ class _LoginState extends State<Login> {
   final _resetEmailFormKey = GlobalKey<FormState>();
   final TextEditingController emailController = new TextEditingController();
   final TextEditingController passwordController = new TextEditingController();
-  final TextEditingController resetEmailController = new TextEditingController();
+  final TextEditingController resetEmailController =
+      new TextEditingController();
   final AuthService auth = AuthService();
   FirebaseUser user;
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-
 
   String email = '';
   String password = '';
@@ -36,76 +36,83 @@ class _LoginState extends State<Login> {
 
   //Login Button
   void signIn() async {
-    if(_formKey.currentState.validate()) {
+    if (_formKey.currentState.validate()) {
       user = await auth.signIn(email, password);
-      print('This is a result of login ${user.toString()}');
-      if(user == null) {
+      if (user == null) {
         SnackBar snackBar = SnackBar(
-          content: Text(AppLocalizations.of(context).emailAlreadyExisted, style: TextStyle(fontFamily: 'Dubai')),
+          content: Text(AppLocalizations.of(context).emailIsNotExist,
+              style: TextStyle(fontFamily: 'Dubai')),
           backgroundColor: Colors.red.shade700,
           duration: Duration(seconds: 3),
         );
         _scaffoldKey.currentState.showSnackBar(snackBar);
       } else {
         currentUser = user;
-        pushAndRemoveUntilPage(context, Home(currentUser: user,));
+        pushAndRemoveUntilPage(context, Home(currentUser: user));
       }
     }
   }
 
-   _resetPasswordDialog(BuildContext context) {
-     return showDialog(
-         context: context,
-         builder: (context) {
-           return SimpleDialog(
-             title: Text(AppLocalizations.of(context).resetYourPassword),
-             children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Form(
-                    key: _resetEmailFormKey,
-                    child: Column(
-                      children: <Widget>[
-                        EntryField(AppLocalizations.of(context).yourEmail,
+  _resetPasswordDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+            title: Text(AppLocalizations.of(context).resetYourPassword),
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Form(
+                  key: _resetEmailFormKey,
+                  child: Column(
+                    children: <Widget>[
+                      EntryField(AppLocalizations.of(context).yourEmail,
                           inputIcon: Icon(Icons.email),
                           textInputType: TextInputType.emailAddress,
                           editingController: resetEmailController,
-                          validator: (val) => val.isEmpty ? AppLocalizations.of(context).emailCannotBeEmpty : null ),
-                      ],
-                    ),
+                          validator: (val) => val.isEmpty
+                              ? AppLocalizations.of(context).emailCannotBeEmpty
+                              : null),
+                    ],
                   ),
                 ),
-               Row(
-                 children: <Widget>[
-                   SimpleDialogOption(
-                     child: Text(AppLocalizations.of(context).resetYourPassword, style: TextStyle(fontFamily: 'Dubai', color:AppColors.cGreen)),
-                     onPressed: () {
-                       if(_resetEmailFormKey.currentState.validate()){
-                         _resetPassword();
-                       }},
-                   ),
-
-                   SimpleDialogOption(
-                     child: Text('إلغاء', style: TextStyle(fontFamily: 'Dubai', color: Colors.black)),
-                     onPressed: () => Navigator.pop(context) ,
-                   ),
-                 ],
-               ),
-             ],
-           );
-         });
+              ),
+              Row(
+                children: <Widget>[
+                  SimpleDialogOption(
+                    child: Text(AppLocalizations.of(context).resetYourPassword,
+                        style: TextStyle(
+                            fontFamily: 'Dubai', color: AppColors.cGreen)),
+                    onPressed: () {
+                      if (_resetEmailFormKey.currentState.validate()) {
+                        _resetPassword();
+                      }
+                    },
+                  ),
+                  SimpleDialogOption(
+                    child: Text(AppLocalizations.of(context).cancel,
+                        style: TextStyle(
+                            fontFamily: 'Dubai', color: Colors.black)),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ],
+          );
+        });
   }
 
   _resetPassword() async {
-    dynamic userEmail = firebaseAuth.sendPasswordResetEmail(email: resetEmailController.text);
-    if(userEmail == null) {
+    dynamic userEmail =
+        firebaseAuth.sendPasswordResetEmail(email: resetEmailController.text);
+    if (userEmail == null) {
       SnackBar snackBar = SnackBar(
-        content: Text(AppLocalizations.of(context).emailIsNotExist,
-          style: TextStyle(fontFamily: 'Dubai', color: Colors.white)),
-        backgroundColor: Colors.red.shade500,
-        duration: Duration(seconds: 3));
+          content: Text(AppLocalizations.of(context).emailIsNotExist,
+              style: TextStyle(fontFamily: 'Dubai', color: Colors.white)),
+          backgroundColor: Colors.red.shade500,
+          duration: Duration(seconds: 3));
       _scaffoldKey.currentState.showSnackBar(snackBar);
-  } else {
+    } else {
       SnackBar snackBar = SnackBar(
           content: Text('تم الإرسال',
               style: TextStyle(fontFamily: 'Dubai', color: Colors.white)),
@@ -114,7 +121,6 @@ class _LoginState extends State<Login> {
       _scaffoldKey.currentState.showSnackBar(snackBar);
       Navigator.pop(context);
     }
-
   }
 
   @override
@@ -146,8 +152,10 @@ class _LoginState extends State<Login> {
                       ),
                       _emailPasswordWidget(),
                       _forgetPassword(),
-                      SubmitButton(color: Color.fromRGBO(0, 153, 51, 1),
-                          title: AppLocalizations.of(context).login, onTap: signIn),
+                      SubmitButton(
+                          color: Color.fromRGBO(0, 153, 51, 1),
+                          title: AppLocalizations.of(context).login,
+                          onTap: signIn),
                       SizedBox(
                         height: 10,
                       ),
@@ -210,9 +218,10 @@ class _LoginState extends State<Login> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           InkWell(
-            onTap: () {_resetPasswordDialog(context);},
-            child:
-            Text(
+            onTap: () {
+              _resetPasswordDialog(context);
+            },
+            child: Text(
               AppLocalizations.of(context).resetYourPassword,
               style: TextStyle(
                   color: Color.fromRGBO(0, 153, 51, 1),
@@ -263,14 +272,18 @@ class _LoginState extends State<Login> {
             textInputType: TextInputType.emailAddress,
             editingController: emailController,
             onValueChanged: (val) => email = val,
-            validator: (val) => val.isEmpty ? AppLocalizations.of(context).emailCannotBeEmpty : null,
+            validator: (val) => val.isEmpty
+                ? AppLocalizations.of(context).emailCannotBeEmpty
+                : null,
           ),
           EntryField(
             AppLocalizations.of(context).password,
             inputIcon: Icon(Icons.lock),
             isPassword: _obscureText,
             visibleIcon: IconButton(
-              icon: (_obscureText)?Icon(Icons.visibility_off, color: Colors.grey):Icon(Icons.visibility, color: Colors.grey),
+                icon: (_obscureText)
+                    ? Icon(Icons.visibility_off, color: Colors.grey)
+                    : Icon(Icons.visibility, color: Colors.grey),
                 onPressed: () {
                   setState(() {
                     _obscureText = !_obscureText;
@@ -278,13 +291,12 @@ class _LoginState extends State<Login> {
                 }),
             editingController: passwordController,
             onValueChanged: (val) => password = val,
-            validator: (val) =>
-            val.length < 6 ? AppLocalizations.of(context).cannotPasswordSmallerThan : null,
+            validator: (val) => val.length < 6
+                ? AppLocalizations.of(context).cannotPasswordSmallerThan
+                : null,
           ),
         ],
       ),
     );
   }
-
-
 }

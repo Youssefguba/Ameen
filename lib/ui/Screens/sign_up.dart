@@ -23,7 +23,8 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
-  final CollectionReference usersRef = Firestore.instance.collection(DatabaseTable.users);
+  final CollectionReference usersRef =
+      Firestore.instance.collection(DatabaseTable.users);
 
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -34,7 +35,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
   final AuthService auth = AuthService();
 
   FacebookLogin facebookLogin = FacebookLogin();
-  
+
   UserModel currentUser;
   String username = '';
   String email = '';
@@ -56,9 +57,11 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
         children: <Widget>[
           // Login Button Navigator
           InkWell(
-            onTap: () {popPage(context);},
+            onTap: () {
+              popPage(context);
+            },
             child: Text(
-              'تسجيل دخول',
+              AppLocalizations.of(context).login,
               style: TextStyle(
                 color: AppColors.cGreen,
                 fontSize: 13,
@@ -88,7 +91,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
     return RichText(
       textAlign: TextAlign.right,
       text: TextSpan(
-        text: 'الإشتراك',
+        text: AppLocalizations.of(context).signup,
         style: TextStyle(
           fontSize: 25,
           fontFamily: 'Dubai',
@@ -105,19 +108,25 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
       child: Column(
         children: <Widget>[
           // Username
-          EntryField(AppLocalizations.of(context).username, inputIcon: Icon(Icons.person),
-              editingController: userNameController,
-              onValueChanged: (value) => { username = value},
-              validator: (val) => val.trim().length < 3 || val.isEmpty ? 'لا تترك خانة الإسم فارغة' : null,
+          EntryField(
+            AppLocalizations.of(context).username,
+            inputIcon: Icon(Icons.person),
+            editingController: userNameController,
+            onValueChanged: (value) => {username = value},
+            validator: (val) => val.trim().length < 3 || val.isEmpty
+                ? AppLocalizations.of(context).nameCannotBeEmpty
+                : null,
           ),
           // Email Address
           EntryField(
             AppLocalizations.of(context).yourEmail,
             inputIcon: Icon(Icons.email),
-              textInputType: TextInputType.emailAddress,
-              editingController: emailController,
-              onValueChanged: (value) => { email = value},
-              validator: (val) => val.isEmpty ? 'لا تنسى كتابة الإيميل' : null,
+            textInputType: TextInputType.emailAddress,
+            editingController: emailController,
+            onValueChanged: (value) => {email = value},
+            validator: (val) => val.isEmpty
+                ? AppLocalizations.of(context).emailCannotBeEmpty
+                : null,
           ),
           // Create a Password
           EntryField(
@@ -125,15 +134,19 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
             inputIcon: Icon(Icons.lock),
             isPassword: _obscureText,
             visibleIcon: IconButton(
-                icon: (_obscureText)?Icon(Icons.visibility_off, color: Colors.grey):Icon(Icons.visibility, color: Colors.grey),
+                icon: (_obscureText)
+                    ? Icon(Icons.visibility_off, color: Colors.grey)
+                    : Icon(Icons.visibility, color: Colors.grey),
                 onPressed: () {
                   setState(() {
                     _obscureText = !_obscureText;
                   });
                 }),
-            editingController: passwordController, onValueChanged: (value) => { password = value},
-            validator: (val) => val.length < 6  ? 'لا يمكن إدخال أقل من 6 ارقام أو حروف' : null,
-
+            editingController: passwordController,
+            onValueChanged: (value) => {password = value},
+            validator: (val) => val.length < 6
+                ? AppLocalizations.of(context).cannotPasswordSmallerThan
+                : null,
           ),
         ],
       ),
@@ -153,8 +166,10 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                   ? Center(
                       child: SpinKitFadingCube(
                       color: AppColors.cGreen,
-                        controller: AnimationController(duration: const Duration(milliseconds: 1200), vsync: this),
-                      ))
+                      controller: AnimationController(
+                          duration: const Duration(milliseconds: 1200),
+                          vsync: this),
+                    ))
                   : Container(
                       padding: EdgeInsets.symmetric(horizontal: 21),
                       child: Column(
@@ -166,11 +181,14 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                           SizedBox(height: 10),
                           _emailPasswordWidget(),
                           SizedBox(height: 10),
-                          SubmitButton(color: AppColors.cGreen, title: AppLocalizations.of(context).signup, onTap: createAccount),
+                          SubmitButton(
+                              color: AppColors.cGreen,
+                              title: AppLocalizations.of(context).signup,
+                              onTap: createAccount),
                           SizedBox(height: 10),
                           _loginAccountLabel(),
                           SizedBox(height: 10),
-                          OrLine(),
+//                          OrLine(),
                           SizedBox(height: 10),
                           SizedBox(height: 13),
 
@@ -188,15 +206,16 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
   }
 
   // Normal Login Button Function
-  void createAccount () async {
-    if(_formKey.currentState.validate()) {
-      setState(() => _isLoading = true );
+  void createAccount() async {
+    if (_formKey.currentState.validate()) {
+      setState(() => _isLoading = true);
       FirebaseUser user = await auth.signUp(email, password);
 
-      setState(() => _isLoading = false );
-      if(user == null) {
+      setState(() => _isLoading = false);
+      if (user == null) {
         SnackBar snackBar = SnackBar(
-          content: Text(AppLocalizations.of(context).emailAlreadyExisted, style: TextStyle(fontFamily: 'Dubai')),
+          content: Text(AppLocalizations.of(context).emailAlreadyExisted,
+              style: TextStyle(fontFamily: 'Dubai')),
           backgroundColor: Colors.red.shade700,
           duration: Duration(seconds: 3),
         );
@@ -207,13 +226,14 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
           "username": username,
           "email": user.email,
           "joined_date": DateTime.now(),
-        }); 
+        });
         GlobalVariable.currentUserId = user.uid;
         DocumentSnapshot doc = await usersRef.document(user.uid).get();
         doc = await usersRef.document(user.uid).get();
         currentUser = UserModel.fromDocument(doc);
 
-        pushAndRemoveUntilPage(context, SecondRegisteration(firebaseUser: user));
+        pushAndRemoveUntilPage(
+            context, SecondRegisteration(firebaseUser: user));
       }
     }
   }
@@ -222,10 +242,12 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
   void anonymousLoginButton() async {
     dynamic result = await auth.signInAnonymously();
     if (result == null) {
-      SnackBar snackbar = SnackBar(content: Text("حدث خطأ في عملية التسجيل يرجى المحاولة مرة أخرى"));
+      SnackBar snackbar = SnackBar(
+          content: Text("حدث خطأ في عملية التسجيل يرجى المحاولة مرة أخرى"));
       _scaffoldKey.currentState.showSnackBar(snackbar);
     } else {
-      SnackBar snackbar = SnackBar(content: Text(AppLocalizations.of(context).welcomeToAmen));
+      SnackBar snackbar =
+          SnackBar(content: Text(AppLocalizations.of(context).welcomeToAmen));
       _scaffoldKey.currentState.showSnackBar(snackbar);
     }
   }

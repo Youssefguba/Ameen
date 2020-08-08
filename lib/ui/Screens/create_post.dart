@@ -1,3 +1,6 @@
+import 'package:ameen/ui/Screens/home.dart';
+import 'package:ameen/ui/Screens/news_feed.dart';
+import 'package:ameen/ui/Screens/ways_page.dart';
 import 'package:ameencommon/localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -126,6 +129,7 @@ class _CreatePostState extends State<CreatePost> {
                                 username: username,
                                 postBody: _postBodyController.text,
                                 profilePicture: profilePicture);
+
                             showToast(context, 'لقد تم نشر الدعاء الخاص بك 🤲',
                                 AppColors.cBlack);
                             popPage(context);
