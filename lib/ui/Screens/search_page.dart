@@ -14,7 +14,6 @@ class SearchPage extends StatefulWidget {
   String profileId;
   SearchPage({Key key, @required this.profileId, @required this.currentUser});
 
-
   @override
   _SearchState createState() => _SearchState();
 }
@@ -25,13 +24,11 @@ class _SearchState extends State<SearchPage> {
   String userId;
 
   @override
-  void initState() {
-  }
+  void initState() {}
 
   _search(String query) {
-    Future<QuerySnapshot> users = DbRefs.usersRef
-        .where("username", isGreaterThanOrEqualTo: query)
-        .getDocuments();
+    Future<QuerySnapshot> users =
+        DbRefs.usersRef.where("username", isEqualTo: query).getDocuments();
     setState(() {
       searchResultsFuture = users;
     });
@@ -43,6 +40,7 @@ class _SearchState extends State<SearchPage> {
 
     return _noContent();
   }
+
   @override
   void dispose() {
     super.dispose();
@@ -63,7 +61,9 @@ class _SearchState extends State<SearchPage> {
       future: searchResultsFuture,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return ShimmerWidget(shimmerCount: 2,);
+          return ShimmerWidget(
+            shimmerCount: 2,
+          );
         }
         List<UserResult> searchResults = [];
         snapshot.data.documents.forEach((doc) {
@@ -115,8 +115,10 @@ class _SearchState extends State<SearchPage> {
         child: ListView(
           shrinkWrap: true,
           children: <Widget>[
-            Image.asset('assets/images/user_search.png', height: 150,),
-
+            Image.asset(
+              'assets/images/user_search.png',
+              height: 150,
+            ),
           ],
         ),
       ),
@@ -137,17 +139,20 @@ class UserResult extends StatelessWidget {
         child: Column(
           children: <Widget>[
             GestureDetector(
-              onTap: () => pushPage(context, UserProfile(profileId: user.uid, currentUser: currentUser)),
+              onTap: () => pushPage(context,
+                  UserProfile(profileId: user.uid, currentUser: currentUser)),
               child: ListTile(
                 leading: CircleAvatar(
                   radius: 20,
                   backgroundColor: Colors.white,
-                  backgroundImage: user.profilePicture == null ? AssetImage(AppImages.AnonymousPerson) : CachedNetworkImageProvider(user.profilePicture),
+                  backgroundImage: user.profilePicture == null
+                      ? AssetImage(AppImages.AnonymousPerson)
+                      : CachedNetworkImageProvider(user.profilePicture),
                 ),
                 title: Text(
                   user.username,
-                  style:
-                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -161,4 +166,3 @@ class UserResult extends StatelessWidget {
     );
   }
 }
-

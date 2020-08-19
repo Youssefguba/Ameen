@@ -1,5 +1,6 @@
 import 'package:ameen/ui/Screens/user_profile.dart';
 import 'package:ameen/ui/Screens/ways_page.dart';
+import 'package:ameen/ui/widgets/full_photo.dart';
 import 'package:ameencommon/common_widget/shimmer_widget.dart';
 import 'package:ameencommon/localizations.dart';
 import 'package:ameencommon/models/comment.dart';
@@ -269,6 +270,9 @@ class _PostPageState extends State<PostPage> {
                           // The post of the Post
                           _postBody(),
 
+                          //Image of Post
+                          _imageOfPost(),
+
                           // React and Comment Counter
                           _reactAndCommentCounter(),
 
@@ -310,7 +314,7 @@ class _PostPageState extends State<PostPage> {
   Widget _postBody() {
     return Container(
       alignment: currentLang == 'ar' ? Alignment.topRight : Alignment.topLeft,
-      margin: EdgeInsets.only(top: 5, left: 5, right: 5, bottom: 0),
+      margin: EdgeInsets.only(top: 5, left: 5, right: 5, bottom: 10),
       padding: EdgeInsets.symmetric(horizontal: 15),
       child: Text(
         postModel.body,
@@ -448,7 +452,7 @@ class _PostPageState extends State<PostPage> {
   // React counter
   Widget _reactAndCommentCounter() {
     return Container(
-      height: 30,
+      height: 20,
       width: double.maxFinite,
       margin: EdgeInsets.all(8),
       child: Row(
@@ -713,5 +717,18 @@ class _PostPageState extends State<PostPage> {
             children: comments,
           );
         });
+  }
+
+  //Image of Post
+  Widget _imageOfPost() {
+    return InkWell(
+      onTap: () => pushPage(context, FullPhoto(url: postModel.postImage)),
+      child: Container(
+          width: double.maxFinite,
+          height: postModel.postImage != null ? 250 : 0,
+          child: postModel.postImage != null
+              ? Image.network(postModel.postImage)
+              : Container(color: Colors.white)),
+    );
   }
 }

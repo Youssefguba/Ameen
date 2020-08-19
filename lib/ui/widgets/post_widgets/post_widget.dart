@@ -26,6 +26,7 @@ class PostWidget extends StatefulWidget {
   String authorName;
   String authorId;
   String authorPhoto;
+  String postImage;
   int ameenCount;
   int forbiddenCount;
   int recommendCount;
@@ -39,6 +40,7 @@ class PostWidget extends StatefulWidget {
     this.postId,
     this.postBody,
     this.authorId,
+    this.postImage,
     this.ameenCount,
     this.forbiddenCount,
     this.recommendCount,
@@ -61,20 +63,7 @@ class PostWidget extends StatefulWidget {
       forbiddenReaction: doc['forbidden'],
       postTime: doc['created_at'],
       authorPhoto: doc['profilePicture'],
-    );
-  }
-
-  factory PostWidget.fromQuery(QuerySnapshot doc) {
-    return PostWidget(
-      postId: 'postId',
-      postBody: 'postBody',
-      authorName: 'username',
-      authorId: 'userId',
-      ameenReaction: 'ameen',
-      recommendReaction: 'recommend',
-      forbiddenReaction: 'forbidden',
-      postTime: Timestamp.now(),
-      authorPhoto: 'profilePicture',
+      postImage: doc['postImage'],
     );
   }
 
@@ -159,6 +148,7 @@ class PostWidget extends StatefulWidget {
         authorName: this.authorName,
         authorPhoto: this.authorPhoto,
         postBody: this.postBody,
+        postImage: this.postImage,
         postTime: this.postTime,
         ameenReaction: this.ameenReaction,
         recommendReaction: this.recommendReaction,
@@ -175,6 +165,7 @@ class _PostWidgetState extends State<PostWidget> {
       this.postId,
       this.postBody,
       this.postTime,
+      this.postImage,
       this.ameenCount,
       this.recommendCount,
       this.forbiddenCount,
@@ -198,6 +189,7 @@ class _PostWidgetState extends State<PostWidget> {
   String authorName;
   String authorId;
   String authorPhoto;
+  String postImage;
   Timestamp postTime;
 
   int ameenCount;
@@ -310,6 +302,41 @@ class _PostWidgetState extends State<PostWidget> {
     });
   }
 
+  void _pushToPostPage() {
+    pushPage(
+        context,
+        PostPage(
+          postId: postId,
+          authorId: authorId,
+          authorName: authorName,
+          postModel: postModel,
+        ));
+  }
+
+  _handleDeletePost(BuildContext parentContext) {
+    return showDialog(
+        context: parentContext,
+        builder: (context) {
+          return SimpleDialog(
+            title: Text("هل تريد حذف المنشور"),
+            children: <Widget>[
+              SimpleDialogOption(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _deletePost();
+                  },
+                  child: Text(
+                    AppLocalizations.of(context).yes,
+                    style: TextStyle(color: Colors.red),
+                  )),
+              SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(AppLocalizations.of(context).cancel)),
+            ],
+          );
+        });
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -363,6 +390,7 @@ class _PostWidgetState extends State<PostWidget> {
                   ],
                 ),
               ),
+              _imageOfPost(),
               ReactionsButtons(
                 authorId: authorId,
                 postId: postId,
@@ -553,7 +581,7 @@ class _PostWidgetState extends State<PostWidget> {
   }
 
   // Counter of Comments (Numbers)
-  _counterOfComment() {
+  Widget _counterOfComment() {
     return StreamBuilder(
         stream: commentsRef
             .document(widget.postId)
@@ -591,7 +619,7 @@ class _PostWidgetState extends State<PostWidget> {
   }
 
   // Container of Numbers and Reactions Icons
-  _counterOfReactions() {
+  Widget _counterOfReactions() {
     // Container of Numbers and Reactions Icons
     return StreamBuilder(
         stream: postsRef
@@ -674,38 +702,17 @@ class _PostWidgetState extends State<PostWidget> {
         });
   }
 
-  _handleDeletePost(BuildContext parentContext) {
-    return showDialog(
-        context: parentContext,
-        builder: (context) {
-          return SimpleDialog(
-            title: Text("هل تريد حذف المنشور"),
-            children: <Widget>[
-              SimpleDialogOption(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    _deletePost();
-                  },
-                  child: Text(
-                    AppLocalizations.of(context).yes,
-                    style: TextStyle(color: Colors.red),
-                  )),
-              SimpleDialogOption(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(AppLocalizations.of(context).cancel)),
-            ],
-          );
-        });
-  }
-
-  void _pushToPostPage() {
-    pushPage(
-        context,
-        PostPage(
-          postId: postId,
-          authorId: authorId,
-          authorName: authorName,
-          postModel: postModel,
-        ));
+  //Image of Post
+  Widget _imageOfPost() {
+    return InkWell(
+      onTap: _pushToPostPage,
+      child: Container(
+          padding: EdgeInsets.all(5),
+          width: double.maxFinite,
+          height: postImage != null ? 250 : 0,
+          child: postImage != null
+              ? Image.network(postImage)
+              : Container(color: Colors.white)),
+    );
   }
 }
