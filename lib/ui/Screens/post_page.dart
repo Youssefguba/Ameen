@@ -725,9 +725,10 @@ class _PostPageState extends State<PostPage> {
       onTap: () => pushPage(context, FullPhoto(url: postModel.postImage)),
       child: Container(
           width: double.maxFinite,
+          color: AppColors.cBackground,
           height: postModel.postImage != null ? 250 : 0,
           child: postModel.postImage != null
-              ? Image.network(postModel.postImage)
+              ? Image.network(postModel.postImage, width: double.maxFinite)
               : Container(color: Colors.white)),
     );
   }

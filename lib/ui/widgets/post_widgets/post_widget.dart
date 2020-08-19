@@ -227,13 +227,13 @@ class _PostWidgetState extends State<PostWidget> {
   void _onInterstitialAdEvent(MobileAdEvent event) {
     switch (event) {
       case MobileAdEvent.loaded:
-        _isInterstitialAdReady = true;
         _pushToPostPage();
+        _isInterstitialAdReady = true;
 
         break;
       case MobileAdEvent.failedToLoad:
-        _isInterstitialAdReady = false;
         _pushToPostPage();
+        _isInterstitialAdReady = false;
 
         break;
       case MobileAdEvent.closed:
@@ -379,6 +379,14 @@ class _PostWidgetState extends State<PostWidget> {
                             ..show();
                         },
                         child: _postBody()),
+                    SizedBox(height: 5),
+                    InkWell(
+                        onTap: () {
+                          createInterstitialAd()
+                            ..load()
+                            ..show();
+                        },
+                        child: _imageOfPost()),
                     InkWell(
                         onTap: () {
                           createInterstitialAd()
@@ -386,11 +394,9 @@ class _PostWidgetState extends State<PostWidget> {
                             ..show();
                         },
                         child: _reactAndCommentCounter()),
-                    SizedBox(height: 8),
                   ],
                 ),
               ),
-              _imageOfPost(),
               ReactionsButtons(
                 authorId: authorId,
                 postId: postId,
@@ -704,15 +710,12 @@ class _PostWidgetState extends State<PostWidget> {
 
   //Image of Post
   Widget _imageOfPost() {
-    return InkWell(
-      onTap: _pushToPostPage,
-      child: Container(
-          padding: EdgeInsets.all(5),
-          width: double.maxFinite,
-          height: postImage != null ? 250 : 0,
-          child: postImage != null
-              ? Image.network(postImage)
-              : Container(color: Colors.white)),
-    );
+    return Container(
+        color: AppColors.cBackground,
+        width: double.maxFinite,
+        height: postImage != null ? 250 : 0,
+        child: postImage != null
+            ? Image.network(postImage, width: double.maxFinite)
+            : Container(color: Colors.white));
   }
 }

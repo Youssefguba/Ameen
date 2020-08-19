@@ -55,9 +55,9 @@ class _NewsFeedState extends State<NewsFeed>
     _scrollController.addListener(() {
       if (_scrollController.position.outOfRange) {
         if (_scrollController.position.pixels == 0) {
-          print('$TAG, at the top');
-        } else {
           print('$TAG, at the bottom');
+        } else {
+          print('$TAG, at the top');
         }
       }
     });

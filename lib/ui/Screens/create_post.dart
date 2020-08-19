@@ -50,6 +50,7 @@ class _CreatePostState extends State<CreatePost> {
     isUploading = false;
     _postBodyController.clear();
     _postBodyController.dispose();
+    imageUrl = null;
   }
 
   @override
@@ -135,10 +136,11 @@ class _CreatePostState extends State<CreatePost> {
                       controller: _postBodyController,
                       maxLength: 220,
                       maxLines: 10,
-                      textInputAction: TextInputAction.newline,
+//                      textInputAction: TextInputAction.newline,
                       autofocus: true,
                       showCursor: true,
-                      maxLengthEnforced: false,
+                      maxLengthEnforced: true,
+                      textDirection: TextDirection.rtl,
                       expands: false,
                       minLines: 1,
                       scrollController: ScrollController(),
@@ -149,9 +151,7 @@ class _CreatePostState extends State<CreatePost> {
                         contentPadding: EdgeInsets.all(15.0),
                         border: InputBorder.none,
                         hintText: AppLocalizations.of(context).postADoaaYouWant,
-                        hintStyle: TextStyle(
-                          fontFamily: 'Dubai',
-                        ),
+                        hintStyle: TextStyle(fontFamily: 'Dubai'),
                       ),
                     ),
 
