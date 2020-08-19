@@ -1,12 +1,12 @@
-import 'package:ameen/ui/Screens/home.dart';
-import 'package:ameen/ui/Screens/news_feed.dart';
-import 'package:ameen/ui/Screens/ways_page.dart';
+import 'dart:io';
+
+import 'package:ameencommon/common_widget/refresh_progress_indicator.dart';
 import 'package:ameencommon/localizations.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ameencommon/utils/constants.dart';
 import 'package:ameencommon/utils/functions.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 class CreatePost extends StatefulWidget {
@@ -26,6 +26,11 @@ class _CreatePostState extends State<CreatePost> {
   String profilePicture;
 
   bool isUploading = false;
+
+  File _imageSelected;
+  var imageUrl;
+  ImagePicker picker = ImagePicker();
+  GlobalKey _circleAvatar = GlobalKey();
 
   @override
   void initState() {
@@ -76,89 +81,170 @@ class _CreatePostState extends State<CreatePost> {
             color: Colors.black,
           ),
         ),
+        actions: [
+          Align(
+            alignment: FractionalOffset.center,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: InkWell(
+                onTap: () {
+                  createPost(
+                    userId: userId,
+                    postId: postId,
+                    username: username,
+                    postBody: _postBodyController.text,
+                    profilePicture: profilePicture,
+                    postImage: imageUrl,
+                  );
+
+                  showToast(context, 'لقد تم نشر الدعاء الخاص بك 🤲',
+                      AppColors.cBlack);
+                  popPage(context);
+                },
+                child: Visibility(
+                  visible: _postBodyController.text.isEmpty ? false : true,
+                  child: Text(
+                    AppLocalizations.of(context).shareADoaa,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Dubai',
+                      color: AppColors.cGreen,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
+        ],
       ),
       body: isUploading
           ? LinearProgressIndicator(
               backgroundColor: AppColors.cBackground,
               valueColor: AlwaysStoppedAnimation<Color>(AppColors.cGreen),
             )
-          : Container(
-              height: double.maxFinite,
-              margin: EdgeInsets.all(15),
-              child: Column(
-                children: <Widget>[
-                  // TextField of Post
-                  TextField(
-                    controller: _postBodyController,
-                    maxLength: 220,
-                    maxLines: 10,
-                    textInputAction: TextInputAction.newline,
-                    autofocus: true,
-                    showCursor: true,
-                    maxLengthEnforced: false,
-                    expands: false,
-                    minLines: 1,
-                    scrollController: ScrollController(),
-                    scrollPhysics: BouncingScrollPhysics(),
-                    cursorColor: AppColors.green[900],
-                    style: TextStyle(fontSize: 18, fontFamily: 'Dubai'),
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.all(15.0),
-                      border: InputBorder.none,
-                      hintText: AppLocalizations.of(context).postADoaaYouWant,
-                      hintStyle: TextStyle(
-                        fontFamily: 'Dubai',
-                      ),
-                    ),
-                  ),
-                  // Post Button
-                  Expanded(
-                    child: Align(
-                      alignment: FractionalOffset.bottomCenter,
-                      widthFactor: double.maxFinite,
-                      child: Visibility(
-                        visible:
-                            _postBodyController.text.isEmpty ? false : true,
-                        child: FlatButton(
-                          focusColor: AppColors.cBackground,
-                          hoverColor: AppColors.cBackground,
-                          onPressed: () {
-                            createPost(
-                                userId: userId,
-                                postId: postId,
-                                username: username,
-                                postBody: _postBodyController.text,
-                                profilePicture: profilePicture);
-
-                            showToast(context, 'لقد تم نشر الدعاء الخاص بك 🤲',
-                                AppColors.cBlack);
-                            popPage(context);
-                          },
-                          padding:
-                              EdgeInsets.symmetric(vertical: 13, horizontal: 5),
-                          color: _postBodyController.text.isEmpty
-                              ? AppColors.cBackground
-                              : AppColors.cGreen,
-                          disabledColor: _postBodyController.text.isEmpty
-                              ? AppColors.cBackground
-                              : AppColors.cGreen,
-                          child: Text(
-                            AppLocalizations.of(context).shareADoaa,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: 'Dubai',
-                              color: Colors.white,
-                              fontSize: 17,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
+          : SingleChildScrollView(
+              child: Container(
+                height: double.maxFinite,
+                margin: EdgeInsets.all(15),
+                child: Column(
+                  children: <Widget>[
+                    // TextField of Post
+                    TextField(
+                      controller: _postBodyController,
+                      maxLength: 220,
+                      maxLines: 10,
+                      textInputAction: TextInputAction.newline,
+                      autofocus: true,
+                      showCursor: true,
+                      maxLengthEnforced: false,
+                      expands: false,
+                      minLines: 1,
+                      scrollController: ScrollController(),
+                      scrollPhysics: BouncingScrollPhysics(),
+                      cursorColor: AppColors.green[900],
+                      style: TextStyle(fontSize: 18, fontFamily: 'Dubai'),
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.all(15.0),
+                        border: InputBorder.none,
+                        hintText: AppLocalizations.of(context).postADoaaYouWant,
+                        hintStyle: TextStyle(
+                          fontFamily: 'Dubai',
                         ),
                       ),
                     ),
-                  ),
-                ],
+
+                    //Image and Close Btn
+                    Visibility(
+                      visible: isImageUploading() != null || imageUrl != null
+                          ? true
+                          : false,
+                      maintainSize:
+                          isImageUploading() != null || imageUrl != null
+                              ? true
+                              : false,
+                      maintainAnimation:
+                          isImageUploading() != null || imageUrl != null
+                              ? true
+                              : false,
+                      maintainState:
+                          isImageUploading() != null || imageUrl != null
+                              ? true
+                              : false,
+                      child: Container(
+                        padding: EdgeInsets.all(15),
+                        height: 350,
+                        child: Stack(children: [
+                          previewImage(),
+                          IconButton(
+                            splashColor: Colors.black,
+                            icon: Icon(
+                              Icons.cancel,
+                              color: Colors.white,
+                            ),
+                            onPressed: () => setState(() {
+                              imageUrl = null;
+                            }),
+                          ),
+                        ]),
+                      ),
+                    ),
+
+                    // ImageChoose Button
+                    Align(
+                        alignment: FractionalOffset.bottomLeft,
+                        widthFactor: double.maxFinite,
+                        child: Container(
+                          child: IconButton(
+                            onPressed: () => getImageFromPhone(),
+                            icon: Icon(Icons.image, color: AppColors.cGreen),
+                          ),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(
+                                  color: Colors.black12, width: 0.5)),
+                        )),
+                  ],
+                ),
               ),
             ),
     );
+  }
+
+  Future getImageFromPhone() async {
+    PickedFile pickedImage = await picker.getImage(source: ImageSource.gallery);
+    setState(() {
+      _imageSelected = File(pickedImage.path);
+    });
+    uploadPhoto(context, "Posts Picture", _imageSelected).then((photoUrl) {
+      setState(() {
+        imageUrl = photoUrl;
+      });
+    });
+  }
+
+  // Preview Selected Image either From Facebook or From Storage
+  dynamic previewImage() {
+    //Check if image uploading?
+    if (isImageUploading() == null) {
+      return Container(color: Colors.white);
+    } else if (isImageUploading()) {
+      return Container(child: RefreshProgress(), color: AppColors.cBackground);
+
+      //Check if uploading canceled?
+    } else if (isUploadingCanceled() == null) {
+      return Container(color: Colors.white);
+    } else if (isUploadingCanceled()) {
+      return Container(color: Colors.white);
+    }
+
+    //Put Image if completed
+    if (imageUrl != null) {
+      return Image.network(imageUrl, fit: BoxFit.fill);
+    } else {
+      return Container(color: Colors.white);
+    }
   }
 }
