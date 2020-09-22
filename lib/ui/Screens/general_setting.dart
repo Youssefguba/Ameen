@@ -6,6 +6,7 @@ import 'package:ameencommon/utils/constants.dart';
 import 'package:ameencommon/utils/functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class GeneralSettingPage extends StatelessWidget {
   FirebaseUser currentUser;
@@ -31,14 +32,26 @@ class GeneralSettingPage extends StatelessWidget {
       body: Container(
         child: Column(
           children: [
-
             // Profile Setting
             ListTile(
               title: Text(AppLocalizations.of(context).editYourProfile,
                   style: TextStyle(fontFamily: 'Dubai', fontSize: 15)),
               leading: Icon(Icons.person),
-              onTap: () => pushPage(context, ProfileSetting(currentUser: currentUser,)),
+              onTap: () => pushPage(
+                  context,
+                  ProfileSetting(
+                    currentUser: currentUser,
+                  )),
             ),
+
+            // Contact us
+            ListTile(
+                title: Text(AppLocalizations.of(context).contactUs,
+                    style: TextStyle(fontFamily: 'Dubai', fontSize: 15)),
+                leading: Icon(Icons.language),
+                onTap: () async {
+                  _launchURL();
+                }),
 
             // Logout
             ListTile(
@@ -54,5 +67,14 @@ class GeneralSettingPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  _launchURL() async {
+    const url = 'https://www.facebook.com/appamen';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
