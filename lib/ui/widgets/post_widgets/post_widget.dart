@@ -211,39 +211,39 @@ class _PostWidgetState extends State<PostWidget> {
   @override
   void initState() {
     super.initState();
-    FirebaseAdMob.instance.initialize(appId: AdManager.appId);
+//    FirebaseAdMob.instance.initialize(appId: AdManager.appId);
     _getPostData();
-    _isInterstitialAdReady = false;
-    _interstitialAd = createInterstitialAd();
+//    _isInterstitialAdReady = false;
+//    _interstitialAd = createInterstitialAd();
   }
 
-  InterstitialAd createInterstitialAd() {
-    return InterstitialAd(
-      adUnitId: AdManager.interstitialAdUnitId,
-      listener: _onInterstitialAdEvent,
-    );
-  }
+//  InterstitialAd createInterstitialAd() {
+//    return InterstitialAd(
+//      adUnitId: AdManager.interstitialAdUnitId,
+//      listener: _onInterstitialAdEvent,
+//    );
+//  }
 
-  void _onInterstitialAdEvent(MobileAdEvent event) {
-    switch (event) {
-      case MobileAdEvent.loaded:
-        _pushToPostPage();
-        _isInterstitialAdReady = true;
-
-        break;
-      case MobileAdEvent.failedToLoad:
-        _pushToPostPage();
-        _isInterstitialAdReady = false;
-
-        break;
-      case MobileAdEvent.closed:
-        _pushToPostPage();
-        break;
-      default:
-      // do nothing
-    }
-  }
-
+//
+//  void _onInterstitialAdEvent(MobileAdEvent event) {
+//    switch (event) {
+//      case MobileAdEvent.loaded:
+//        _pushToPostPage();
+//        _isInterstitialAdReady = true;
+//
+//        break;
+//      case MobileAdEvent.failedToLoad:
+//        _pushToPostPage();
+//        _isInterstitialAdReady = false;
+//
+//        break;
+//      case MobileAdEvent.closed:
+//        _pushToPostPage();
+//        break;
+//      default:
+//      // do nothing
+//    }
+//  }
   // Get Post Data
   _getPostData() {
     _postData = getPostData(
@@ -374,24 +374,18 @@ class _PostWidgetState extends State<PostWidget> {
                   children: [
                     InkWell(
                         onTap: () {
-                          createInterstitialAd()
-                            ..load()
-                            ..show();
+                          _pushToPostPage();
                         },
                         child: _postBody()),
                     SizedBox(height: 5),
                     InkWell(
                         onTap: () {
-                          createInterstitialAd()
-                            ..load()
-                            ..show();
+                          _pushToPostPage();
                         },
                         child: _imageOfPost()),
                     InkWell(
                         onTap: () {
-                          createInterstitialAd()
-                            ..load()
-                            ..show();
+                          _pushToPostPage();
                         },
                         child: _reactAndCommentCounter()),
                   ],
@@ -410,9 +404,7 @@ class _PostWidgetState extends State<PostWidget> {
               ),
               InkWell(
                   onTap: () {
-                    createInterstitialAd()
-                      ..load()
-                      ..show();
+                    _pushToPostPage();
                   },
                   child: AddNewCommentWidget(
                     authorPhoto: authorPhoto,

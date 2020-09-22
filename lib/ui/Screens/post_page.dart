@@ -243,7 +243,7 @@ class _PostPageState extends State<PostPage> {
               },
               child: Container(
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
                     Container(
                       margin: EdgeInsets.only(top: 5),
@@ -259,7 +259,7 @@ class _PostPageState extends State<PostPage> {
                         ],
                       ),
                       child: Column(
-                        mainAxisSize: MainAxisSize.min,
+                        mainAxisSize: MainAxisSize.max,
                         children: <Widget>[
                           Padding(
                               padding: EdgeInsets.symmetric(horizontal: 13)),
@@ -683,9 +683,7 @@ class _PostPageState extends State<PostPage> {
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: AppLocalizations.of(context).writeAComment,
-                  hintStyle: TextStyle(
-                    fontFamily: 'Dubai',
-                  ),
+                  hintStyle: TextStyle(fontFamily: 'Dubai', fontSize: 12),
                 ),
               ),
             ),

@@ -57,7 +57,6 @@ class ReactionsButtons extends StatefulWidget {
   int recommendCount;
   int forbiddenCount;
 
-
   ReactionsButtons(
       {Key key,
       @required this.authorId,
@@ -81,8 +80,7 @@ class ReactionsButtons extends StatefulWidget {
       recommendReaction: this.recommendReaction,
       ameenCount: this.ameenCount,
       recommendCount: this.recommendCount,
-      forbiddenCount: this.forbiddenCount
-  );
+      forbiddenCount: this.forbiddenCount);
 }
 
 class ReactionsButtonsState extends State<ReactionsButtons>
@@ -109,7 +107,6 @@ class ReactionsButtonsState extends State<ReactionsButtons>
     this.ameenCount,
     this.recommendCount,
     this.forbiddenCount,
-
   });
 
   UserModel user;
@@ -201,7 +198,7 @@ class ReactionsButtonsState extends State<ReactionsButtons>
   Widget build(BuildContext context) {
     super.build(context);
     return Container(
-      width: MediaQuery.of(context).size.width,
+      width: double.maxFinite,
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
@@ -246,8 +243,8 @@ class ReactionsButtonsState extends State<ReactionsButtons>
             },
             child: ReactionsButtonRow(
                 image: Image.asset(shareImage),
-                label:
-                    Text(AppLocalizations.of(context).share, style: btnStyle, overflow: TextOverflow.ellipsis)),
+                label: Text(AppLocalizations.of(context).share,
+                    style: btnStyle, overflow: TextOverflow.ellipsis)),
           ),
         ],
       ),

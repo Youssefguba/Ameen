@@ -15,6 +15,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 
 // ** This page to display the General Timeline of posts
 class NewsFeed extends StatefulWidget {
@@ -32,14 +33,15 @@ class _NewsFeedState extends State<NewsFeed>
   ScrollController _scrollController = ScrollController();
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  QuerySnapshot postsSnapshot;
   List<PostWidget> posts = [];
+  PostWidget individualPost;
   bool _isLoading = false;
   Locale locale;
 
   @override
   void initState() {
     super.initState();
-    _loadMoreInTimeline();
     getTimeline();
     configurePushNotification();
   }
@@ -51,26 +53,16 @@ class _NewsFeedState extends State<NewsFeed>
     _scrollController.dispose();
   }
 
-  void _loadMoreInTimeline() {
-    _scrollController.addListener(() {
-      if (_scrollController.position.outOfRange) {
-        if (_scrollController.position.pixels == 0) {
-          print('$TAG, at the bottom');
-        } else {
-          print('$TAG, at the top');
-        }
-      }
-    });
-  }
-
   void getTimeline() async {
+    await new Future.delayed(const Duration(milliseconds: 500));
+
     setState(() => _isLoading = true);
-    QuerySnapshot snapshot = await DbRefs.timelineRef
+    postsSnapshot = await DbRefs.timelineRef
         .orderBy('created_at', descending: true)
         .getDocuments();
 
     setState(() {
-      posts = snapshot.documents
+      posts = postsSnapshot.documents
           .map((doc) => PostWidget.fromDocument(doc))
           .toList();
     });
@@ -117,6 +109,16 @@ class _NewsFeedState extends State<NewsFeed>
     });
   }
 
+//  Future _loadMore() async {
+//    print(
+//        'Lazy is working now Lazy is working now Lazy is working now Lazy is working now Lazy is working now');
+//    // Add in an artificial delay
+//    await new Future.delayed(const Duration(seconds: 1));
+//    setState(() {
+//      currentLength += 10;
+//    });
+//  }
+
   buildTimeline() {
     if (posts == null) {
       return ShimmerWidget();
@@ -129,7 +131,6 @@ class _NewsFeedState extends State<NewsFeed>
         children: posts,
         controller: _scrollController,
         physics: BouncingScrollPhysics(),
-        semanticChildCount: posts.length % 2,
         shrinkWrap: true,
       );
     }
